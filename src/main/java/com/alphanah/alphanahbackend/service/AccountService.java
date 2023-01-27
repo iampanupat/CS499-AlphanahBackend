@@ -1,7 +1,7 @@
 package com.alphanah.alphanahbackend.service;
 
 import com.alphanah.alphanahbackend.entity.Account;
-import com.alphanah.alphanahbackend.model.enumerate.EAccountRole;
+import com.alphanah.alphanahbackend.model.enumerate.Role;
 import com.alphanah.alphanahbackend.utility.PhoneUtil;
 import com.alphanah.alphanahbackend.utility.TokenUtil;
 import com.amazonaws.AmazonServiceException;
@@ -46,7 +46,7 @@ public class AccountService {
             switch (cognitoKey) {
                 case "sub" -> account.setUuid(UUID.fromString(cognitoValue));
                 case "email" -> account.setEmail(cognitoValue);
-                case "custom:role" -> account.setRole(EAccountRole.valueOf(cognitoValue.toUpperCase()));
+                case "custom:role" -> account.setRole(Role.valueOf(cognitoValue.toUpperCase()));
                 case "name" -> account.setFirstname(cognitoValue);
                 case "family_name" -> account.setLastname(cognitoValue);
                 case "address" -> account.setAddress(cognitoValue);

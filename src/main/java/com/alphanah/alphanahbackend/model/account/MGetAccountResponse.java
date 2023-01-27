@@ -1,6 +1,6 @@
 package com.alphanah.alphanahbackend.model.account;
 
-import com.alphanah.alphanahbackend.model.enumerate.EAccountRole;
+import com.alphanah.alphanahbackend.model.enumerate.Role;
 import lombok.Data;
 
 import java.util.UUID;
@@ -9,7 +9,7 @@ import java.util.UUID;
 public class MGetAccountResponse {
     private UUID uuid;
     private String email;
-    private EAccountRole role;
+    private Role role;
     private String firstname;
     private String lastname;
     private String address;

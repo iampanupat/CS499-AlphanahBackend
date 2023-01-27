@@ -6,7 +6,7 @@ import com.alphanah.alphanahbackend.model.authentication.MLoginRequest;
 import com.alphanah.alphanahbackend.model.authentication.MLoginResponse;
 import com.alphanah.alphanahbackend.model.authentication.MRegisterRequest;
 import com.alphanah.alphanahbackend.model.authentication.MRegisterResponse;
-import com.alphanah.alphanahbackend.model.enumerate.EAccountRole;
+import com.alphanah.alphanahbackend.model.enumerate.Role;
 import com.alphanah.alphanahbackend.service.AuthService;
 import com.amazonaws.services.cognitoidp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +25,14 @@ public class AuthBusiness {
     private static final int PASSWORD_MAX_LENGTH = 256;
 
     public MRegisterResponse customerRegister(MRegisterRequest request) throws AlphanahBaseException {
-        return register(request, EAccountRole.CUSTOMER);
+        return register(request, Role.CUSTOMER);
     }
 
     public MRegisterResponse merchantRegister(MRegisterRequest request) throws AlphanahBaseException {
-        return register(request, EAccountRole.MERCHANT);
+        return register(request, Role.MERCHANT);
     }
 
-    private MRegisterResponse register(MRegisterRequest request, EAccountRole role) throws AlphanahBaseException {
+    private MRegisterResponse register(MRegisterRequest request, Role role) throws AlphanahBaseException {
         if (request == null)
             throw AuthException.registerRequestNull();
 
@@ -72,7 +72,7 @@ public class AuthBusiness {
         Map<String, String> accountDetail = service.createAccount(request.getEmail(), request.getPassword(), role);
         MRegisterResponse response = new MRegisterResponse();
         response.setEmail(accountDetail.get("email"));
-        response.setRole(EAccountRole.valueOf(accountDetail.get("role")));
+        response.setRole(Role.valueOf(accountDetail.get("role")));
         return response;
     }
 

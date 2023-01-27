@@ -1,7 +1,7 @@
 package com.alphanah.alphanahbackend.entity;
 
 import com.alphanah.alphanahbackend.model.account.MGetAccountResponse;
-import com.alphanah.alphanahbackend.model.enumerate.EAccountRole;
+import com.alphanah.alphanahbackend.model.enumerate.Role;
 import lombok.Data;
 
 import java.util.UUID;
@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Account {
     private UUID uuid;
     private String email;
-    private EAccountRole role;
+    private Role role;
     private String firstname;
     private String lastname;
     private String address;
@@ -19,16 +19,16 @@ public class Account {
     private UUID cartUuid;
 
     public Account() {
-        this.role = EAccountRole.CUSTOMER;
+        this.role = Role.CUSTOMER;
         this.picture = "https://images.alphanah.com/defaultProfilePicture.jpg";
     }
 
     public boolean isCustomer() {
-        return this.role == EAccountRole.CUSTOMER;
+        return this.role == Role.CUSTOMER;
     }
 
     public boolean isMerchant() {
-        return this.role == EAccountRole.MERCHANT;
+        return this.role == Role.MERCHANT;
     }
 
     public MGetAccountResponse toMGetAccountResponse() {
