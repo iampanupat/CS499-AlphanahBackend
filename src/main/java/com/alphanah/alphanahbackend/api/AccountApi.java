@@ -2,16 +2,15 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.AccountBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.entity.Account;
-import com.alphanah.alphanahbackend.model.account.MGetAccountResponse;
 import com.alphanah.alphanahbackend.model.account.MUpdateAccountRequest;
+import com.alphanah.alphanahbackend.model.response.MAccountFullResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")
@@ -20,34 +19,32 @@ public class AccountApi {
     @Autowired
     private AccountBusiness business;
 
-    // Get raw attributes from AWS Cognito for debug and testing
-    // Please delete this function soon as possible
-    @GetMapping("/rawAttributes")
-    public ResponseEntity<Map<String, Object>> getAccountRawAttributes(@RequestHeader(value = "Authorization") String bearerToken) {
-        Map<String, Object> response = business.getAccountRawAttributes(bearerToken);
-        return ResponseEntity.status(HttpStatus.OK.value()).body(response);
+    @GetMapping
+    public ResponseEntity<MAccountFullResponse> getAccount(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
+        MAccountFullResponse response = business.getAccount(token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<MGetAccountResponse> getAccount(@RequestHeader(value = "Authorization") String bearerToken) {
-        MGetAccountResponse response = business.getAccount(bearerToken);
-        return ResponseEntity.status(HttpStatus.OK.value()).body(response);
+    @GetMapping("/{uuid}")
+    public ResponseEntity<MAccountFullResponse> getAccountByUuid(@PathVariable("uuid") UUID uuid) throws AlphanahBaseException {
+        MAccountFullResponse response = business.getAccountByUuid(uuid);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateAccount(
-            @RequestHeader(value = "Authorization") String bearerToken,
+    public ResponseEntity<MAccountFullResponse> updateAccount(
+            @RequestHeader(value = "Authorization") String token,
             @RequestBody MUpdateAccountRequest request) throws AlphanahBaseException {
-        business.updateAccount(bearerToken, request);
-        return new ResponseEntity<>(HttpStatus.OK);
+        MAccountFullResponse response = business.updateAccount(token, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/picture")
-    public ResponseEntity<Void> updateAccountPicture(
-            @RequestHeader(value = "Authorization") String bearerToken,
-            @RequestBody MultipartFile picture) throws AlphanahBaseException {
-        business.updateAccountPicture(bearerToken, picture);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/image")
+    public ResponseEntity<MAccountFullResponse> updateAccountImage(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestBody MultipartFile image) throws AlphanahBaseException {
+        MAccountFullResponse response = business.updateAccountPicture(token, image);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

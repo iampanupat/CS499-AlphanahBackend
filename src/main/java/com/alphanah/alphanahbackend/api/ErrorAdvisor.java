@@ -23,12 +23,13 @@ public class ErrorAdvisor {
         return handleException(e, alphanah);
     }
 
-    private final String amazon = "Amazon";
-
-    // Handle amazon web services exception
     @ExceptionHandler(AmazonServiceException.class)
-    public ResponseEntity<ErrorResponse> handleAmazonServiceException(AmazonServiceException e) {
-        return handleException(e, amazon, HttpStatus.valueOf(e.getStatusCode()));
+    public ResponseEntity<ErrorResponse> handleAmazonServiceException(AmazonServiceException exception) {
+        ErrorResponse response = new ErrorResponse();
+        response.setStatus(exception.getStatusCode());
+        response.setFrom("Amazon");
+        response.setError(exception.getErrorMessage());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(exception.getStatusCode()));
     }
 
     private final String springFramework = "Spring Framework";

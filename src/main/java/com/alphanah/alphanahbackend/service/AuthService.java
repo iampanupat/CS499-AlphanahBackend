@@ -1,7 +1,7 @@
 package com.alphanah.alphanahbackend.service;
 
-import com.alphanah.alphanahbackend.model.enumerate.Role;
-import com.alphanah.alphanahbackend.utility.AmazonUtil;
+import com.alphanah.alphanahbackend.model.enumerate.ERole;
+import com.alphanah.alphanahbackend.utility.AmazonUtils;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class AuthService {
     @Value("${spring.security.oauth2.client.registration.cognito.clientSecret}")
     private String clientSecret;
 
-    public Map<String, String> createAccount(String email, String password, Role role) {
+    public Map<String, String> createAccount(String email, String password, ERole role) {
         AttributeType emailAttr = new AttributeType().withName("email").withValue(email);
         AttributeType emailVerifiedAttr = new AttributeType().withName("email_verified").withValue("true");
 
@@ -39,7 +39,7 @@ public class AuthService {
                 .withMessageAction(MessageActionType.SUPPRESS)
                 .withDesiredDeliveryMediums(DeliveryMediumType.EMAIL);
 
-        if (role == Role.MERCHANT) {
+        if (role == ERole.MERCHANT) {
             createUserRequest.withUserAttributes(new AttributeType().withName("custom:role").withValue("merchant"));
         }
 
@@ -55,17 +55,13 @@ public class AuthService {
 
         Map<String, String> response = new HashMap<>();
         response.put("email", email);
-        if (Objects.equals(role, Role.MERCHANT)) {
-            response.put("role", Role.MERCHANT.toString());
-        } else {
-            response.put("role", Role.CUSTOMER.toString());
-        }
+        response.put("role", Objects.equals(ERole.MERCHANT, role) ? ERole.MERCHANT.toString() : ERole.CUSTOMER.toString());
         return response;
     }
 
     public AuthenticationResultType signInAccount(String email, String password) {
         final Map<String, String> authParams = new HashMap<>();
-        authParams.put("SECRET_HASH", AmazonUtil.calculateSecretHash(clientId, clientSecret, email));
+        authParams.put("SECRET_HASH", AmazonUtils.calculateSecretHash(clientId, clientSecret, email));
         authParams.put("USERNAME", email);
         authParams.put("PASSWORD", password);
 

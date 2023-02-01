@@ -1,9 +1,12 @@
 package com.alphanah.alphanahbackend.service;
 
 import com.alphanah.alphanahbackend.entity.Account;
-import com.alphanah.alphanahbackend.model.enumerate.Role;
-import com.alphanah.alphanahbackend.utility.PhoneUtil;
-import com.alphanah.alphanahbackend.utility.TokenUtil;
+import com.alphanah.alphanahbackend.exception.AccountException;
+import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.enumerate.ECognitoField;
+import com.alphanah.alphanahbackend.model.enumerate.ERole;
+import com.alphanah.alphanahbackend.utility.PhoneUtils;
+import com.alphanah.alphanahbackend.utility.JWTUtils;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
@@ -11,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class AccountService {
@@ -24,47 +25,102 @@ public class AccountService {
     @Value("${spring.security.oauth2.client.registration.cognito.userPoolId}")
     private String userPoolId;
 
-    // Get raw attributes from AWS Cognito for debug and testing
-    // Please delete this function soon as possible
-    public Map<String, Object> getAccountRawAttributes(String bearerToken) {
-        GetUserResult userResult = cognitoClient.getUser(new GetUserRequest().withAccessToken(TokenUtil.removeBearer(bearerToken)));
-        Map<String, Object> attributeMap = new HashMap<>();
-        for (AttributeType attribute: userResult.getUserAttributes()) {
-            attributeMap.put(attribute.getName(), attribute.getValue());
+    private final int AWS_COGNITO_VALUE_MAX_LENGTH = 2048;
+
+    public Account get(String token) throws AlphanahBaseException {
+        if (Objects.isNull(token))
+            throw AccountException.getWithNullToken();
+
+        try {
+            List<AttributeType> attributeTypeList = cognitoClient.getUser(new GetUserRequest().withAccessToken(JWTUtils.removeBearer(token))).getUserAttributes();
+            return this.mapping(new Account(), attributeTypeList);
+        } catch (Exception exception) {
+            throw exception;
         }
-        return attributeMap;
     }
 
-    public Account getAccount(String bearerToken) {
-        GetUserResult userResult = cognitoClient.getUser(new GetUserRequest().withAccessToken(TokenUtil.removeBearer(bearerToken)));
-        Account account = new Account();
+    public Account get(UUID uuid) throws AlphanahBaseException {
+        if (Objects.isNull(uuid))
+            throw AccountException.getWithNullUuid();
 
-        // Convert AWS Cognito attributes name
-        for (AttributeType attribute: userResult.getUserAttributes()) {
-            String cognitoKey = attribute.getName();
+        Map<UUID, Account> accountMap;
+        try {
+            accountMap = this.getAll();
+        } catch (AmazonServiceException exception){
+            throw exception;
+        }
+
+        Account account = accountMap.get(uuid);
+        if (Objects.isNull(account))
+            throw AccountException.getNullObject();
+
+        return account;
+    }
+
+    private Map<UUID, Account> getAll() {
+        try {
+            List<UserType> users = cognitoClient.listUsers(new ListUsersRequest().withUserPoolId(userPoolId)).getUsers();
+            Map<UUID, Account> accountMap = new HashMap<>();
+            for (UserType user : users) {
+                List<AttributeType> attributeTypes = user.getAttributes();
+                Account account = this.mapping(new Account(), attributeTypes);;
+                accountMap.put(account.getUuid(), account);
+            }
+            return accountMap;
+        } catch (AmazonServiceException exception) {
+            throw exception;
+        }
+    }
+
+    private Account mapping(Account account, List<AttributeType> attributeTypes) {
+        for (AttributeType attribute : attributeTypes) {
+            ECognitoField cognitoField = ECognitoField.get(attribute.getName());
             String cognitoValue = attribute.getValue();
-            switch (cognitoKey) {
-                case "sub" -> account.setUuid(UUID.fromString(cognitoValue));
-                case "email" -> account.setEmail(cognitoValue);
-                case "custom:role" -> account.setRole(Role.valueOf(cognitoValue.toUpperCase()));
-                case "name" -> account.setFirstname(cognitoValue);
-                case "family_name" -> account.setLastname(cognitoValue);
-                case "address" -> account.setAddress(cognitoValue);
-                case "phone_number" -> account.setPhone(PhoneUtil.removeThaiAreaCode(cognitoValue));
-                case "picture" -> account.setPicture(cognitoValue);
-                case "custom:cart_uuid" -> account.setCartUuid(UUID.fromString(cognitoValue));
+            if (Objects.isNull(cognitoField))
+                continue;
+            switch (cognitoField) {
+                case UUID -> account.setUuid(UUID.fromString(cognitoValue));
+                case EMAIL -> account.setEmail(cognitoValue);
+                case ROLE -> account.setRole(ERole.valueOf(cognitoValue.toUpperCase()));
+                case FIRSTNAME -> account.setFirstname(cognitoValue);
+                case LASTNAME -> account.setLastname(cognitoValue);
+                case ADDRESS -> account.setAddress(cognitoValue);
+                case PHONE -> account.setPhone(PhoneUtils.removeThaiAreaCode(cognitoValue));
+                case IMAGE -> account.setImage(cognitoValue);
+                case CART_UUID -> account.setCartUuid(UUID.fromString(cognitoValue));
             }
         }
         return account;
     }
 
-    public void updateAccount(String bearerToken, String cognitoFieldName, String value) {
-        GetUserResult userResult = cognitoClient.getUser(new GetUserRequest().withAccessToken(TokenUtil.removeBearer(bearerToken)));
+    public void update(String token, ECognitoField cognitoField, String value) throws AlphanahBaseException {
+        if (Objects.isNull(token))
+            throw AccountException.updateWithNullToken();
+
+        if (Objects.isNull(cognitoField))
+            throw AccountException.updateWithNullCognitoField();
+
+        if (Objects.isNull(value))
+            throw AccountException.updateWithNullValue();
+
+        if (value.isEmpty())
+            throw AccountException.updateWithEmptyValue();
+
+        if (value.length() > AWS_COGNITO_VALUE_MAX_LENGTH)
+            throw AccountException.updateWithMaxLengthValue();
+
+        Account account;
+        try {
+            account = this.get(token);
+        } catch (AlphanahBaseException exception) {
+            throw AccountException.updateNullObject();
+        }
+
         try {
             cognitoClient.adminUpdateUserAttributes(new AdminUpdateUserAttributesRequest()
-                    .withUsername(userResult.getUsername())
+                    .withUsername(account.getEmail())
                     .withUserPoolId(userPoolId)
-                    .withUserAttributes(new AttributeType().withName(cognitoFieldName).withValue(value))
+                    .withUserAttributes(new AttributeType().withName(cognitoField.getFieldName()).withValue(value))
             );
         } catch (AmazonServiceException exception) {
             throw exception;

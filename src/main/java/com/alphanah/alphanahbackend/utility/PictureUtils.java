@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
 import java.util.List;
 
-public class PictureUtil {
+public class PictureUtils {
 
     public static void validateFile(MultipartFile file) throws AlphanahBaseException {
         if (file == null) {

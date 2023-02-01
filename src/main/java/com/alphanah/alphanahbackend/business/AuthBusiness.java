@@ -6,7 +6,7 @@ import com.alphanah.alphanahbackend.model.authentication.MLoginRequest;
 import com.alphanah.alphanahbackend.model.authentication.MLoginResponse;
 import com.alphanah.alphanahbackend.model.authentication.MRegisterRequest;
 import com.alphanah.alphanahbackend.model.authentication.MRegisterResponse;
-import com.alphanah.alphanahbackend.model.enumerate.Role;
+import com.alphanah.alphanahbackend.model.enumerate.ERole;
 import com.alphanah.alphanahbackend.service.AuthService;
 import com.amazonaws.services.cognitoidp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +25,18 @@ public class AuthBusiness {
     private static final int PASSWORD_MAX_LENGTH = 256;
 
     public MRegisterResponse customerRegister(MRegisterRequest request) throws AlphanahBaseException {
-        return register(request, Role.CUSTOMER);
+        return register(request, ERole.CUSTOMER);
     }
 
     public MRegisterResponse merchantRegister(MRegisterRequest request) throws AlphanahBaseException {
-        return register(request, Role.MERCHANT);
+        return register(request, ERole.MERCHANT);
     }
 
-    private MRegisterResponse register(MRegisterRequest request, Role role) throws AlphanahBaseException {
+    private MRegisterResponse register(MRegisterRequest request, ERole ERole) throws AlphanahBaseException {
         if (request == null)
             throw AuthException.registerRequestNull();
 
-        if (role == null)
+        if (ERole == null)
             throw AuthException.registerRoleNull();
 
         if (Objects.isNull(request.getEmail()))
@@ -69,10 +69,10 @@ public class AuthBusiness {
         if ( !(Objects.equals(request.getPassword(), request.getConfirmPassword())) )
             throw AuthException.registerPasswordsNotMatch();
 
-        Map<String, String> accountDetail = service.createAccount(request.getEmail(), request.getPassword(), role);
+        Map<String, String> accountDetail = service.createAccount(request.getEmail(), request.getPassword(), ERole);
         MRegisterResponse response = new MRegisterResponse();
         response.setEmail(accountDetail.get("email"));
-        response.setRole(Role.valueOf(accountDetail.get("role")));
+        response.setERole(ERole.valueOf(accountDetail.get("role")));
         return response;
     }
 

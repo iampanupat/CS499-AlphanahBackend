@@ -1,19 +1,21 @@
 package com.alphanah.alphanahbackend.business;
 
+import com.alphanah.alphanahbackend.entity.Account;
 import com.alphanah.alphanahbackend.exception.AccountException;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.account.MGetAccountResponse;
 import com.alphanah.alphanahbackend.model.account.MUpdateAccountRequest;
+import com.alphanah.alphanahbackend.model.enumerate.ECognitoField;
+import com.alphanah.alphanahbackend.model.response.MAccountFullResponse;
 import com.alphanah.alphanahbackend.service.AccountService;
 import com.alphanah.alphanahbackend.service.AmazonS3Service;
-import com.alphanah.alphanahbackend.utility.PhoneUtil;
-import com.alphanah.alphanahbackend.utility.PictureUtil;
+import com.alphanah.alphanahbackend.utility.PhoneUtils;
+import com.alphanah.alphanahbackend.utility.PictureUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class AccountBusiness {
@@ -24,50 +26,58 @@ public class AccountBusiness {
     @Autowired
     private AmazonS3Service amazonS3Service;
 
-    // Get raw attributes from AWS Cognito for debug and testing
-    // Please delete this function soon as possible
-    public Map<String, Object> getAccountRawAttributes(String bearerToken) {
-        return service.getAccountRawAttributes(bearerToken);
+    private final int ACCOUNT_FIRSTNAME_MAX_LENGTH = 20;
+    private final int ACCOUNT_LASTNAME_MAX_LENGTH = 20;
+    private final int ACCOUNT_ADDRESS_MAX_LENGTH = 2048;
+    private final int ACCOUNT_PHONE_MAX_LENGTH = 19;
+
+    public MAccountFullResponse getAccount(String token) throws AlphanahBaseException {
+        return service.get(token).toMAccountFullResponse();
     }
 
-    public MGetAccountResponse getAccount(String bearerToken) {
-        return service.getAccount(bearerToken).toMGetAccountResponse();
+    public MAccountFullResponse getAccountByUuid(UUID uuid) throws AlphanahBaseException {
+        return service.get(uuid).toMAccountFullResponse();
     }
 
-    public void updateAccount(String bearerToken, MUpdateAccountRequest request) throws AlphanahBaseException {
+    public MAccountFullResponse updateAccount(String token, MUpdateAccountRequest request) throws AlphanahBaseException {
+        if (Objects.isNull(token))
+            throw AccountException.updateWithNullToken();
+
         if (Objects.isNull(request.getFirstname()))
-            throw AccountException.updateFirstnameNull();
+            throw AccountException.updateWithNullFirstname();
 
         if (Objects.isNull(request.getLastname()))
-            throw AccountException.updateLastnameNull();
+            throw AccountException.updateWithNullLastname();
 
         if (Objects.isNull(request.getAddress()))
-            throw AccountException.updateAddressNull();
+            throw AccountException.updateWithNullAddress();
 
         if (Objects.isNull(request.getPhone()))
-            throw AccountException.updatePhoneNull();
+            throw AccountException.updateWithNullPhone();
 
-        if (request.getFirstname().length() > 20)
-            throw AccountException.updateFirstnameMaxLength();
+        if (request.getFirstname().length() > ACCOUNT_FIRSTNAME_MAX_LENGTH)
+            throw AccountException.updateWithMaxLengthFirstname();
 
-        if (request.getLastname().length() > 20)
-            throw AccountException.updateLastnameMaxLength();
+        if (request.getLastname().length() > ACCOUNT_LASTNAME_MAX_LENGTH)
+            throw AccountException.updateWithMaxLengthLastname();
 
-        if (request.getAddress().length() > 2048)
-            throw AccountException.updateAddressMaxLength();
+        if (request.getAddress().length() > ACCOUNT_ADDRESS_MAX_LENGTH)
+            throw AccountException.updateWithMaxLengthAddress();
 
-        if (request.getPhone().length() > 19)
-            throw AccountException.updatePhoneMaxLength();
+        if (request.getPhone().length() > ACCOUNT_PHONE_MAX_LENGTH)
+            throw AccountException.updateWithMaxLengthPhone();
 
-        service.updateAccount(bearerToken, "name", request.getFirstname());
-        service.updateAccount(bearerToken, "family_name", request.getLastname());
-        service.updateAccount(bearerToken, "address", request.getAddress());
-        service.updateAccount(bearerToken, "phone_number", PhoneUtil.addThaiAreaCode(request.getPhone()));
+        service.update(token, ECognitoField.FIRSTNAME, request.getFirstname());
+        service.update(token, ECognitoField.LASTNAME, request.getLastname());
+        service.update(token, ECognitoField.ADDRESS, request.getAddress());
+        service.update(token, ECognitoField.PHONE, PhoneUtils.addThaiAreaCode(request.getPhone()));
+        return service.get(token).toMAccountFullResponse();
     }
 
-    public void updateAccountPicture(String bearerToken, MultipartFile file) throws AlphanahBaseException {
-        PictureUtil.validateFile(file);
-        service.updateAccount(bearerToken, "picture", amazonS3Service.saveFile(file));
+    public MAccountFullResponse updateAccountPicture(String token, MultipartFile file) throws AlphanahBaseException {
+        PictureUtils.validateFile(file);
+        service.update(token, ECognitoField.IMAGE, amazonS3Service.saveFile(file));
+        return service.get(token).toMAccountFullResponse();
     }
 
 }

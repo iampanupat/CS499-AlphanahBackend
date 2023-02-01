@@ -1,6 +1,6 @@
 package com.alphanah.alphanahbackend.model.enumerate;
 
-public enum Role {
+public enum ERole {
     CUSTOMER,
     MERCHANT
 }

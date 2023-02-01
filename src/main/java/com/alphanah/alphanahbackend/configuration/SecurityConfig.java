@@ -15,16 +15,26 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        String[] permitAllEndpoints = {
+        String[] anonymousEndpoints = {
                 "/register/customer",
                 "/register/merchant",
                 "/login"
         };
+
+        String[] permitAllEndpoints = {
+                "/product",
+                "/product/*",
+                "/category",
+                "/category/*",
+        };
+
         httpSecurity
                 .cors().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests().requestMatchers(permitAllEndpoints).anonymous()
+                .authorizeHttpRequests()
+                .requestMatchers(anonymousEndpoints).anonymous()
+                .requestMatchers(permitAllEndpoints).permitAll()
                 .anyRequest().authenticated().and()
                 .oauth2ResourceServer().jwt();
         return httpSecurity.build();

@@ -5,7 +5,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public final class AmazonUtil {
+public final class AmazonUtils {
 
     // Reference: https://docs.aws.amazon.com/en_us/cognito/latest/developerguide/signing-up-users-in-your-app.html
     public static String calculateSecretHash(String userPoolClientId, String userPoolClientSecret, String userName) {

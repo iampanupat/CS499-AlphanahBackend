@@ -1,13 +1,18 @@
 package com.alphanah.alphanahbackend.utility;
 
-public class PhoneUtil {
+import java.util.Objects;
+
+public class PhoneUtils {
 
     public static String addThaiAreaCode(String phoneNumber) {
-        if (phoneNumber.startsWith("+")) {
+        if (Objects.isNull(phoneNumber))
+            return null;
+        if (phoneNumber.equals(""))
+            return null;
+        if (phoneNumber.startsWith("+"))
             return phoneNumber;
-        } else {
+        else
             return "+66" + phoneNumber;
-        }
     }
 
     public static String removeThaiAreaCode(String phoneNumber) {
