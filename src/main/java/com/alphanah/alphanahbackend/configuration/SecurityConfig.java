@@ -26,6 +26,7 @@ public class SecurityConfig {
                 "/product/*",
                 "/category",
                 "/category/*",
+                "/pay"
         };
 
         httpSecurity

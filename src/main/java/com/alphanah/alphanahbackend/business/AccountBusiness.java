@@ -3,9 +3,10 @@ package com.alphanah.alphanahbackend.business;
 import com.alphanah.alphanahbackend.entity.Account;
 import com.alphanah.alphanahbackend.exception.AccountException;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.account.MUpdateAccountRequest;
-import com.alphanah.alphanahbackend.model.enumerate.ECognitoField;
-import com.alphanah.alphanahbackend.model.response.MAccountFullResponse;
+import com.alphanah.alphanahbackend.model.account.UpdateAccountRequest;
+import com.alphanah.alphanahbackend.enumerate.CognitoField;
+import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
+import com.alphanah.alphanahbackend.model.account.AccountResponseM2;
 import com.alphanah.alphanahbackend.service.AccountService;
 import com.alphanah.alphanahbackend.service.AmazonS3Service;
 import com.alphanah.alphanahbackend.utility.PhoneUtils;
@@ -31,15 +32,17 @@ public class AccountBusiness {
     private final int ACCOUNT_ADDRESS_MAX_LENGTH = 2048;
     private final int ACCOUNT_PHONE_MAX_LENGTH = 19;
 
-    public MAccountFullResponse getAccount(String token) throws AlphanahBaseException {
-        return service.get(token).toMAccountFullResponse();
+    public AccountResponseM2 getAccount(String token) throws AlphanahBaseException {
+        Account response = service.get(token);
+        return response.toAccountResponseM2(null);
     }
 
-    public MAccountFullResponse getAccountByUuid(UUID uuid) throws AlphanahBaseException {
-        return service.get(uuid).toMAccountFullResponse();
+    public AccountResponseM1 getAccountByUuid(UUID uuid) throws AlphanahBaseException {
+        Account response = service.get(uuid);
+        return response.toAccountResponseM1(null);
     }
 
-    public MAccountFullResponse updateAccount(String token, MUpdateAccountRequest request) throws AlphanahBaseException {
+    public AccountResponseM2 updateAccount(String token, UpdateAccountRequest request) throws AlphanahBaseException {
         if (Objects.isNull(token))
             throw AccountException.updateWithNullToken();
 
@@ -67,17 +70,19 @@ public class AccountBusiness {
         if (request.getPhone().length() > ACCOUNT_PHONE_MAX_LENGTH)
             throw AccountException.updateWithMaxLengthPhone();
 
-        service.update(token, ECognitoField.FIRSTNAME, request.getFirstname());
-        service.update(token, ECognitoField.LASTNAME, request.getLastname());
-        service.update(token, ECognitoField.ADDRESS, request.getAddress());
-        service.update(token, ECognitoField.PHONE, PhoneUtils.addThaiAreaCode(request.getPhone()));
-        return service.get(token).toMAccountFullResponse();
+        service.update(token, CognitoField.FIRSTNAME, request.getFirstname());
+        service.update(token, CognitoField.LASTNAME, request.getLastname());
+        service.update(token, CognitoField.ADDRESS, request.getAddress());
+        service.update(token, CognitoField.PHONE, PhoneUtils.addThaiAreaCode(request.getPhone()));
+        Account response = service.get(token);
+        return response.toAccountResponseM2(null);
     }
 
-    public MAccountFullResponse updateAccountPicture(String token, MultipartFile file) throws AlphanahBaseException {
+    public AccountResponseM2 updateAccountPicture(String token, MultipartFile file) throws AlphanahBaseException {
         PictureUtils.validateFile(file);
-        service.update(token, ECognitoField.IMAGE, amazonS3Service.saveFile(file));
-        return service.get(token).toMAccountFullResponse();
+        service.update(token, CognitoField.IMAGE, amazonS3Service.saveFile(file));
+        Account response = service.get(token);
+        return response.toAccountResponseM2(null);
     }
 
 }

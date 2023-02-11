@@ -1,6 +1,6 @@
 package com.alphanah.alphanahbackend.entity;
 
-import com.alphanah.alphanahbackend.model.response.MImageBaseResponse;
+import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -13,19 +13,21 @@ import lombok.EqualsAndHashCode;
 @Entity(name = "images")
 public class Image extends BaseEntity {
 
-    @Column(name = "img_path", nullable = false)
+    @Column(name = "image_path", nullable = false)
     private String path;
 
     @ManyToOne
-    @JoinColumn(name = "p_uuid")
-    private Product productImageOwner;
+    @JoinColumn(name = "product_uuid")
+    private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "r_uuid")
-    private Review reviewImageOwner;
+    @JoinColumn(name = "review_uuid")
+    private Review review;
 
-    public MImageBaseResponse toMImageBaseResponse() {
-        MImageBaseResponse response = new MImageBaseResponse();
+    public ImageResponseM1 toImageResponseM1(ImageResponseM1 response) {
+        if (response == null)
+            response = new ImageResponseM1();
+
         response.setUuid(this.getUuid());
         response.setPath(this.getPath());
         return response;

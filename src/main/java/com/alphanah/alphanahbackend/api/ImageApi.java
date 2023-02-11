@@ -2,7 +2,7 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.ImageBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.response.MImageBaseResponse;
+import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +20,20 @@ public class ImageApi {
     private ImageBusiness business;
 
     @GetMapping("/{productUuid}/image")
-    public ResponseEntity<List<MImageBaseResponse>> getAllProductImages(
+    public ResponseEntity<List<ImageResponseM1>> getAllProductImages(
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
-        List<MImageBaseResponse> response = business.getAllProductImages(productUuid);
+        List<ImageResponseM1> response = business.getAllProductImages(productUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{productUuid}/image")
-    public ResponseEntity<MImageBaseResponse> createProductImage(
+    public ResponseEntity<ImageResponseM1> createProductImage(
             @RequestHeader(value = "Authorization") String token,
             @RequestBody MultipartFile image,
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
-        MImageBaseResponse response = business.createProductImage(token, productUuid, image);
+        ImageResponseM1 response = business.createProductImage(token, productUuid, image);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -48,22 +48,22 @@ public class ImageApi {
     }
 
     @GetMapping("/{productUuid}/review/{reviewUuid}/image")
-    public ResponseEntity<List<MImageBaseResponse>> getAllReviewImages(
+    public ResponseEntity<List<ImageResponseM1>> getAllReviewImages(
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("reviewUuid") UUID reviewUuid
     ) throws AlphanahBaseException {
-        List<MImageBaseResponse> response = business.getAllReviewImages(productUuid, reviewUuid);
+        List<ImageResponseM1> response = business.getAllReviewImages(productUuid, reviewUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{productUuid}/review/{reviewUuid}/image")
-    public ResponseEntity<MImageBaseResponse> createReviewImage(
+    public ResponseEntity<ImageResponseM1> createReviewImage(
             @RequestHeader(value = "Authorization") String token,
             @RequestBody MultipartFile image,
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("reviewUuid") UUID reviewUuid
     ) throws AlphanahBaseException {
-        MImageBaseResponse response = business.createReviewImage(token, productUuid, reviewUuid, image);
+        ImageResponseM1 response = business.createReviewImage(token, productUuid, reviewUuid, image);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

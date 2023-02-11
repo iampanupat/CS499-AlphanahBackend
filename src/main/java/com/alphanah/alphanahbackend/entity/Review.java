@@ -1,68 +1,76 @@
 package com.alphanah.alphanahbackend.entity;
 
-import com.alphanah.alphanahbackend.model.response.*;
+import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
+import com.alphanah.alphanahbackend.model.review.ReviewResponseM1;
+import com.alphanah.alphanahbackend.model.review.ReviewResponseM3;
+import com.alphanah.alphanahbackend.model.review.ReviewResponseM2;
+import com.alphanah.alphanahbackend.utility.AccountUtils;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "reviews")
 public class Review extends BaseEntity {
 
-    @Column(name = "r_header", nullable = false, length = 120)
-    private String header;
-
-    @Column(name = "r_msg", nullable = false)
+    @Column(name = "review_message", nullable = false)
     private String message;
 
-    @Column(name = "r_rating", nullable = false)
+    @Column(name = "review_rating", nullable = false)
     private Integer rating;
 
-    @Column(name = "r_creator_uuid", nullable = false, length = 36)
+    @Column(name = "review_creator_uuid", nullable = false, length = 36)
     private String creatorUuid;
 
-    @OneToMany(mappedBy = "reviewImageOwner", orphanRemoval = true, fetch = FetchType.EAGER)
+    @Column(name = "review_create_date", nullable = false, updatable = false, length = 29)
+    private String createDate;
+
+    @OneToMany(mappedBy = "review", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Image> images;
 
     @ManyToOne
-    @JoinColumn(name = "p_uuid", nullable = false)
-    private Product productReviewOwner;
+    @JoinColumn(name = "product_uuid", nullable = false)
+    private Product product;
 
-    private MReviewBaseResponse setMReviewBaseResponse(MReviewBaseResponse response) {
+    public ReviewResponseM1 toReviewResponseM1(ReviewResponseM1 response) throws AlphanahBaseException {
+        if (response == null)
+            response = new ReviewResponseM1();
+
         response.setUuid(this.getUuid());
-        response.setHeader(this.getHeader());
         response.setMessage(this.getMessage());
         response.setRating(this.getRating().toString());
-        response.setCreatorUuid(this.getCreatorUuid());
+        response.setCreateDate(this.getCreateDate());
+        response.setCreator(AccountUtils.getAccountWithUuid(UUID.fromString(this.getCreatorUuid())).toAccountResponseM1(null));
         return response;
     }
 
-    public MReviewBaseResponse toMReviewBaseResponse() {
-        return this.setMReviewBaseResponse(new MReviewBaseResponse());
-    }
+    public ReviewResponseM2 toReviewResponseM2(ReviewResponseM2 response) throws AlphanahBaseException {
+        if (response == null)
+            response = new ReviewResponseM2();
 
-    public MReviewWithImageResponse toMReviewWithImageResponse() {
-        MReviewWithImageResponse response = (MReviewWithImageResponse) this.setMReviewBaseResponse(new MReviewWithImageResponse());
-        List<MImageBaseResponse> images = new ArrayList<>();
+        response = (ReviewResponseM2) this.toReviewResponseM1(response);
+        List<ImageResponseM1> images = new ArrayList<>();
         List<Image> imageList = this.getImages();
         for (Image image : imageList)
-            images.add(image.toMImageBaseResponse());
+            images.add(image.toImageResponseM1(null));
         response.setImages(images);
         return response;
     }
 
-    public MReviewFullResponse toMReviewFullResponse() {
-        MReviewFullResponse response = (MReviewFullResponse) this.setMReviewBaseResponse(new MReviewFullResponse());
-        List<MImageBaseResponse> images = new ArrayList<>();
-        List<Image> imageList = this.getImages();
-        for (Image image : imageList)
-            images.add(image.toMImageBaseResponse());
-        response.setImages(images);
-        response.setProduct(this.getProductReviewOwner().toMProductBaseResponse());
+    public ReviewResponseM3 toReviewResponseM3(ReviewResponseM3 response) throws AlphanahBaseException {
+        if (response == null)
+            response = new ReviewResponseM3();
+
+        response = (ReviewResponseM3) this.toReviewResponseM2(response);
+        response.setProduct(this.getProduct().toProductResponseM1(null));
         return response;
     }
 

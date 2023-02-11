@@ -6,7 +6,7 @@ import com.alphanah.alphanahbackend.model.authentication.MLoginRequest;
 import com.alphanah.alphanahbackend.model.authentication.MLoginResponse;
 import com.alphanah.alphanahbackend.model.authentication.MRegisterRequest;
 import com.alphanah.alphanahbackend.model.authentication.MRegisterResponse;
-import com.alphanah.alphanahbackend.model.enumerate.ERole;
+import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.service.AuthService;
 import com.amazonaws.services.cognitoidp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +25,14 @@ public class AuthBusiness {
     private static final int PASSWORD_MAX_LENGTH = 256;
 
     public MRegisterResponse customerRegister(MRegisterRequest request) throws AlphanahBaseException {
-        return register(request, ERole.CUSTOMER);
+        return register(request, Role.CUSTOMER);
     }
 
     public MRegisterResponse merchantRegister(MRegisterRequest request) throws AlphanahBaseException {
-        return register(request, ERole.MERCHANT);
+        return register(request, Role.MERCHANT);
     }
 
-    private MRegisterResponse register(MRegisterRequest request, ERole ERole) throws AlphanahBaseException {
+    private MRegisterResponse register(MRegisterRequest request, Role ERole) throws AlphanahBaseException {
         if (request == null)
             throw AuthException.registerRequestNull();
 

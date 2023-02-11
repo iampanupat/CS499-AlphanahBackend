@@ -2,9 +2,9 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.ProductOptionBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.product.option.MCreateProductOptionRequest;
-import com.alphanah.alphanahbackend.model.product.option.MUpdateProductOptionRequest;
-import com.alphanah.alphanahbackend.model.response.MProductOptionBaseResponse;
+import com.alphanah.alphanahbackend.model.product_option.ProductOptionRequest;
+import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,35 +21,35 @@ public class ProductOptionApi {
     private ProductOptionBusiness business;
 
     @GetMapping("/{productUuid}/option")
-    public ResponseEntity<List<MProductOptionBaseResponse>> getAllProductOptions(@PathVariable("productUuid") UUID productUuid) throws AlphanahBaseException {
-        List<MProductOptionBaseResponse> response = business.getAllProductOptions(productUuid);
+    public ResponseEntity<List<ProductOptionResponseM1>> getAllProductOptions(@PathVariable("productUuid") UUID productUuid) throws AlphanahBaseException {
+        List<ProductOptionResponseM1> response = business.getAllProductOptions(productUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{productUuid}/option/{uuid}")
-    public ResponseEntity<MProductOptionBaseResponse> getProductOption(@PathVariable("productUuid") UUID productUuid, @PathVariable("uuid") UUID uuid) throws AlphanahBaseException {
-        MProductOptionBaseResponse response = business.getProductOptions(productUuid, uuid);
+    public ResponseEntity<ProductOptionResponseM1> getProductOption(@PathVariable("productUuid") UUID productUuid, @PathVariable("uuid") UUID uuid) throws AlphanahBaseException {
+        ProductOptionResponseM1 response = business.getProductOptions(productUuid, uuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{productUuid}/option")
-    public ResponseEntity<MProductOptionBaseResponse> createProductOption(
+    public ResponseEntity<ProductOptionResponseM1> createProductOption(
             @RequestHeader(value = "Authorization") String token,
-            @RequestBody MCreateProductOptionRequest request,
+            @Valid @RequestBody ProductOptionRequest request,
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
-        MProductOptionBaseResponse response = business.createProductOption(token, productUuid, request);
+        ProductOptionResponseM1 response = business.createProductOption(token, productUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{productUuid}/option/{uuid}")
-    public ResponseEntity<MProductOptionBaseResponse> updateProductOption(
+    public ResponseEntity<ProductOptionResponseM1> updateProductOption(
             @RequestHeader(value = "Authorization") String token,
-            @RequestBody MUpdateProductOptionRequest request,
+            @RequestBody ProductOptionRequest request,
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("uuid") UUID uuid
     ) throws AlphanahBaseException {
-        MProductOptionBaseResponse response = business.updateProductOption(token, productUuid, uuid, request);
+        ProductOptionResponseM1 response = business.updateProductOption(token, productUuid, uuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

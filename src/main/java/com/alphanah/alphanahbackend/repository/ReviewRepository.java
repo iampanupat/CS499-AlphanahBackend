@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ReviewRepository extends CrudRepository<Review, String> {
 
-    List<Review> findAllByProductReviewOwner(Product product);
+    List<Review> findAllByProduct(Product product);
 
 }

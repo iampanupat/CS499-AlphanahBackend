@@ -38,7 +38,7 @@ public class ProductOptionService {
             throw ProductOptionException.getNullProductObject();
         }
 
-        return repository.findAllByRootProduct(product);
+        return repository.findAllByProduct(product);
     }
 
     public ProductOption get(UUID productUuid, UUID uuid) throws AlphanahBaseException {
@@ -59,7 +59,7 @@ public class ProductOptionService {
         if (optional.isEmpty())
             throw ProductOptionException.getNullObject();
 
-        if (!optional.get().getRootProduct().getUuid().equals(product.getUuid()))
+        if (!optional.get().getProduct().getUuid().equals(product.getUuid()))
             throw ProductOptionException.getWithInvalidRootProductUuid();
 
         return optional.get();
@@ -104,7 +104,7 @@ public class ProductOptionService {
             throw ProductOptionException.createNotOwned();
 
         ProductOption entity = new ProductOption();
-        entity.setRootProduct(product);
+        entity.setProduct(product);
         entity.setName(name);
         entity.setPrice(price);
         entity.setQuantity(quantity);

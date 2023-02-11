@@ -2,9 +2,8 @@ package com.alphanah.alphanahbackend.business;
 
 import com.alphanah.alphanahbackend.entity.ProductOption;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.product.option.MCreateProductOptionRequest;
-import com.alphanah.alphanahbackend.model.product.option.MUpdateProductOptionRequest;
-import com.alphanah.alphanahbackend.model.response.MProductOptionBaseResponse;
+import com.alphanah.alphanahbackend.model.product_option.ProductOptionRequest;
+import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
 import com.alphanah.alphanahbackend.service.ProductOptionService;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,31 +19,31 @@ public class ProductOptionBusiness {
     @Autowired
     private ProductOptionService service;
 
-    @Autowired
-    private AccountUtils accountUtils;
-
-    public List<MProductOptionBaseResponse> getAllProductOptions(UUID productUuid) throws AlphanahBaseException {
-        List<MProductOptionBaseResponse> responses = new ArrayList<>();
+    public List<ProductOptionResponseM1> getAllProductOptions(UUID productUuid) throws AlphanahBaseException {
+        List<ProductOptionResponseM1> responses = new ArrayList<>();
         List<ProductOption> options = service.getAll(productUuid);
         for (ProductOption option : options)
-            responses.add(option.toMProductOptionBaseResponse());
+            responses.add(option.toProductOptionResponseM1(null));
         return responses;
     }
 
-    public MProductOptionBaseResponse getProductOptions(UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        return service.get(productUuid, uuid).toMProductOptionBaseResponse();
+    public ProductOptionResponseM1 getProductOptions(UUID productUuid, UUID uuid) throws AlphanahBaseException {
+        ProductOption response = service.get(productUuid, uuid);
+        return response.toProductOptionResponseM1(null);
     }
 
-    public MProductOptionBaseResponse createProductOption(String token, UUID productUuid, MCreateProductOptionRequest request) throws AlphanahBaseException {
-        return service.create(accountUtils.getAccount(token).getUuid(), productUuid, request.getName(), request.getPrice(), request.getQuantity()).toMProductOptionBaseResponse();
+    public ProductOptionResponseM1 createProductOption(String token, UUID productUuid, ProductOptionRequest request) throws AlphanahBaseException {
+        ProductOption response = service.create(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, request.getName(), request.getPrice(), request.getQuantity());
+        return response.toProductOptionResponseM1(null);
     }
 
-    public MProductOptionBaseResponse updateProductOption(String token, UUID productUuid, UUID uuid, MUpdateProductOptionRequest request) throws AlphanahBaseException {
-        return service.update(accountUtils.getAccount(token).getUuid(), productUuid, uuid, request.getName(), request.getPrice(), request.getQuantity()).toMProductOptionBaseResponse();
+    public ProductOptionResponseM1 updateProductOption(String token, UUID productUuid, UUID uuid, ProductOptionRequest request) throws AlphanahBaseException {
+        ProductOption response = service.update(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid, request.getName(), request.getPrice(), request.getQuantity());
+        return response.toProductOptionResponseM1(null);
     }
 
     public void deleteProductOption(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        service.delete(accountUtils.getAccount(token).getUuid(), productUuid, uuid);
+        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid);
     }
 
 }

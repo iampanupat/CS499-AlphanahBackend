@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,20 +21,32 @@ public class OrderService {
     public List<Order> getAll(UUID creatorUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
             throw OrderException.getAllWithNullCreatorUuid();
+
         return repository.findAllByCreatorUuid(creatorUuid.toString());
     }
 
-//    public Order get(UUID uuid) throws AlphanahBaseException {
-//        if (Objects.isNull(uuid))
-//            throw OrderException.getWithNullUuid();
-//
-//        Optional<Order> optional = repository.findById(uuid.toString());
-//        if (optional.isEmpty())
-//            throw OrderException.getNullObject();
-//
-//        return optional.get();
-//    }
-//
-//    public Order create(UUID creatorUuid, String status, String payType, Double payAmount, )
+    public Order get(UUID creatorUuid, UUID uuid) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw OrderException.getWithNullCreatorUuid();
+
+        if (Objects.isNull(uuid))
+            throw OrderException.getWithNullUuid();
+
+        Optional<Order> optional = repository.findById(uuid.toString());
+        if (optional.isEmpty())
+            throw OrderException.getNullObject();
+
+        return optional.get();
+    }
+
+    public Order create(UUID creatorUuid, String type) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw OrderException.createWithNullCreatorUuid();
+
+        if (Objects.isNull(type))
+            throw OrderException.createWithNullType();
+
+        return null;
+    }
 
 }

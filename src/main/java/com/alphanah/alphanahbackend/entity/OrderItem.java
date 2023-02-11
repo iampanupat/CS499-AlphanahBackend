@@ -12,21 +12,21 @@ import lombok.EqualsAndHashCode;
 @Entity(name = "order_items")
 public class OrderItem extends BaseEntity {
 
-    @Column(name = "or_item_quantity")
+    @Column(name = "order_item_quantity")
     private Integer quantity;
 
-    @Column(name = "or_item_price")
+    @Column(name = "order_item_price")
     private Double price;
 
-    @Column(name = "or_item_delivery_status")
+    @Column(name = "order_item_delivery_status")
     private String deliveryStatus;
 
     @ManyToOne
-    @JoinColumn(name = "or_uuid", nullable = false)
+    @JoinColumn(name = "order_uuid", nullable = false)
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "p_opt_uuid", nullable = false)
+    @JoinColumn(name = "product_option_uuid", nullable = false)
     private ProductOption productOption;
 
 }

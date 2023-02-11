@@ -9,9 +9,7 @@ import com.alphanah.alphanahbackend.repository.ProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductCategoryService {
@@ -25,7 +23,7 @@ public class ProductCategoryService {
     @Autowired
     private CategoryService categoryService;
 
-    public ProductCategory create(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
+    public List<ProductCategory> create(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
             throw ProductCategoryException.createWithNullCreatorUuid();
 
@@ -55,10 +53,17 @@ public class ProductCategoryService {
         if (!product.getCreatorUuid().equals(creatorUuid.toString()))
             throw ProductCategoryException.createNotOwned();
 
-        ProductCategory entity = new ProductCategory();
-        entity.setProduct(product);
-        entity.setCategory(category);
-        return repository.save(entity);
+        List<ProductCategory> entityList = new ArrayList<>();
+        while (category != null) {
+            if (!repository.existsByProductAndCategory(product, category)) {
+                ProductCategory entity = new ProductCategory();
+                entity.setProduct(product);
+                entity.setCategory(category);
+                entityList.add(entity);
+            }
+            category = category.getParentCategory();
+        }
+        return (List<ProductCategory>) repository.saveAll(entityList);
     }
 
     public void delete(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
@@ -85,15 +90,27 @@ public class ProductCategoryService {
             throw ProductCategoryException.deleteWithNullCategoryObject();
         }
 
-        Optional<ProductCategory> optional = repository.findByProductAndCategory(product, category);
-        if (optional.isEmpty())
-            throw ProductCategoryException.deleteNullRelation();
-
         if (!product.getCreatorUuid().equals(creatorUuid.toString()))
             throw ProductCategoryException.deleteNotOwned();
 
-        ProductCategory entity = optional.get();
-        repository.delete(entity);
+        List<ProductCategory> entityList = new ArrayList<>();
+        List<Category> categoryAndSubcategories = new ArrayList<>();
+        categoryAndSubcategories.add(category);
+        categoryAndSubcategories.addAll(category.getAllChild());
+
+        for (Category currentCategory: categoryAndSubcategories) {
+            Optional<ProductCategory> optional = repository.findByProductAndCategory(product, currentCategory);
+            if (optional.isEmpty())
+                continue;
+
+            ProductCategory entity = optional.get();
+            entityList.add(entity);
+        }
+
+        if (entityList.isEmpty())
+            throw ProductCategoryException.deleteNullRelation();
+
+        repository.deleteAll(entityList);
     }
 
 }

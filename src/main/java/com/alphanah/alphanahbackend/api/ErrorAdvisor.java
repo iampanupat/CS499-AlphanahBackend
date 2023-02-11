@@ -3,17 +3,34 @@ package com.alphanah.alphanahbackend.api;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.amazonaws.AmazonServiceException;
 import lombok.Data;
+import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class ErrorAdvisor {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException exception) {
+        ErrorResponse response = new ErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setFrom("Alphanah");
+        response.setError(exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     private final String alphanah = "Alphanah";
 
@@ -60,7 +77,7 @@ public class ErrorAdvisor {
 
     @Data
     public static class ErrorResponse {
-        private LocalDateTime timestamp = LocalDateTime.now();
+        private String timestamp = DateTime.now().toString();
         private int status;
         private String from;
         private String error;

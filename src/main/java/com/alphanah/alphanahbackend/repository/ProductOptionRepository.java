@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ProductOptionRepository extends CrudRepository<ProductOption, String> {
 
-    List<ProductOption> findAllByRootProduct(Product product);
+    List<ProductOption> findAllByProduct(Product product);
 
 }

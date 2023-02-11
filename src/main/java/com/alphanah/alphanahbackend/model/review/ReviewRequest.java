@@ -3,8 +3,7 @@ package com.alphanah.alphanahbackend.model.review;
 import lombok.Data;
 
 @Data
-public class MUpdateReviewRequest {
-    private String header;
+public class ReviewRequest {
     private String message;
-    private int rating;
+    private int rating = -1;
 }

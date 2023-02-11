@@ -3,17 +3,23 @@ package com.alphanah.alphanahbackend.service;
 import com.alphanah.alphanahbackend.entity.Account;
 import com.alphanah.alphanahbackend.exception.AccountException;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.enumerate.ECognitoField;
-import com.alphanah.alphanahbackend.model.enumerate.ERole;
+import com.alphanah.alphanahbackend.enumerate.CognitoField;
+import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.utility.PhoneUtils;
 import com.alphanah.alphanahbackend.utility.JWTUtils;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Instant;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -32,8 +38,9 @@ public class AccountService {
             throw AccountException.getWithNullToken();
 
         try {
-            List<AttributeType> attributeTypeList = cognitoClient.getUser(new GetUserRequest().withAccessToken(JWTUtils.removeBearer(token))).getUserAttributes();
-            return this.mapping(new Account(), attributeTypeList);
+            GetUserResult userResult = cognitoClient.getUser(new GetUserRequest().withAccessToken(JWTUtils.removeBearer(token)));
+            UUID accountUuid = UUID.fromString(userResult.getUserAttributes().get(0).getValue());
+            return this.get(accountUuid);
         } catch (Exception exception) {
             throw exception;
         }
@@ -63,7 +70,8 @@ public class AccountService {
             Map<UUID, Account> accountMap = new HashMap<>();
             for (UserType user : users) {
                 List<AttributeType> attributeTypes = user.getAttributes();
-                Account account = this.mapping(new Account(), attributeTypes);;
+                Date createDate = user.getUserCreateDate();
+                Account account = this.mapping(new Account(), attributeTypes, createDate);;
                 accountMap.put(account.getUuid(), account);
             }
             return accountMap;
@@ -72,16 +80,19 @@ public class AccountService {
         }
     }
 
-    private Account mapping(Account account, List<AttributeType> attributeTypes) {
+    private Account mapping(Account account, List<AttributeType> attributeTypes, Date createDate) {
+        String bangkokTime = createDate.toInstant().atZone(ZoneId.of("Asia/Bangkok")).toString();
+        bangkokTime = bangkokTime.substring(0, 29);
+        account.setCreateDate(DateTime.parse(bangkokTime).toString());
         for (AttributeType attribute : attributeTypes) {
-            ECognitoField cognitoField = ECognitoField.get(attribute.getName());
+            CognitoField cognitoField = CognitoField.get(attribute.getName());
             String cognitoValue = attribute.getValue();
             if (Objects.isNull(cognitoField))
                 continue;
             switch (cognitoField) {
                 case UUID -> account.setUuid(UUID.fromString(cognitoValue));
                 case EMAIL -> account.setEmail(cognitoValue);
-                case ROLE -> account.setRole(ERole.valueOf(cognitoValue.toUpperCase()));
+                case ROLE -> account.setRole(Role.valueOf(cognitoValue.toUpperCase()));
                 case FIRSTNAME -> account.setFirstname(cognitoValue);
                 case LASTNAME -> account.setLastname(cognitoValue);
                 case ADDRESS -> account.setAddress(cognitoValue);
@@ -93,7 +104,7 @@ public class AccountService {
         return account;
     }
 
-    public void update(String token, ECognitoField cognitoField, String value) throws AlphanahBaseException {
+    public void update(String token, CognitoField cognitoField, String value) throws AlphanahBaseException {
         if (Objects.isNull(token))
             throw AccountException.updateWithNullToken();
 

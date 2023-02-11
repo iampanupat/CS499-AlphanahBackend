@@ -14,31 +14,31 @@ import java.util.List;
 @Entity(name = "orders")
 public class Order extends BaseEntity {
 
-    @Column(name = "or_creator_uuid", nullable = false, length = 36)
+    @Column(name = "order_creator_uuid", nullable = false, length = 36)
     private String creatorUuid;
 
-    @Column(name = "or_status", nullable = false)
-    private String status;
+    @Column(name = "order_type", nullable = false)
+    private String type;
 
-    @Column(name = "or_pay_type")
+    @Column(name = "order_pay_type")
     private String payType;
 
-    @Column(name = "or_pay_amount")
+    @Column(name = "order_pay_amount")
     private Double payAmount;
 
-    @Column(name = "or_recipient_firstname")
+    @Column(name = "order_recipient_firstname")
     private String recipientFirstname;
 
-    @Column(name = "or_recipient_lastname")
+    @Column(name = "order_recipient_lastname")
     private String recipientLastname;
 
-    @Column(name = "or_recipient_phone")
+    @Column(name = "order_recipient_phone")
     private String recipientPhone;
 
-    @Column(name = "or_recipient_address")
+    @Column(name = "order_recipient_address")
     private String recipientAddress;
 
-    @OneToMany(mappedBy = "order", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 
 }

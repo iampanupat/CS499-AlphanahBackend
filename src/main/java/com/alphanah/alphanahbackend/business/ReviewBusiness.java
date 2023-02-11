@@ -2,10 +2,9 @@ package com.alphanah.alphanahbackend.business;
 
 import com.alphanah.alphanahbackend.entity.Review;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.response.MReviewBaseResponse;
-import com.alphanah.alphanahbackend.model.response.MReviewFullResponse;
-import com.alphanah.alphanahbackend.model.review.MCreateReviewRequest;
-import com.alphanah.alphanahbackend.model.review.MUpdateReviewRequest;
+import com.alphanah.alphanahbackend.model.review.ReviewResponseM1;
+import com.alphanah.alphanahbackend.model.review.ReviewResponseM3;
+import com.alphanah.alphanahbackend.model.review.ReviewRequest;
 import com.alphanah.alphanahbackend.service.ReviewService;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,31 +20,31 @@ public class ReviewBusiness {
     @Autowired
     private ReviewService service;
 
-    @Autowired
-    private AccountUtils accountUtils;
-
-    public List<MReviewFullResponse> getAllReviews(UUID productUuid) throws AlphanahBaseException {
-        List<MReviewFullResponse> responses = new ArrayList<>();
+    public List<ReviewResponseM3> getAllReviews(UUID productUuid) throws AlphanahBaseException {
+        List<ReviewResponseM3> responses = new ArrayList<>();
         List<Review> reviews = service.getAll(productUuid);
         for (Review review : reviews)
-            responses.add(review.toMReviewFullResponse());
+            responses.add(review.toReviewResponseM3(null));
         return responses;
     }
 
-    public MReviewFullResponse getReview(UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        return service.get(productUuid, uuid).toMReviewFullResponse();
+    public ReviewResponseM3 getReview(UUID productUuid, UUID uuid) throws AlphanahBaseException {
+        Review response = service.get(productUuid, uuid);
+        return response.toReviewResponseM3(null);
     }
 
-    public MReviewBaseResponse createReview(String token, UUID productUuid, MCreateReviewRequest request) throws AlphanahBaseException {
-        return service.create(accountUtils.getAccount(token).getUuid(), productUuid, request.getHeader(), request.getMessage(), request.getRating()).toMReviewBaseResponse();
+    public ReviewResponseM1 createReview(String token, UUID productUuid, ReviewRequest request) throws AlphanahBaseException {
+        Review response = service.create(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, request.getMessage(), request.getRating());
+        return response.toReviewResponseM1(null);
     }
 
-    public MReviewBaseResponse updateReview(String token, UUID productUuid, UUID uuid, MUpdateReviewRequest request) throws AlphanahBaseException {
-        return service.update(accountUtils.getAccount(token).getUuid(), productUuid, uuid, request.getHeader(), request.getMessage(), request.getRating()).toMReviewBaseResponse();
+    public ReviewResponseM1 updateReview(String token, UUID productUuid, UUID uuid, ReviewRequest request) throws AlphanahBaseException {
+        Review response = service.update(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid, request.getMessage(), request.getRating());
+        return response.toReviewResponseM1(null);
     }
 
     public void deleteReview(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        service.delete(accountUtils.getAccount(token).getUuid(), productUuid, uuid);
+        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid);
     }
 
 }

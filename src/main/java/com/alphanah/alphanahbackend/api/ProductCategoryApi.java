@@ -3,12 +3,13 @@ package com.alphanah.alphanahbackend.api;
 import com.alphanah.alphanahbackend.business.ProductCategoryBusiness;
 import com.alphanah.alphanahbackend.entity.ProductCategory;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.response.MProductCategoryFullResponse;
+import com.alphanah.alphanahbackend.model.product_category.ProductCategoryResponseM1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,13 +20,13 @@ public class ProductCategoryApi {
     private ProductCategoryBusiness business;
 
     @PostMapping("/{productUuid}/category/{categoryUuid}")
-    public ResponseEntity<MProductCategoryFullResponse> createProductCategory(
+    public ResponseEntity<List<ProductCategoryResponseM1>> createProductCategory(
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("categoryUuid") UUID categoryUuid
     ) throws AlphanahBaseException {
-        MProductCategoryFullResponse response = business.createProductCategory(token, productUuid, categoryUuid);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        List<ProductCategoryResponseM1> responses = business.createProductCategory(token, productUuid, categoryUuid);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @DeleteMapping("/{productUuid}/category/{categoryUuid}")

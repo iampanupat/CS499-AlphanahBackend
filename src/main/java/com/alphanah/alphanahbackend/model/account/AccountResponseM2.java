@@ -1,9 +1,9 @@
-package com.alphanah.alphanahbackend.model.response;
+package com.alphanah.alphanahbackend.model.account;
 
 import lombok.Data;
 
 @Data
-public class MAccountFullResponse extends MAccountBaseResponse {
+public class AccountResponseM2 extends AccountResponseM1 {
     private String email;
     private String address;
     private String phone;

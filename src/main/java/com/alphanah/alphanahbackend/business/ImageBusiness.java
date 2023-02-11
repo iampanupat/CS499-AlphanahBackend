@@ -2,7 +2,7 @@ package com.alphanah.alphanahbackend.business;
 
 import com.alphanah.alphanahbackend.entity.Image;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.response.MImageBaseResponse;
+import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
 import com.alphanah.alphanahbackend.service.AmazonS3Service;
 import com.alphanah.alphanahbackend.service.ImageService;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
@@ -21,41 +21,40 @@ public class ImageBusiness {
     private ImageService service;
 
     @Autowired
-    private AccountUtils accountUtils;
-
-    @Autowired
     private AmazonS3Service amazonS3Service;
 
-    public List<MImageBaseResponse> getAllProductImages(UUID productUuid) throws AlphanahBaseException {
-        List<MImageBaseResponse> responses = new ArrayList<>();
+    public List<ImageResponseM1> getAllProductImages(UUID productUuid) throws AlphanahBaseException {
+        List<ImageResponseM1> responses = new ArrayList<>();
         List<Image> images = service.getAll(productUuid);
         for (Image image : images)
-            responses.add(image.toMImageBaseResponse());
+            responses.add(image.toImageResponseM1(null));
         return responses;
     }
 
-    public MImageBaseResponse createProductImage(String token, UUID productUuid, MultipartFile image) throws AlphanahBaseException {
-        return service.create(accountUtils.getAccount(token).getUuid(), productUuid, amazonS3Service.saveFile(image)).toMImageBaseResponse();
+    public ImageResponseM1 createProductImage(String token, UUID productUuid, MultipartFile image) throws AlphanahBaseException {
+        Image response = service.create(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, amazonS3Service.saveFile(image));
+        return response.toImageResponseM1(null);
     }
 
     public void deleteProductImage(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        service.delete(accountUtils.getAccount(token).getUuid(), productUuid, uuid);
+        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid);
     }
 
-    public List<MImageBaseResponse> getAllReviewImages(UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
-        List<MImageBaseResponse> responses = new ArrayList<>();
+    public List<ImageResponseM1> getAllReviewImages(UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
+        List<ImageResponseM1> responses = new ArrayList<>();
         List<Image> images = service.getAll(productUuid, reviewUuid);
         for (Image image : images)
-            responses.add(image.toMImageBaseResponse());
+            responses.add(image.toImageResponseM1(null));
         return responses;
     }
 
-    public MImageBaseResponse createReviewImage(String token, UUID productUuid, UUID reviewUuid, MultipartFile image) throws AlphanahBaseException {
-        return service.create(accountUtils.getAccount(token).getUuid(), productUuid, reviewUuid, amazonS3Service.saveFile(image)).toMImageBaseResponse();
+    public ImageResponseM1 createReviewImage(String token, UUID productUuid, UUID reviewUuid, MultipartFile image) throws AlphanahBaseException {
+        Image response = service.create(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, reviewUuid, amazonS3Service.saveFile(image));
+        return response.toImageResponseM1(null);
     }
 
     public void deleteReviewImage(String token, UUID productUuid, UUID reviewUuid, UUID uuid) throws AlphanahBaseException {
-        service.delete(accountUtils.getAccount(token).getUuid(), productUuid, reviewUuid, uuid);
+        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, reviewUuid, uuid);
     }
 
 }

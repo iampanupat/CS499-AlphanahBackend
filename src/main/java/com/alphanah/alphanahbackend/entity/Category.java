@@ -1,12 +1,12 @@
 package com.alphanah.alphanahbackend.entity;
 
-import com.alphanah.alphanahbackend.model.response.MCategoryBaseResponse;
-import com.alphanah.alphanahbackend.model.response.MCategoryFullResponse;
-import com.alphanah.alphanahbackend.model.response.MProductWithoutCategoryResponse;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.category.CategoryResponseM1;
+import com.alphanah.alphanahbackend.model.category.CategoryResponseM2;
+import com.alphanah.alphanahbackend.model.category.CategoryResponseM3;
+import com.alphanah.alphanahbackend.model.product.ProductResponseM2;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,32 +18,90 @@ import java.util.List;
 @Entity(name = "categories")
 public class Category extends BaseEntity {
 
-    @Column(name = "cat_name", nullable = false, length = 120, unique = true)
+    @Column(name = "category_name", nullable = false, length = 120)
     private String name;
 
-    @Column(name = "cat_creator_uuid", nullable = false, length = 36)
-    private String creatorUuid;
-
-    @OneToMany(mappedBy = "category", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductCategory> productCategories;
 
-    private MCategoryBaseResponse setMCategoryBaseResponse(MCategoryBaseResponse response) {
+    @ManyToOne
+    @JoinColumn(name = "parent_category_uuid")
+    private Category parentCategory;
+
+    @OneToMany(mappedBy = "parentCategory", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Category> childCategories;
+
+    @JsonIgnore
+    public List<Category> getAllChild() {
+        return getAllChild(new ArrayList<>(), this);
+    }
+
+    private List<Category> getAllChild(List<Category> allChildList, Category root) {
+        for (Category child : root.getChildCategories()) {
+            allChildList.add(child);
+            allChildList = getAllChild(allChildList, child);
+        }
+        return allChildList;
+    }
+
+    @JsonIgnore
+    public List<Category> getAllParent() {
+        return getAllParent(new ArrayList<>(), this);
+    }
+    private List<Category> getAllParent(List<Category> allParentList, Category root) {
+        Category current = root;
+        while (current.getParentCategory() != null) {
+            allParentList.add(root.parentCategory);
+            current = current.parentCategory;
+        }
+        return allParentList;
+    }
+
+
+    public CategoryResponseM1 toCategoryResponseM1(CategoryResponseM1 response) {
+        if (response == null)
+            response = new CategoryResponseM1();
+
         response.setUuid(this.getUuid());
         response.setName(this.getName());
-        response.setCreatorUuid(this.getCreatorUuid());
         return response;
     }
 
-    public MCategoryBaseResponse toMCategoryBaseResponse() {
-        return this.setMCategoryBaseResponse(new MCategoryBaseResponse());
+    public CategoryResponseM2 toCategoryResponseM2(CategoryResponseM2 response) {
+        if (response == null)
+            response = new CategoryResponseM2();
+
+        response = (CategoryResponseM2) this.toCategoryResponseM1(response);
+        if (this.getParentCategory() != null)
+            response.setParentCategory(this.getParentCategory().toCategoryResponseM1(null));
+
+        List<CategoryResponseM1> subcategories = new ArrayList<>();
+        for (Category subCategory: this.getChildCategories())
+            subcategories.add(subCategory.toCategoryResponseM1(null));
+        response.setChildCategories(subcategories);
+        return response;
     }
 
-    public MCategoryFullResponse toMCategoryFullResponse() {
-        MCategoryFullResponse response = (MCategoryFullResponse) this.setMCategoryBaseResponse(new MCategoryFullResponse());
-        List<MProductWithoutCategoryResponse> products = new ArrayList<>();
+    public CategoryResponseM3 toCategoryResponseM3(CategoryResponseM3 response) throws AlphanahBaseException {
+        if (response == null)
+            response = new CategoryResponseM3();
+
+        response = (CategoryResponseM3) this.toCategoryResponseM2(response);
+
+        // List of (All Own "Product") and (All Subcategory "Product") (without Category) Response
         List<ProductCategory> productCategoryList = this.getProductCategories();
-        for (ProductCategory productCategory : productCategoryList)
-            products.add(productCategory.toMProductWithoutCategoryResponse());
+        for (Category subCategory: this.getAllChild()) {
+            productCategoryList.addAll(subCategory.getProductCategories());
+        }
+
+        List<ProductResponseM2> products = new ArrayList<>();
+        for (ProductCategory productCategory: productCategoryList) {
+            ProductResponseM2 productResponse = productCategory.toProductResponseM2(null);
+            if (products.contains(productResponse))
+                continue;
+            products.add(productResponse);
+        }
+
         response.setProducts(products);
         return response;
     }

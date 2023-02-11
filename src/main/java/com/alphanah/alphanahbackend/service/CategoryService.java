@@ -32,10 +32,7 @@ public class CategoryService {
         return optional.get();
     }
 
-    public Category create(UUID creatorUuid, String name) throws AlphanahBaseException {
-        if (Objects.isNull(creatorUuid))
-            throw CategoryException.createWithNullCreatorUuid();
-
+    public Category create(UUID parentUuid, String name) throws AlphanahBaseException {
         if (Objects.isNull(name))
             throw CategoryException.createWithNullName();
 
@@ -46,67 +43,29 @@ public class CategoryService {
             throw CategoryException.createWithMaxLengthName();
 
         name = name.toLowerCase();
-        if (repository.existsByName(name))
-            throw CategoryException.createDuplicateName();
+        Category parentCategory = null;
+        if (parentUuid != null) {
+            try {
+                 parentCategory = this.get(parentUuid);
+            } catch (AlphanahBaseException exception) {
+                throw CategoryException.createWithNullParentObject();
+            }
+
+            for (Category category : parentCategory.getChildCategories()) {
+                if (category.getName().equals(name))
+                    throw CategoryException.createDuplicateName();
+            }
+        } else {
+            for (Category category : repository.findAllByParentCategoryIsNull()) {
+                if (category.getName().equals(name))
+                    throw CategoryException.createDuplicateName();
+            }
+        }
 
         Category entity = new Category();
-        entity.setCreatorUuid(creatorUuid.toString());
         entity.setName(name);
+        entity.setParentCategory(parentCategory);
         return repository.save(entity);
-    }
-
-    public Category update(UUID creatorUuid, UUID uuid, String name) throws AlphanahBaseException {
-        if (Objects.isNull(creatorUuid))
-            throw CategoryException.updateWithNullCreatorUuid();
-
-        if (Objects.isNull(uuid))
-            throw CategoryException.updateWithNullUuid();
-
-        if (Objects.isNull(name))
-            throw CategoryException.updateWithNullName();
-
-        if (name.isEmpty())
-            throw CategoryException.updateWithEmptyName();
-
-        if (name.length() > CATEGORY_NAME_MAX_LENGTH)
-            throw CategoryException.updateWithMaxLengthName();
-
-        name = name.toLowerCase();
-        if (repository.existsByName(name))
-            throw CategoryException.updateDuplicateName();
-
-        Category entity;
-        try {
-            entity = this.get(uuid);
-        } catch (AlphanahBaseException exception) {
-            throw CategoryException.updateNullObject();
-        }
-
-        if (!entity.getCreatorUuid().equals(creatorUuid.toString()))
-            throw CategoryException.updateNotOwned();
-        entity.setName(name);
-
-        return repository.save(entity);
-    }
-
-    public void delete(UUID creatorUuid, UUID uuid) throws AlphanahBaseException {
-        if (Objects.isNull(creatorUuid))
-            throw CategoryException.deleteWithNullCreatorUuid();
-
-        if (Objects.isNull(uuid))
-            throw CategoryException.deleteWithNullUuid();
-
-        Category entity;
-        try {
-            entity = this.get(uuid);
-        } catch (AlphanahBaseException exception) {
-            throw CategoryException.deleteNullObject();
-        }
-
-        if (!entity.getCreatorUuid().equals(creatorUuid.toString()))
-            throw CategoryException.deleteNotOwned();
-
-        repository.delete(entity);
     }
 
 }

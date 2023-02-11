@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class MUpdateAccountRequest {
+public class UpdateAccountRequest {
     private String firstname;
     private String lastname;
     private String address;
