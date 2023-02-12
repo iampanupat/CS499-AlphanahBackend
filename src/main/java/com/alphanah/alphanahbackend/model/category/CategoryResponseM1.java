@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CategoryResponseM1 {
-    private String uuid;
+    private String categoryUUID;
     private String name;
 }

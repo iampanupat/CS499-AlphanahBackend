@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Data
 public class AccountResponseM1 {
-    private String uuid;
+    private String accountUUID;
     private String role;
     private String firstname;
     private String lastname;

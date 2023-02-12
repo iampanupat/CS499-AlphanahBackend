@@ -28,7 +28,7 @@ public class Image extends BaseEntity {
         if (response == null)
             response = new ImageResponseM1();
 
-        response.setUuid(this.getUuid());
+        response.setImageUUID(this.getUuid());
         response.setPath(this.getPath());
         return response;
     }

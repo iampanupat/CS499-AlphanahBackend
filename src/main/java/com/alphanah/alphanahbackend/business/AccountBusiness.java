@@ -27,8 +27,8 @@ public class AccountBusiness {
     @Autowired
     private AmazonS3Service amazonS3Service;
 
-    private final int ACCOUNT_FIRSTNAME_MAX_LENGTH = 20;
-    private final int ACCOUNT_LASTNAME_MAX_LENGTH = 20;
+    private final int ACCOUNT_FIRSTNAME_MAX_LENGTH = 50;
+    private final int ACCOUNT_LASTNAME_MAX_LENGTH = 50;
     private final int ACCOUNT_ADDRESS_MAX_LENGTH = 2048;
     private final int ACCOUNT_PHONE_MAX_LENGTH = 19;
 

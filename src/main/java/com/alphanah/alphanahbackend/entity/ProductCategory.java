@@ -35,7 +35,7 @@ public class ProductCategory extends BaseEntity {
         if (response == null)
             response = new ProductCategoryResponseM1();
 
-        response.setUuid(this.getUuid());
+        response.setProductCategoryUUID(this.getUuid());
         response.setProduct(this.getProduct().toProductResponseM1(null));
         response.setCategory(this.getCategory().toCategoryResponseM1(null));
         return response;

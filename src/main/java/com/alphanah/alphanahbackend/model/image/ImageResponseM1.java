@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ImageResponseM1 {
-    private String uuid;
+    private String imageUUID;
     private String path;
 }

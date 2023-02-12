@@ -6,6 +6,14 @@ public class ProductException extends AlphanahBaseException {
         super("product." + message);
     }
 
+    public static ProductException searchWithNullKeyword() {
+        return new ProductException("search.with.null.keyword");
+    }
+
+    public static ProductException searchWithEmptyKeyword() {
+        return new ProductException("search.with.empty.keyword");
+    }
+
     public static ProductException getWithNullUuid() {
         return new ProductException("get.with.null.uuid");
     }

@@ -40,7 +40,7 @@ public class Account {
         if (response == null)
             response = new AccountResponseM1();
 
-        response.setUuid(this.getUuid().toString());
+        response.setAccountUUID(this.getUuid().toString());
         response.setRole(this.getRole().toString());
         response.setFirstname(this.getFirstname());
         response.setLastname(this.getLastname());

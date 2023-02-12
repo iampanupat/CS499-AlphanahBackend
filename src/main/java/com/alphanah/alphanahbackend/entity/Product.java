@@ -48,7 +48,7 @@ public class Product extends BaseEntity {
         if (response == null)
             response = new ProductResponseM1();
 
-        response.setUuid(this.getUuid());
+        response.setProductUUID(this.getUuid());
         response.setName(this.getName());
         response.setDescription(this.getDescription());
         response.setCreator(AccountUtils.getAccountWithUuid(UUID.fromString(this.getCreatorUuid())).toAccountResponseM1(null));

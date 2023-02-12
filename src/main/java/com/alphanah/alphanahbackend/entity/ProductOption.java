@@ -32,7 +32,7 @@ public class ProductOption extends BaseEntity {
         if (response == null)
             response = new ProductOptionResponseM1();
 
-        response.setUuid(this.getUuid());
+        response.setOptionUUID(this.getUuid());
         response.setName(this.getName());
         response.setPrice(this.getPrice().toString());
         response.setQuantity(this.getQuantity().toString());

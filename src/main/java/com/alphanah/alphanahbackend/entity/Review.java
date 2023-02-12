@@ -44,7 +44,7 @@ public class Review extends BaseEntity {
         if (response == null)
             response = new ReviewResponseM1();
 
-        response.setUuid(this.getUuid());
+        response.setReviewUUID(this.getUuid());
         response.setMessage(this.getMessage());
         response.setRating(this.getRating().toString());
         response.setCreateDate(this.getCreateDate());

@@ -27,6 +27,20 @@ public class ProductApi {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/owned")
+    public ResponseEntity<List<ProductResponseM3>> getMyProducts(
+            @RequestHeader(value = "Authorization") String token
+    ) throws AlphanahBaseException {
+        List<ProductResponseM3> response = business.getMyProducts(AccountUtils.getAccountWithToken(token).getUuid());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductResponseM3>> searchProducts(@RequestParam String keyword) throws AlphanahBaseException {
+        List<ProductResponseM3> responses = business.searchProducts(keyword);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     @GetMapping("/{uuid}")
     public ResponseEntity<ProductResponseM3> getProduct(@PathVariable("uuid") UUID uuid) throws AlphanahBaseException {
         ProductResponseM3 response = business.getProduct(uuid);

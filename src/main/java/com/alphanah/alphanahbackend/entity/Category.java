@@ -62,7 +62,7 @@ public class Category extends BaseEntity {
         if (response == null)
             response = new CategoryResponseM1();
 
-        response.setUuid(this.getUuid());
+        response.setCategoryUUID(this.getUuid());
         response.setName(this.getName());
         return response;
     }

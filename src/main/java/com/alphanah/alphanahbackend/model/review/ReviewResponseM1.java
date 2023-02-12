@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class ReviewResponseM1 {
-    private String uuid;
+    private String reviewUUID;
     private String message;
     private String rating;
     private String createDate;

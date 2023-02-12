@@ -114,15 +114,43 @@ public class AccountService {
         if (Objects.isNull(value))
             throw AccountException.updateWithNullValue();
 
-        if (value.isEmpty())
-            throw AccountException.updateWithEmptyValue();
-
         if (value.length() > AWS_COGNITO_VALUE_MAX_LENGTH)
             throw AccountException.updateWithMaxLengthValue();
 
         Account account;
         try {
             account = this.get(token);
+        } catch (AlphanahBaseException exception) {
+            throw AccountException.updateNullObject();
+        }
+
+        try {
+            cognitoClient.adminUpdateUserAttributes(new AdminUpdateUserAttributesRequest()
+                    .withUsername(account.getEmail())
+                    .withUserPoolId(userPoolId)
+                    .withUserAttributes(new AttributeType().withName(cognitoField.getFieldName()).withValue(value))
+            );
+        } catch (AmazonServiceException exception) {
+            throw exception;
+        }
+    }
+
+    public void update(UUID uuid, CognitoField cognitoField, String value) throws AlphanahBaseException {
+        if (Objects.isNull(uuid))
+            throw AccountException.updateWithNullUuid();
+
+        if (Objects.isNull(cognitoField))
+            throw AccountException.updateWithNullCognitoField();
+
+        if (Objects.isNull(value))
+            throw AccountException.updateWithNullValue();
+
+        if (value.length() > AWS_COGNITO_VALUE_MAX_LENGTH)
+            throw AccountException.updateWithMaxLengthValue();
+
+        Account account;
+        try {
+            account = this.get(uuid);
         } catch (AlphanahBaseException exception) {
             throw AccountException.updateNullObject();
         }
