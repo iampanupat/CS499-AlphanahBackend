@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/coupon")
-public class CouponApi {
+public class CouponAPI {
 
     @Autowired
     private CouponBusiness business;
@@ -43,7 +43,7 @@ public class CouponApi {
             @RequestHeader(value = "Authorization") String token,
             @RequestBody CouponRequest request
     ) throws AlphanahBaseException {
-        // AccountUtils.merchantVerify(token);
+        AccountUtils.merchantVerify(token);
         CouponResponseM1 response = business.createCoupon(AccountUtils.getAccountWithToken(token).getUuid(), request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -53,7 +53,7 @@ public class CouponApi {
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("coupon_uuid") UUID couponUuid
     ) throws AlphanahBaseException {
-        // AccountUtils.merchantVerify(token);
+        AccountUtils.merchantVerify(token);
         business.deleteCoupon(AccountUtils.getAccountWithToken(token).getUuid(), couponUuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
