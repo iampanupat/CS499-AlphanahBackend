@@ -1,6 +1,8 @@
 package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.ErrorResponse;
+import com.alphanah.alphanahbackend.utility.Environment;
 import com.amazonaws.AmazonServiceException;
 import lombok.Data;
 import org.joda.time.DateTime;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.security.sasl.AuthenticationException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,44 +26,35 @@ import java.util.Map;
 public class ErrorAdvisor {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException exception) {
-        ErrorResponse response = new ErrorResponse();
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setFrom("Alphanah");
-        response.setError(exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException exception) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse response = new ErrorResponse(httpStatus, Environment.ALPHANAH, exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(response, httpStatus);
     }
-
-
-    private final String alphanah = "Alphanah";
 
     // Handle function exception from this backend application
     @ExceptionHandler(AlphanahBaseException.class)
     public ResponseEntity<ErrorResponse> handleAlphanahBaseException(AlphanahBaseException e) {
-        return handleException(e, alphanah);
+        return handleException(e, Environment.ALPHANAH);
     }
 
     @ExceptionHandler(AmazonServiceException.class)
     public ResponseEntity<ErrorResponse> handleAmazonServiceException(AmazonServiceException exception) {
-        ErrorResponse response = new ErrorResponse();
-        response.setStatus(exception.getStatusCode());
-        response.setFrom("Amazon");
-        response.setError(exception.getErrorMessage());
-        return new ResponseEntity<>(response, HttpStatus.valueOf(exception.getStatusCode()));
+        HttpStatus httpStatus = HttpStatus.valueOf(exception.getStatusCode());
+        ErrorResponse response = new ErrorResponse(httpStatus, Environment.AMAZON, exception.getErrorMessage());
+        return new ResponseEntity<>(response, httpStatus);
     }
-
-    private final String springFramework = "Spring Framework";
 
     // Handle http request method not allowed
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        return handleException(e, springFramework, HttpStatus.valueOf(e.getStatusCode().value()));
+        return handleException(e, Environment.SPRING_FRAMEWORK, HttpStatus.valueOf(e.getStatusCode().value()));
     }
 
     // Handle json invalid syntax
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        return handleException(e, springFramework);
+        return handleException(e, Environment.SPRING_FRAMEWORK);
     }
 
     private ResponseEntity<ErrorResponse> handleException(Exception e, String owner) {
@@ -68,19 +62,8 @@ public class ErrorAdvisor {
     }
 
     private ResponseEntity<ErrorResponse> handleException(Exception e, String owner, HttpStatus httpStatus) {
-        ErrorResponse response = new ErrorResponse();
-        response.setStatus(httpStatus.value());
-        response.setFrom(owner);
-        response.setError(e.getMessage());
+        ErrorResponse response = new ErrorResponse(httpStatus, owner, e.getMessage());
         return new ResponseEntity<>(response, httpStatus);
-    }
-
-    @Data
-    public static class ErrorResponse {
-        private String timestamp = DateTime.now().toString();
-        private int status;
-        private String from;
-        private String error;
     }
 
 }

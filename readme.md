@@ -83,3 +83,12 @@
 | `GET`        | `/sale_order`                                       | Get all sales order details                           | **MERCHANT** |
 | `GET`        | `/sale_order/{order_item_uuid}`                     | Get sales order detail by Order Item UUID             | **MERCHANT** |
 | `PUT`        | `/sale_order/{order_item_uuid}`                     | Update sales order delivery status by Order Item UUID | **MERCHANT** |
+
+### Coupon API
+| HTTP Methods | Endpoints               | Action                           | Access Right |
+|--------------|-------------------------|----------------------------------|--------------|
+| `GET`        | `/coupon`               | Get all coupon details           | **ALL**      |
+| `GET`        | `/coupon?usage={usage}` | Get all coupon details by Usage  | **ALL**      |         
+| `GET`        | `/coupon/{coupon_uuid}` | Get coupon detail by Coupon UUID | **ALL**      |        
+| `POST`       | `/coupon/{coupon_uuid}` | Create coupon                    | **MERCHANT** |
+| `DELETE`     | `/coupon/{coupon_uuid}` | Delete unused coupon             | **MERCHANT** |

@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +22,7 @@ public class SecurityConfig {
         };
 
         String[] permitAllEndpoints = {
+                "/error/*",
                 "/product",
                 "/product/*",
                 "/category",
@@ -37,8 +38,21 @@ public class SecurityConfig {
                 .requestMatchers(anonymousEndpoints).anonymous()
                 .requestMatchers(permitAllEndpoints).permitAll()
                 .anyRequest().authenticated().and()
+                .exceptionHandling()
+                    .authenticationEntryPoint(authenticationEntryPoint())
+                    .accessDeniedHandler(accessDeniedHandler()).and()
                 .oauth2ResourceServer().jwt();
         return httpSecurity.build();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
     }
 
 }

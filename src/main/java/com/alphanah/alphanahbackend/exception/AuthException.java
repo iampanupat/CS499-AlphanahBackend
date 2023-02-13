@@ -6,6 +6,10 @@ public class AuthException extends AlphanahBaseException {
         super("auth." + message);
     }
 
+    public static AuthException unauthorized() {
+        return new AuthException("unauthorized");
+    }
+
     public static AuthException roleNotAllowed() {
         return new AuthException("role.not.allowed");
     }
