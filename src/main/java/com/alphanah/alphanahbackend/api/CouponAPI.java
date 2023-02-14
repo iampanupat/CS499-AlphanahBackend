@@ -38,7 +38,7 @@ public class CouponAPI {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/{coupon_uuid}")
+    @PostMapping
     public ResponseEntity<CouponResponseM1> createCoupon(
             @RequestHeader(value = "Authorization") String token,
             @RequestBody CouponRequest request

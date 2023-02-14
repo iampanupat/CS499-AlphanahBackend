@@ -2,6 +2,7 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.ProductOptionBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.product_option.ProductOptionRequest;
 import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
 import jakarta.validation.Valid;
@@ -21,8 +22,9 @@ public class ProductOptionApi {
     private ProductOptionBusiness business;
 
     @GetMapping("/{productUuid}/option")
-    public ResponseEntity<List<ProductOptionResponseM1>> getAllProductOptions(@PathVariable("productUuid") UUID productUuid) throws AlphanahBaseException {
-        List<ProductOptionResponseM1> response = business.getAllProductOptions(productUuid);
+    public ResponseEntity<ListResponse> getAllProductOptions(@PathVariable("productUuid") UUID productUuid) throws AlphanahBaseException {
+        List<ProductOptionResponseM1> rawResponse = business.getAllProductOptions(productUuid);
+        ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

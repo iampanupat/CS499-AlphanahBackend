@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -26,7 +27,7 @@ public class ProductOption extends BaseEntity {
     private Product product;
 
     @OneToMany(mappedBy = "productOption", fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public ProductOptionResponseM1 toProductOptionResponseM1(ProductOptionResponseM1 response) {
         if (response == null)

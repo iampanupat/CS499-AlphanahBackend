@@ -3,6 +3,7 @@ package com.alphanah.alphanahbackend.api;
 import com.alphanah.alphanahbackend.business.ProductBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.OrderException;
+import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.product.ProductRequest;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM1;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
@@ -23,23 +24,14 @@ public class ProductApi {
     private ProductBusiness business;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseM3>> getAllProducts() throws AlphanahBaseException {
-        List<ProductResponseM3> response = business.getAllProducts();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/owned")
-    public ResponseEntity<List<ProductResponseM3>> getMyProducts(
-            @RequestHeader(value = "Authorization") String token
+    public ResponseEntity<ListResponse> getAllProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) UUID merchant
     ) throws AlphanahBaseException {
-        List<ProductResponseM3> response = business.getMyProducts(AccountUtils.getAccountWithToken(token).getUuid());
+        List<ProductResponseM3> rawResponse = business.getAllProducts(name, description, merchant);
+        ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<ProductResponseM3>> searchProducts(@RequestParam String keyword) throws AlphanahBaseException {
-        List<ProductResponseM3> responses = business.searchProducts(keyword);
-        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{uuid}")

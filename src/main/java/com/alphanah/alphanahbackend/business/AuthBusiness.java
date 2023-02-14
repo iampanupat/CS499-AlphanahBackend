@@ -2,10 +2,10 @@ package com.alphanah.alphanahbackend.business;
 
 import com.alphanah.alphanahbackend.exception.AuthException;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.authentication.MLoginRequest;
-import com.alphanah.alphanahbackend.model.authentication.MLoginResponse;
-import com.alphanah.alphanahbackend.model.authentication.MRegisterRequest;
-import com.alphanah.alphanahbackend.model.authentication.MRegisterResponse;
+import com.alphanah.alphanahbackend.model.authentication.LoginRequest;
+import com.alphanah.alphanahbackend.model.authentication.LoginResponse;
+import com.alphanah.alphanahbackend.model.authentication.RegisterRequest;
+import com.alphanah.alphanahbackend.model.authentication.RegisterResponse;
 import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.service.AuthService;
 import com.amazonaws.services.cognitoidp.model.*;
@@ -24,19 +24,19 @@ public class AuthBusiness {
     private static final int EMAIL_MAX_LENGTH = 128;
     private static final int PASSWORD_MAX_LENGTH = 256;
 
-    public MRegisterResponse customerRegister(MRegisterRequest request) throws AlphanahBaseException {
+    public RegisterResponse customerRegister(RegisterRequest request) throws AlphanahBaseException {
         return register(request, Role.CUSTOMER);
     }
 
-    public MRegisterResponse merchantRegister(MRegisterRequest request) throws AlphanahBaseException {
+    public RegisterResponse merchantRegister(RegisterRequest request) throws AlphanahBaseException {
         return register(request, Role.MERCHANT);
     }
 
-    private MRegisterResponse register(MRegisterRequest request, Role ERole) throws AlphanahBaseException {
+    private RegisterResponse register(RegisterRequest request, Role role) throws AlphanahBaseException {
         if (request == null)
             throw AuthException.registerRequestNull();
 
-        if (ERole == null)
+        if (role == null)
             throw AuthException.registerRoleNull();
 
         if (Objects.isNull(request.getEmail()))
@@ -69,14 +69,14 @@ public class AuthBusiness {
         if ( !(Objects.equals(request.getPassword(), request.getConfirmPassword())) )
             throw AuthException.registerPasswordsNotMatch();
 
-        Map<String, String> accountDetail = service.createAccount(request.getEmail(), request.getPassword(), ERole);
-        MRegisterResponse response = new MRegisterResponse();
+        Map<String, String> accountDetail = service.createAccount(request.getEmail(), request.getPassword(), role);
+        RegisterResponse response = new RegisterResponse();
         response.setEmail(accountDetail.get("email"));
-        response.setERole(ERole.valueOf(accountDetail.get("role")));
+        response.setRole(Role.valueOf(accountDetail.get("role")));
         return response;
     }
 
-    public MLoginResponse login(MLoginRequest request) throws AlphanahBaseException {
+    public LoginResponse login(LoginRequest request) throws AlphanahBaseException {
         if (request == null)
             throw AuthException.loginRequestNull();
 
@@ -99,7 +99,7 @@ public class AuthBusiness {
             throw AuthException.loginPasswordMaxLength();
 
         AuthenticationResultType authenticationResult = service.signInAccount(request.getEmail(), request.getPassword());
-        MLoginResponse response = new MLoginResponse();
+        LoginResponse response = new LoginResponse();
         response.setAccessToken(authenticationResult.getAccessToken());
         response.setIdToken(authenticationResult.getIdToken());
         response.setRefreshToken(authenticationResult.getRefreshToken());

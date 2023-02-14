@@ -13,6 +13,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 
+import java.util.Date;
+import java.util.Objects;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "order_items")
@@ -37,21 +40,9 @@ public class OrderItem extends BaseEntity implements Comparable<OrderItem> {
 
     @Override
     public int compareTo(OrderItem other) {
-        DateTime thisCheckoutDate;
-        try {
-            thisCheckoutDate = DateTime.parse(this.getOrder().getCheckoutDate());
-        } catch (Exception exception) {
-            thisCheckoutDate = DateTime.now();
-        }
-
-        DateTime otherCheckoutDate;
-        try {
-            otherCheckoutDate = DateTime.parse(other.getOrder().getCheckoutDate());
-        } catch (Exception exception) {
-            otherCheckoutDate = DateTime.now();
-        }
-
-        return thisCheckoutDate.compareTo(otherCheckoutDate) * -1;
+        Date thisDate = Objects.isNull(this.order.getCheckoutDate()) ? new Date() : this.order.getCheckoutDate();
+        Date otherDate = Objects.isNull(other.order.getCheckoutDate()) ? new Date() : other.order.getCheckoutDate();
+        return thisDate.compareTo(otherDate) * -1;
     }
 
     public CartItemResponseM1 toCartItemResponseM1(CartItemResponseM1 response) {

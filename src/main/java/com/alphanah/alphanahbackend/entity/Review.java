@@ -34,7 +34,7 @@ public class Review extends BaseEntity {
     private String createDate;
 
     @OneToMany(mappedBy = "review", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "product_uuid", nullable = false)

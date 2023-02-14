@@ -1,10 +1,11 @@
 package com.alphanah.alphanahbackend.model.order;
 
+import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
 import lombok.Data;
 
 @Data
 public class CartResponseM1 {
     private String orderUuid;
-    private String creatorUuid;
+    private AccountResponseM1 creator;
     private String orderType;
 }

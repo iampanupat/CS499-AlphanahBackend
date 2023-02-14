@@ -1,9 +1,10 @@
 package com.alphanah.alphanahbackend.model.authentication;
 
+import com.alphanah.alphanahbackend.enumerate.Role;
 import lombok.Data;
 
 @Data
-public class MLoginRequest {
+public class RegisterResponse {
     private String email;
-    private String password;
+    private Role role;
 }

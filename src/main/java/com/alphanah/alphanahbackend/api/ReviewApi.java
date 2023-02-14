@@ -2,6 +2,7 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.ReviewBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM1;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM3;
 import com.alphanah.alphanahbackend.model.review.ReviewRequest;
@@ -22,8 +23,9 @@ public class ReviewApi {
     private ReviewBusiness business;
 
     @GetMapping("/{productUuid}/review")
-    public ResponseEntity<List<ReviewResponseM3>> getAllReviews(@PathVariable("productUuid") UUID productUuid) throws AlphanahBaseException {
-        List<ReviewResponseM3> response = business.getAllReviews(productUuid);
+    public ResponseEntity<ListResponse> getAllReviews(@PathVariable("productUuid") UUID productUuid) throws AlphanahBaseException {
+        List<ReviewResponseM3> rawResponse = business.getAllReviews(productUuid);
+        ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -2,6 +2,7 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.ImageBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,11 @@ public class ImageApi {
     private ImageBusiness business;
 
     @GetMapping("/{productUuid}/image")
-    public ResponseEntity<List<ImageResponseM1>> getAllProductImages(
+    public ResponseEntity<ListResponse> getAllProductImages(
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
-        List<ImageResponseM1> response = business.getAllProductImages(productUuid);
+        List<ImageResponseM1> rawResponse = business.getAllProductImages(productUuid);
+        ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -48,11 +50,12 @@ public class ImageApi {
     }
 
     @GetMapping("/{productUuid}/review/{reviewUuid}/image")
-    public ResponseEntity<List<ImageResponseM1>> getAllReviewImages(
+    public ResponseEntity<ListResponse> getAllReviewImages(
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("reviewUuid") UUID reviewUuid
     ) throws AlphanahBaseException {
-        List<ImageResponseM1> response = business.getAllReviewImages(productUuid, reviewUuid);
+        List<ImageResponseM1> rawResponse = business.getAllReviewImages(productUuid, reviewUuid);
+        ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

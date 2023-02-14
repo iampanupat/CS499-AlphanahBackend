@@ -22,14 +22,14 @@ public class Category extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "category", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProductCategory> productCategories;
+    private List<ProductCategory> productCategories = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "parent_category_uuid")
     private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Category> childCategories;
+    private List<Category> childCategories = new ArrayList<>();
 
     @JsonIgnore
     public List<Category> getAllChild() {

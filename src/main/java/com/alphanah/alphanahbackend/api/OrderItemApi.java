@@ -2,6 +2,7 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.OrderItemBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
 import com.alphanah.alphanahbackend.model.order_item.OrderItemRequest;
 import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
@@ -43,9 +44,10 @@ public class OrderItemApi {
     }
 
     @GetMapping("/sale_order")
-    public ResponseEntity<List<PaidItemResponseM2>> getAllSaleOrderItem(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
-        List<PaidItemResponseM2> responses = business.getAllSaleOrderItem(AccountUtils.getAccountWithToken(token).getUuid());
-        return new ResponseEntity<>(responses, HttpStatus.OK);
+    public ResponseEntity<ListResponse> getAllSaleOrderItem(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
+        List<PaidItemResponseM2> rawResponse = business.getAllSaleOrderItem(AccountUtils.getAccountWithToken(token).getUuid());
+        ListResponse response = new ListResponse(rawResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/sale_order/{order_item_uuid}")

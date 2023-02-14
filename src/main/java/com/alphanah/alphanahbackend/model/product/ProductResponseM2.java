@@ -9,6 +9,8 @@ import java.util.List;
 
 @Data
 public class ProductResponseM2 extends ProductResponseM1 {
+    private Double minPrice;
+    private Double maxPrice;
     private List<ProductOptionResponseM1> options;
     private List<ImageResponseM1> images;
     private List<ReviewResponseM2> reviews;

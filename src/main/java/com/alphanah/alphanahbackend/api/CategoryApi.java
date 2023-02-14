@@ -3,6 +3,7 @@ package com.alphanah.alphanahbackend.api;
 import com.alphanah.alphanahbackend.business.CategoryBusiness;
 import com.alphanah.alphanahbackend.entity.Category;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.category.CategoryRequest;
 import com.alphanah.alphanahbackend.model.category.CategoryResponseM2;
 import com.alphanah.alphanahbackend.model.category.CategoryResponseM3;
@@ -23,8 +24,9 @@ public class CategoryApi {
     private CategoryBusiness business;
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponseM3>> getAllCategories() throws AlphanahBaseException {
-        List<CategoryResponseM3> response = business.getAllCategories();
+    public ResponseEntity<ListResponse> getAllCategories() throws AlphanahBaseException {
+        List<CategoryResponseM3> rawResponse = business.getAllCategories();
+        ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

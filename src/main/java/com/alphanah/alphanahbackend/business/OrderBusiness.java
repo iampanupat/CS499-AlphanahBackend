@@ -3,6 +3,7 @@ package com.alphanah.alphanahbackend.business;
 import com.alphanah.alphanahbackend.entity.Account;
 import com.alphanah.alphanahbackend.entity.Order;
 import com.alphanah.alphanahbackend.entity.OrderItem;
+import com.alphanah.alphanahbackend.enumerate.PayType;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.OrderException;
 import com.alphanah.alphanahbackend.model.order.CartResponseM2;
@@ -33,7 +34,12 @@ public class OrderBusiness {
     @Value("${Stripe.apiKey}")
     private String stripeApiKey;
 
-    public CartResponseM2 getCartOrder(UUID accountUuid) throws AlphanahBaseException {
+    public CartResponseM2 updateCoupon(UUID creatorUuid, UUID couponUuid) throws AlphanahBaseException {
+        Order response = service.updateCoupon(creatorUuid, couponUuid);
+        return response.toCartResponseM2(null);
+    }
+
+    public CartResponseM2 getCartOrder(UUID accountUuid) throws AlphanahBaseException, InterruptedException {
         Order response = service.getOrCreateCart(accountUuid);
         return response.toCartResponseM2(null);
     }
@@ -48,7 +54,7 @@ public class OrderBusiness {
         return responses;
     }
 
-    public ResponseEntity<Map<String, Object>> checkout(UUID accountUuid, byte[] stripeRequest) throws AlphanahBaseException {
+    public ResponseEntity<Map<String, Object>> checkout(UUID accountUuid, byte[] stripeRequest) {
         Stripe.apiKey = stripeApiKey;
         Gson gson = new Gson();
 
@@ -64,16 +70,11 @@ public class OrderBusiness {
             if (cart.getOrderItems().size() == 0)
                 throw OrderException.updateWithEmptyCart();
 
-            double totalPrice = 0;
-            for (OrderItem cartItem: cart.getOrderItems())
-                totalPrice += cartItem.getProductOption().getPrice() * cartItem.getQuantity();
-
-            totalPrice = Math.ceil(totalPrice);
-
             RequestOptions requestOptions = RequestOptions.builder()
                     .setApiKey(stripeApiKey)
                     .build();
 
+            double totalPrice = cart.calculateTotalPriceWithCoupon() + cart.calculateDeliveryFeeWithCoupon();
             if (confirmRequest.getPaymentMethodId() != null) {
                 PaymentIntentCreateParams createParams = PaymentIntentCreateParams.builder()
                         .setAmount((long) totalPrice * 100)
@@ -105,7 +106,7 @@ public class OrderBusiness {
             responseData.put("success", true);
 
             // UPDATE Cart to Paid
-            service.updateCartToPaid(accountUuid, firstname, lastname, phone, address);
+            service.updateCartToPaid(accountUuid, PayType.CARD, firstname, lastname, phone, address);
 
         } else {
             throw OrderException.checkoutFailure();

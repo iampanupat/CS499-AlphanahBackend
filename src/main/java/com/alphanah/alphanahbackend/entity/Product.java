@@ -33,16 +33,16 @@ public class Product extends BaseEntity {
     private String creatorUuid;
 
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProductOption> options;
+    private List<ProductOption> options = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProductCategory> productCategories;
+    private List<ProductCategory> productCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
     public ProductResponseM1 toProductResponseM1(ProductResponseM1 response) throws AlphanahBaseException {
         if (response == null)
@@ -64,8 +64,15 @@ public class Product extends BaseEntity {
         // List of "Product Option" Base Response
         List<ProductOptionResponseM1> options = new ArrayList<>();
         List<ProductOption> productOptionList = this.getOptions();
-        for (ProductOption option : productOptionList)
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        for (ProductOption option : productOptionList) {
+            min = option.getPrice() < min ? option.getPrice() : min;
+            max = option.getPrice() > max ? option.getPrice() : max;
             options.add(option.toProductOptionResponseM1(null));
+        }
+        response.setMinPrice(min);
+        response.setMaxPrice(max);
         response.setOptions(options);
 
         // "Image" Base Response

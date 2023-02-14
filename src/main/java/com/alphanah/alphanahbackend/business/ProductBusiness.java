@@ -12,10 +12,7 @@ import org.mapstruct.ap.shaded.freemarker.template.utility.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductBusiness {
@@ -23,37 +20,17 @@ public class ProductBusiness {
     @Autowired
     private ProductService service;
 
-    public List<ProductResponseM3> getAllProducts() throws AlphanahBaseException {
+    public List<ProductResponseM3> getAllProducts(String name, String description, UUID merchantUuid) throws AlphanahBaseException {
         List<ProductResponseM3> responses = new ArrayList<>();
-        List<Product> products = service.getAll();
-        for (Product product: products)
+        List<Product> productList = service.getAll();
+        for (Product product: productList) {
+            if (!Objects.isNull(name) && !product.getName().toLowerCase().contains(name.toLowerCase()))
+                continue;
+            if (!Objects.isNull(description) && !product.getDescription().toLowerCase().contains(description.toLowerCase()))
+                continue;
+            if (!Objects.isNull(merchantUuid) && !product.getCreatorUuid().equals(merchantUuid.toString()))
+                continue;
             responses.add(product.toProductResponseM3(null));
-        return responses;
-    }
-
-    public List<ProductResponseM3> getMyProducts(UUID accountUuid) throws AlphanahBaseException {
-        List<ProductResponseM3> responses = new ArrayList<>();
-        List<Product> products = service.getAll();
-        for (Product product: products) {
-            if (accountUuid.equals(UUID.fromString(product.getCreatorUuid())))
-                responses.add(product.toProductResponseM3(null));
-        }
-        return responses;
-
-    }
-
-    public List<ProductResponseM3> searchProducts(String keyword) throws AlphanahBaseException {
-        if (keyword == null)
-            throw ProductException.searchWithNullKeyword();
-
-        if (keyword.isEmpty())
-            throw ProductException.searchWithEmptyKeyword();
-
-        List<ProductResponseM3> responses = new ArrayList<>();
-        List<Product> products = service.getAll();
-        for (Product product: products) {
-            if (product.getName().toLowerCase().contains(keyword.toLowerCase()))
-                responses.add(product.toProductResponseM3(null));
         }
         return responses;
     }
