@@ -1,7 +1,6 @@
 package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.ProductCategoryBusiness;
-import com.alphanah.alphanahbackend.entity.ProductCategory;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.product_category.ProductCategoryResponseM1;
@@ -15,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
-public class ProductCategoryApi {
+public class ProductCategoryAPI {
 
     @Autowired
     private ProductCategoryBusiness business;

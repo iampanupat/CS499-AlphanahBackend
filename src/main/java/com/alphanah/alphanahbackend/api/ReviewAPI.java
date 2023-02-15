@@ -6,7 +6,6 @@ import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM1;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM3;
 import com.alphanah.alphanahbackend.model.review.ReviewRequest;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
-public class ReviewApi {
+public class ReviewAPI {
 
     @Autowired
     private ReviewBusiness business;

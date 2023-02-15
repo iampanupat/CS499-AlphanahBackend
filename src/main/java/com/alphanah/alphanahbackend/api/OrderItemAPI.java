@@ -6,7 +6,6 @@ import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
 import com.alphanah.alphanahbackend.model.order_item.OrderItemRequest;
 import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
-import com.alphanah.alphanahbackend.service.OrderItemService;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-public class OrderItemApi {
+public class OrderItemAPI {
 
     @Autowired
     private OrderItemBusiness business;

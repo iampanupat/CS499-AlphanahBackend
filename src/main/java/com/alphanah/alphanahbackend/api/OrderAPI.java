@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-public class OrderApi {
+public class OrderAPI {
 
     @Autowired
     private OrderBusiness business;

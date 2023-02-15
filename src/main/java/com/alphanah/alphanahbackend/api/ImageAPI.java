@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
-public class ImageApi {
+public class ImageAPI {
 
     @Autowired
     private ImageBusiness business;

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
-public class ProductOptionApi {
+public class ProductOptionAPI {
 
     @Autowired
     private ProductOptionBusiness business;
