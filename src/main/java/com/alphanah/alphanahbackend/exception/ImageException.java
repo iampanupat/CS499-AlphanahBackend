@@ -6,116 +6,76 @@ public class ImageException extends AlphanahBaseException {
         super("image." + message);
     }
 
-    public static ImageException getAllWithNullProductUuid() {
-        return new ImageException("get.all.with.null.product.uuid");
+    public static ImageException cannotFindWithNullProductUuid() {
+        return new ImageException("cannot.find.with.null.product.uuid");
     }
 
-    public static ImageException getAllWithNullReviewUuid() {
-        return new ImageException("get.all.with.null.review.uuid");
+    public static ImageException cannotFindWithNullReviewUuid() {
+        return new ImageException("cannot.find.with.null.review.uuid");
     }
 
-    public static ImageException getNullProductObject() {
-        return new ImageException("get.null.product.object");
+    public static ImageException cannotFindWithNullImageUuid() {
+        return new ImageException("cannot.find.with.null.image.uuid");
     }
 
-    public static ImageException getNullReviewObject() {
-        return new ImageException("get.null.review.object");
+    public static ImageException notFound() {
+        return new ImageException("not.found");
     }
 
-    public static ImageException getWithNullProductUuid() {
-        return new ImageException("get.with.null.product.uuid");
+    public static ImageException cannotFindWithInvalidProductUuid() {
+        return new ImageException("cannot.find.with.invalid.product.uuid");
     }
 
-    public static ImageException getWithNullReviewUuid() {
-        return new ImageException("get.with.null.review.uuid");
+    public static ImageException cannotFindWithInvalidReviewUuid() {
+        return new ImageException("cannot.find.with.invalid.review.uuid");
     }
 
-    public static ImageException getWithNullUuid() {
-        return new ImageException("get.with.null.uuid");
+    public static ImageException cannotCreateWithNullCreatorUuid() {
+        return new ImageException("cannot.create.with.null.creator.uuid");
     }
 
-    public static ImageException getWithNullProductObject() {
-        return new ImageException("get.with.null.product.object");
+    public static ImageException cannotCreateWithNullProductUuid() {
+        return new ImageException("cannot.create.with.null.product.uuid");
     }
 
-    public static ImageException getWithNullReviewObject() {
-        return new ImageException("get.with.null.review.object");
+    public static ImageException cannotCreateWithNullReviewUuid() {
+        return new ImageException("cannot.create.with.null.review.uuid");
     }
 
-    public static ImageException getNullObject() {
-        return new ImageException("get.null.object");
+    public static ImageException cannotCreateWithNullImagePath() {
+        return new ImageException("cannot.create.with.null.image.path");
     }
 
-    public static ImageException getWithInvalidProductUuid() {
-        return new ImageException("get.with.invalid.product.uuid");
+    public static ImageException cannotCreateWithEmptyImagePath() {
+        return new ImageException("cannot.create.with.empty.image.path");
     }
 
-    public static ImageException getWithInvalidReviewUuid() {
-        return new ImageException("get.with.invalid.review.uuid");
+    public static ImageException cannotCreateWithImagePathExceedMaxLength() {
+        return new ImageException("cannot.create.with.image.path.exceed.max.length");
     }
 
-    public static ImageException createWithNullCreatorUuid() {
-        return new ImageException("create.with.null.creator.uuid");
+    public static ImageException cannotCreateNotOwned() {
+        return new ImageException("cannot.create.not.owned");
     }
 
-    public static ImageException createWithNullProductUuid() {
-        return new ImageException("create.with.null.product.uuid");
+    public static ImageException cannotDeleteWithNullCreatorUuid() {
+        return new ImageException("cannot.delete.with.null.creator.uuid");
     }
 
-    public static ImageException createWithNullReviewUuid() {
-        return new ImageException("create.with.null.review.uuid");
+    public static ImageException cannotDeleteWithNullProductUuid() {
+        return new ImageException("cannot.delete.with.null.product.uuid");
     }
 
-    public static ImageException createWithNullPath() {
-        return new ImageException("create.with.null.path");
+    public static ImageException cannotDeleteWithNullReviewUuid() {
+        return new ImageException("cannot.delete.with.null.review.uuid");
     }
 
-    public static ImageException createWithEmptyPath() {
-        return new ImageException("create.with.empty.path");
+    public static ImageException cannotDeleteWithNullImageUuid() {
+        return new ImageException("cannot.delete.with.null.image.uuid");
     }
 
-    public static ImageException createWithMaxLengthPath() {
-        return new ImageException("create.with.max.length.path");
-    }
-
-    public static ImageException createWithNullProductObject() {
-        return new ImageException("create.with.null.product.object");
-    }
-
-    public static ImageException createWithNullReviewObject() {
-        return new ImageException("create.with.null.review.object");
-    }
-
-    public static ImageException createNotOwned() {
-        return new ImageException("create.not.owned");
-    }
-
-    public static ImageException deleteWithNullCreatorUuid() {
-        return new ImageException("delete.with.null.creator.uuid");
-    }
-
-    public static ImageException deleteWithNullProductUuid() {
-        return new ImageException("delete.with.null.product.uuid");
-    }
-
-    public static ImageException deleteWithNullReviewUuid() {
-        return new ImageException("delete.with.null.review.uuid");
-    }
-
-    public static ImageException deleteWithNullUuid() {
-        return new ImageException("delete.with.null.uuid");
-    }
-
-    public static ImageException deleteWithNullProductObject() {
-        return new ImageException("delete.with.null.product.object");
-    }
-
-    public static ImageException deleteNullObject() {
-        return new ImageException("delete.null.object");
-    }
-
-    public static ImageException deleteNotOwned() {
-        return new ImageException("delete.not.owned");
+    public static ImageException cannotDeleteNotOwned() {
+        return new ImageException("cannot.delete.not.owned");
     }
 
 }

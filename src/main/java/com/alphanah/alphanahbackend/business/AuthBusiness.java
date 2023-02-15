@@ -8,7 +8,7 @@ import com.alphanah.alphanahbackend.model.authentication.RegisterRequest;
 import com.alphanah.alphanahbackend.model.authentication.RegisterResponse;
 import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.service.AuthService;
-import com.alphanah.alphanahbackend.utility.Environment;
+import com.alphanah.alphanahbackend.utility.Env;
 import com.amazonaws.services.cognitoidp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,13 +44,13 @@ public class AuthBusiness {
         if (request.getConfirmPassword().isEmpty())
             throw AuthException.cannotRegisterWithEmptyConfirmPassword();
 
-        if (request.getEmail().length() > Environment.EMAIL_MAX_LENGTH)
+        if (request.getEmail().length() > Env.EMAIL_MAX_LENGTH)
             throw AuthException.cannotRegisterWithEmailExceedMaxLength();
 
-        if (request.getPassword().length() > Environment.PASSWORD_MAX_LENGTH)
+        if (request.getPassword().length() > Env.PASSWORD_MAX_LENGTH)
             throw AuthException.cannotRegisterWithPasswordExceedMaxLength();
 
-        if (request.getConfirmPassword().length() > Environment.PASSWORD_MAX_LENGTH)
+        if (request.getConfirmPassword().length() > Env.PASSWORD_MAX_LENGTH)
             throw AuthException.cannotRegisterWithConfirmPasswordExceedMaxLength();
 
         if ( !(Objects.equals(request.getPassword(), request.getConfirmPassword())) )
@@ -76,10 +76,10 @@ public class AuthBusiness {
         if (request.getPassword().isEmpty())
             throw AuthException.cannotLoginWithEmptyPassword();
 
-        if (request.getEmail().length() > Environment.EMAIL_MAX_LENGTH)
+        if (request.getEmail().length() > Env.EMAIL_MAX_LENGTH)
             throw AuthException.cannotLoginWithEmailExceedMaxLength();
 
-        if (request.getPassword().length() > Environment.PASSWORD_MAX_LENGTH)
+        if (request.getPassword().length() > Env.PASSWORD_MAX_LENGTH)
             throw AuthException.cannotLoginWithPasswordExceedMaxLength();
 
         AuthenticationResultType authenticationResult = service.signInAccount(request.getEmail(), request.getPassword());

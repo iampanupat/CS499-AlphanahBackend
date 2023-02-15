@@ -6,7 +6,7 @@ import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.enumerate.AwsCognitoField;
 import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.utility.DateUtils;
-import com.alphanah.alphanahbackend.utility.Environment;
+import com.alphanah.alphanahbackend.utility.Env;
 import com.alphanah.alphanahbackend.utility.PhoneUtils;
 import com.alphanah.alphanahbackend.utility.JWTUtils;
 import com.amazonaws.AmazonServiceException;
@@ -44,7 +44,7 @@ public class AccountService {
     }
 
     private Account accountMapper(Account account, List<AttributeType> attributeTypes, Date createDate) {
-        account.setCreateDate(DateUtils.timeZoneConverter(createDate, Environment.bangkokZone));
+        account.setCreateDate(DateUtils.timeZoneConverter(createDate, Env.bangkokZone));
         for (AttributeType attribute : attributeTypes) {
             AwsCognitoField awsCognitoField = AwsCognitoField.get(attribute.getName());
             String cognitoValue = attribute.getValue();
@@ -126,22 +126,22 @@ public class AccountService {
         if (Objects.isNull(phone))
             throw AccountException.cannotUpdateWithNullPhone();
 
-        if (firstname.length() > Environment.FIRSTNAME_MAX_LENGTH)
+        if (firstname.length() > Env.FIRSTNAME_MAX_LENGTH)
             throw AccountException.cannotUpdateWithFirstnameExceedMaxLength();
 
-        if (lastname.length() > Environment.LASTNAME_MAX_LENGTH)
+        if (lastname.length() > Env.LASTNAME_MAX_LENGTH)
             throw AccountException.cannotUpdateWithLastnameExceedMaxLength();
 
-        if (address.length() > Environment.ADDRESS_MAX_LENGTH)
+        if (address.length() > Env.ADDRESS_MAX_LENGTH)
             throw AccountException.cannotUpdateWithAddressExceedMaxLength();
 
-        if (phone.length() > Environment.PHONE_MAX_LENGTH)
+        if (phone.length() > Env.PHONE_MAX_LENGTH)
             throw AccountException.cannotUpdateWithPhoneExceedMaxLength();
 
         this.updateAwsCognitoField(account, AwsCognitoField.FIRSTNAME, firstname);
         this.updateAwsCognitoField(account, AwsCognitoField.LASTNAME, lastname);
         this.updateAwsCognitoField(account, AwsCognitoField.ADDRESS, address);
-        this.updateAwsCognitoField(account, AwsCognitoField.PHONE, phone);
+        this.updateAwsCognitoField(account, AwsCognitoField.PHONE, PhoneUtils.addThaiAreaCode(phone));
     }
 
     public void updateAwsCognitoField(String token, AwsCognitoField awsCognitoField, String value) throws AlphanahBaseException {
@@ -170,7 +170,7 @@ public class AccountService {
         if (Objects.isNull(value))
             throw AccountException.cannotUpdateWithNullValue();
 
-        if (value.length() > Environment.AWS_COGNITO_VALUE_MAX_LENGTH)
+        if (value.length() > Env.AWS_COGNITO_VALUE_MAX_LENGTH)
             throw AccountException.cannotUpdateWithAwsCognitoValueExceedMaxLength();
 
         try {

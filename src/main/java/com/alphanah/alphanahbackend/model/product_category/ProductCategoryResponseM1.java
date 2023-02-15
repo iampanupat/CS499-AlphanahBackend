@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class ProductCategoryResponseM1 {
-    private String productCategoryUUID;
     private ProductResponseM1 product;
     private CategoryResponseM1 category;
 }

@@ -11,6 +11,7 @@ import com.alphanah.alphanahbackend.repository.OrderItemRepository;
 import com.alphanah.alphanahbackend.repository.OrderRepository;
 import com.alphanah.alphanahbackend.repository.ProductOptionRepository;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
+import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,21 +35,16 @@ public class OrderService {
     @Autowired
     private CouponService couponService;
 
-    private final int ORDER_FIRSTNAME_MAX_LENGTH = 50;
-    private final int ORDER_LASTNAME_MAX_LENGTH = 50;
-    private final int ORDER_ADDRESS_MAX_LENGTH = 2048;
-    private final int ORDER_PHONE_MAX_LENGTH = 19;
-
     public Order updateCoupon(UUID creatorUuid, UUID couponUuid) throws AlphanahBaseException {
-        Order entity = this.getOrCreateCart(creatorUuid);
+        Order entity = this.findOrCreateCart(creatorUuid);
         Coupon coupon = Objects.isNull(couponUuid) ? null : couponService.findCoupon(couponUuid);
         entity.setCoupon(coupon);
         return repository.save(entity);
     }
 
-    public List<Order> getAllPaidOrders(UUID creatorUuid) throws AlphanahBaseException {
+    public List<Order> findAllPaidOrders(UUID creatorUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw OrderException.getAllWithNullCreatorUuid();
+            throw OrderException.cannotFindWithNullCreatorUuid();
 
         List<Order> paidList = new ArrayList<>();
         List<Order> orderList = repository.findAllByCreatorUuid(creatorUuid);
@@ -56,55 +52,53 @@ public class OrderService {
             if (paidOrder.getType().equals(OrderType.PAID))
                 paidList.add(paidOrder);
         }
-
         return paidList;
     }
 
-    public Order getOrder(UUID creatorUuid, UUID uuid) throws AlphanahBaseException {
+    public Order findPaidOrder(UUID creatorUuid, UUID orderUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw OrderException.getWithNullCreatorUuid();
+            throw OrderException.cannotFindWithNullCreatorUuid();
 
-        if (Objects.isNull(uuid))
-            throw OrderException.getWithNullUuid();
+        if (Objects.isNull(orderUuid))
+            throw OrderException.cannotFindWithNullOrderUuid();
 
-        Optional<Order> optional = repository.findById(uuid);
+        Optional<Order> optional = repository.findById(orderUuid);
         if (optional.isEmpty())
-            throw OrderException.getNullObject();
+            throw OrderException.notFound();
 
         Order order = optional.get();
         if (!order.getType().equals(OrderType.PAID))
-            throw OrderException.getNotPaidOrder();
+            throw OrderException.notFound();
 
         return order;
     }
 
-    public Order getOrCreateCart(UUID creatorUuid) throws AlphanahBaseException {
+    public Order findOrCreateCart(UUID creatorUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw OrderException.getWithNullCreatorUuid();
+            throw OrderException.cannotFindWithNullCreatorUuid();
 
         Account account = AccountUtils.findAccount(creatorUuid);
-        if (account.getCartUuid() == null) {
+        if (account.getCartUuid() == null)
             return createCart(creatorUuid);
-        }
 
         Optional<Order> optional = repository.findById(account.getCartUuid());
         if (optional.isEmpty())
-            throw OrderException.getNullObject();
+            throw OrderException.notFound();
 
         Order cart = optional.get();
         if (!cart.getType().equals(OrderType.CART))
-            throw OrderException.getNotCartOrder();
+            throw OrderException.notFound();
 
         return cart;
     }
 
     private Order createCart(UUID creatorUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw OrderException.createWithNullCreatorUuid();
+            throw OrderException.cannotCreateWithNullCreatorUuid();
 
         Account account = AccountUtils.findAccount(creatorUuid);
         if (account.getCartUuid() != null)
-            throw OrderException.createDuplicateCart();
+            throw OrderException.cannotCreateDuplicateCart();
 
         Order entity = new Order();
         entity.setCreatorUuid(creatorUuid);
@@ -112,57 +106,58 @@ public class OrderService {
         entity.setPayType(PayType.NONE);
         repository.save(entity);
         accountService.updateAwsCognitoField(account, AwsCognitoField.CART_UUID, entity.getUuid().toString());
-        return this.getOrCreateCart(creatorUuid);
+        return this.findOrCreateCart(creatorUuid);
     }
 
-//    @Transactional
     public Order updateCartToPaid(UUID creatorUUID, PayType payType, String firstname, String lastname, String phone, String address) throws AlphanahBaseException {
         if (Objects.isNull(creatorUUID))
-            throw OrderException.updateWithNullCreatorUuid();
+            throw OrderException.cannotUpdateWithNullCreatorUuid();
+
+        if (Objects.isNull(payType))
+            throw OrderException.cannotUpdateWithNullPayType();
 
         if (Objects.isNull(firstname))
-            throw OrderException.updateWithNullFirstname();
+            throw OrderException.cannotUpdateWithNullFirstname();
 
         if (Objects.isNull(lastname))
-            throw OrderException.updateWithNullLastname();
+            throw OrderException.cannotUpdateWithNullLastname();
 
         if (Objects.isNull(phone))
-            throw OrderException.updateWithNullPhone();
+            throw OrderException.cannotUpdateWithNullPhone();
 
         if (Objects.isNull(address))
-            throw OrderException.updateWithNullAddress();
+            throw OrderException.cannotUpdateWithNullAddress();
 
         if (firstname.isEmpty())
-            throw OrderException.updateWithEmptyFirstname();
+            throw OrderException.cannotUpdateWithEmptyFirstname();
 
         if (lastname.isEmpty())
-            throw OrderException.updateWithEmptyLastname();
+            throw OrderException.cannotUpdateWithEmptyLastname();
 
         if (phone.isEmpty())
-            throw OrderException.updateWithEmptyPhone();
+            throw OrderException.cannotUpdateWithEmptyPhone();
 
         if (address.isEmpty())
-            throw OrderException.updateWithEmptyAddress();
+            throw OrderException.cannotUpdateWithEmptyAddress();
 
-        if (firstname.length() > ORDER_FIRSTNAME_MAX_LENGTH)
-            throw OrderException.updateWithMaxLengthFirstname();
+        if (firstname.length() > Env.FIRSTNAME_MAX_LENGTH)
+            throw OrderException.cannotUpdateWithFirstnameExceedMaxLength();
 
-        if (lastname.length() > ORDER_LASTNAME_MAX_LENGTH)
-            throw OrderException.updateWithMaxLengthLastname();
+        if (lastname.length() > Env.LASTNAME_MAX_LENGTH)
+            throw OrderException.cannotUpdateWithLastnameExceedMaxLength();
 
-        if (phone.length() > ORDER_PHONE_MAX_LENGTH)
-            throw OrderException.updateWithMaxLengthPhone();
+        if (phone.length() > Env.PHONE_MAX_LENGTH)
+            throw OrderException.cannotUpdateWithPhoneExceedMaxLength();
 
-        if (address.length() > ORDER_ADDRESS_MAX_LENGTH)
-            throw OrderException.updateWithMaxLengthAddress();
+        if (address.length() > Env.ADDRESS_MAX_LENGTH)
+            throw OrderException.cannotUpdateWithAddressExceedMaxLength();
 
         if (Objects.isNull(AccountUtils.findAccount(creatorUUID).getCartUuid()))
-            throw OrderException.updateWithNullCartUuid();
+            throw OrderException.cannotUpdateWithNullCartUuid();
 
-        Order entity = this.getOrCreateCart(creatorUUID);
-
+        Order entity = this.findOrCreateCart(creatorUUID);
         if (entity.getOrderItems().size() == 0)
-            throw OrderException.updateWithEmptyCart();
+            throw OrderException.cannotUpdateWithEmptyCart();
 
         entity.setType(OrderType.PAID);
         entity.setPayType(payType);
@@ -174,16 +169,16 @@ public class OrderService {
 
         List<OrderItem> orderItemEntityList = new ArrayList<>();
         List<ProductOption> productOptionEntityList = new ArrayList<>();
-
-        // Update All OrderItem to Delivery Status PENDING
         for (OrderItem orderItem: entity.getOrderItems()) {
+            // Update All OrderItem to Delivery Status PENDING
             orderItem.setPrice(orderItem.getProductOption().getPrice());
-            orderItem.setDeliveryStatus(DeliveryStatus.PENDING.toString());
+            orderItem.setDeliveryStatus(DeliveryStatus.PENDING);
             orderItemEntityList.add(orderItem);
 
+            // Reduce All ProductOption Quantity after Checkout
             ProductOption productOption = orderItem.getProductOption();
             if (productOption.getQuantity() < orderItem.getQuantity())
-                throw OrderException.updateCartToPaidWithOverStockQuantity();
+                throw OrderException.cannotUpdateWithQuantityExceedStock();
             productOption.setQuantity(productOption.getQuantity() - orderItem.getQuantity());
             productOptionEntityList.add(productOption);
         }
@@ -191,6 +186,8 @@ public class OrderService {
         Coupon coupon = entity.getCoupon();
         if (!Objects.isNull(coupon) && entity.isCouponActive())
             couponService.updateCouponUsageStatus(coupon.getUuid());
+        else
+            entity.setCoupon(null);
         orderItemRepository.saveAll(orderItemEntityList);
         productOptionRepository.saveAll(productOptionEntityList);
         accountService.updateAwsCognitoField(creatorUUID, AwsCognitoField.CART_UUID, "");

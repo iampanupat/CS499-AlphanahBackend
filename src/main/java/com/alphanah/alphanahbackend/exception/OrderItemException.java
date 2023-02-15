@@ -6,92 +6,60 @@ public class OrderItemException extends AlphanahBaseException {
         super("order.item." + message);
     }
 
-    public static OrderException createOrUpdateWithNullCreatorUuid() {
-        return new OrderException("create.or.update.with.null.creator.uuid");
+    public static OrderItemException cannotUpdateWithNullCreatorUuid() {
+        return new OrderItemException("cannot.update.with.null.creator.uuid");
     }
 
-    public static OrderException createOrUpdateWithNullProductUuid() {
-        return new OrderException("create.or.update.with.null.product.uuid");
+    public static OrderItemException cannotUpdateWithNullProductUuid() {
+        return new OrderItemException("cannot.update.with.null.product.uuid");
     }
 
-    public static OrderException createOrUpdateWithNullProductOptionUuid() {
-        return new OrderException("create.or.update.with.null.product.option.uuid");
+    public static OrderItemException cannotUpdateWithNullProductOptionUuid() {
+        return new OrderItemException("cannot.update.with.null.product.option.uuid");
     }
 
-    public static OrderException createOrUpdateWithNegativeQuantity() {
-        return new OrderException("create.or.update.with.negative.quantity");
+    public static OrderItemException cannotUpdateWithNullQuantity() {
+        return new OrderItemException("cannot.update.with.null.quantity");
     }
 
-    public static OrderException createOrUpdateWithMaxValueQuantity() {
-        return new OrderException("create.or.update.with.max.value.quantity");
+    public static OrderItemException cannotUpdateWithNegativeOrZeroQuantity() {
+        return new OrderItemException("cannot.update.with.negative.or.zero.quantity");
     }
 
-    public static OrderException createOrUpdateWithNullOrderObject() {
-        return new OrderException("create.or.update.with.null.order.object");
+    public static OrderItemException cannotUpdateWithQuantityExceedMaxValue() {
+        return new OrderItemException("cannot.update.with.quantity.exceed.max.value");
     }
 
-    public static OrderException createOrUpdateWithNullProductOptionObject() {
-        return new OrderException("create.or.update.with.null.product.option.object");
+    public static OrderItemException cannotUpdateWithQuantityExceedStock() {
+        return new OrderItemException("cannot.update.with.quantity.exceed.stock");
     }
 
-    public static OrderException createOrUpdateWithOverStockQuantity() {
-        return new OrderException("create.or.update.with.over.stock.quantity");
+    public static OrderItemException notFound() {
+        return new OrderItemException("not.found");
     }
 
-    public static OrderException createOrUpdateWithNullOrderItemObject() {
-        return new OrderException("create.or.update.with.null.order.item.object");
+    public static OrderItemException cannotDeleteWithNullCreatorUuid() {
+        return new OrderItemException("cannot.delete.with.null.creator.uuid");
     }
 
-    public static OrderException deleteWithNullCreatorUuid() {
-        return new OrderException("delete.with.null.creator.uuid");
+    public static OrderItemException cannotDeleteWithNullProductUuid() {
+        return new OrderItemException("cannot.delete.with.null.product.uuid");
     }
 
-    public static OrderException deleteWithNullProductUuid() {
-        return new OrderException("delete.with.null.product.uuid");
+    public static OrderItemException cannotDeleteWithNullProductOptionUuid() {
+        return new OrderItemException("cannot.delete.with.null.product.option.uuid");
     }
 
-    public static OrderException deleteWithNullProductOptionUuid() {
-        return new OrderException("delete.with.null.product.option.uuid");
+    public static OrderItemException cannotFindWithNullCreatorUuid() {
+        return new OrderItemException("cannot.find.with.null.creator.uuid");
     }
 
-    public static OrderException deleteWithNullOrderObject() {
-        return new OrderException("delete.with.null.order.object");
+    public static OrderItemException cannotFindWithNullOrderItemUuid() {
+        return new OrderItemException("cannot.find.with.null.order.item.uuid");
     }
 
-    public static OrderException deleteWithNullProductOptionObject() {
-        return new OrderException("delete.with.null.product.option.object");
-    }
-
-    public static OrderException deleteNullObject() {
-        return new OrderException("delete.null.object");
-    }
-
-    public static OrderException findAllPaidOrderItemWithNullProductCreatorUuid() {
-        return new OrderException("find.all.paid.order.item.with.null.product.creator.uuid");
-    }
-
-    public static OrderException findPaidOrderItemWithNullProductCreatorUuid() {
-        return new OrderException("find.paid.order.item.with.null.product.creator.uuid");
-    }
-
-    public static OrderException findPaidOrderItemWithNullOrderItemUuid() {
-        return new OrderException("find.paid.order.item.with.null.order.item.uuid");
-    }
-
-    public static OrderItemException findNullOrderItemObject() {
-        return new OrderItemException("find.null.order.item.object");
-    }
-
-    public static OrderItemException findNotOwned() {
-        return new OrderItemException("find.not.owned");
-    }
-
-    public static OrderItemException updatePaidOrderItemWithNullProductCreatorUuid() {
-        return new OrderItemException("update.paid.order.item.with.null.product.creator.uuid");
-    }
-
-    public static OrderItemException updatePaidOrderItemWithNullOrderItemUuid() {
-        return new OrderItemException("update.paid.order.item.with.null.order.item.uuid");
+    public static OrderItemException cannotUpdateWithNullOrderItemUuid() {
+        return new OrderItemException("cannot.update.with.null.order.item.uuid");
     }
 
 }

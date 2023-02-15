@@ -2,7 +2,7 @@ package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.AccountBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.account.UpdateAccountRequest;
+import com.alphanah.alphanahbackend.model.account.AccountRequest;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class AccountAPI {
     @PutMapping
     public ResponseEntity<AccountResponseM2> updateAccount(
             @RequestHeader(value = "Authorization") String token,
-            @RequestBody UpdateAccountRequest request
+            @RequestBody AccountRequest request
     ) throws AlphanahBaseException {
         AccountResponseM2 response = business.updateAccount(token, request);
         return new ResponseEntity<>(response, HttpStatus.OK);

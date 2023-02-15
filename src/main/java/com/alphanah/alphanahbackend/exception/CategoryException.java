@@ -6,36 +6,28 @@ public class CategoryException extends AlphanahBaseException {
         super("category." + message);
     }
 
-    public static CategoryException getWithNullUuid() {
-        return new CategoryException("get.with.null.uuid");
+    public static CategoryException cannotFindWithNullCategoryUuid() {
+        return new CategoryException("cannot.find.with.null.category.uuid");
     }
 
-    public static CategoryException getNullObject() {
-        return new CategoryException("get.null.object");
+    public static CategoryException notFound() {
+        return new CategoryException("not.found");
     }
 
-    public static CategoryException createWithNullCreatorUuid() {
-        return new CategoryException("create.with.null.creator.uuid");
+    public static CategoryException cannotCreateWithNullName() {
+        return new CategoryException("cannot.create.with.null.name");
     }
 
-    public static CategoryException createWithNullName() {
-        return new CategoryException("create.with.null.name");
+    public static CategoryException cannotCreateWithEmptyName() {
+        return new CategoryException("cannot.create.with.empty.name");
     }
 
-    public static CategoryException createWithEmptyName() {
-        return new CategoryException("create.with.empty.name");
+    public static CategoryException cannotCreateWithNameExceedMaxLength() {
+        return new CategoryException("cannot.create.with.name.exceed.max.length");
     }
 
-    public static CategoryException createWithMaxLengthName() {
-        return new CategoryException("create.with.max.length.name");
-    }
-
-    public static CategoryException createDuplicateName() {
-        return new CategoryException("create.duplicate.name");
-    }
-
-    public static CategoryException createWithNullParentObject() {
-        return new CategoryException("create.with.null.parent.object");
+    public static CategoryException cannotCreateWithDuplicateName() {
+        return new CategoryException("cannot.create.with.duplicate.name");
     }
 
 }

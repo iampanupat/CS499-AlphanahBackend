@@ -1,65 +1,51 @@
 package com.alphanah.alphanahbackend.exception;
 
+import org.springframework.security.core.parameters.P;
+
 public class ProductCategoryException extends AlphanahBaseException {
 
     public ProductCategoryException(String message) {
         super("product.category." + message);
     }
 
-    public static ProductCategoryException createWithNullCreatorUuid() {
-        return new ProductCategoryException("create.with.null.creator.uuid");
+    public static ProductCategoryException cannotCreateWithNullCreatorUuid() {
+        return new ProductCategoryException("cannot.create.with.null.creator.uuid");
     }
 
-    public static ProductCategoryException createWithNullProductUuid() {
-        return new ProductCategoryException("create.with.null.product.uuid");
+    public static ProductCategoryException cannotCreateWithNullProductUuid() {
+        return new ProductCategoryException("cannot.create.with.null.product.uuid");
     }
 
-    public static ProductCategoryException createWithNullCategoryUuid() {
-        return new ProductCategoryException("create.with.null.category.uuid");
+    public static ProductCategoryException cannotCreateWithNullCategoryUuid() {
+        return new ProductCategoryException("cannot.create.with.null.category.uuid");
     }
 
-    public static ProductCategoryException createWithNullProductObject() {
-        return new ProductCategoryException("create.with.null.product.object");
+    public static ProductCategoryException cannotCreateDuplicateRelationship() {
+        return new ProductCategoryException("cannot.create.duplicate.relationship");
     }
 
-    public static ProductCategoryException createWithNullCategoryObject() {
-        return new ProductCategoryException("create.with.null.category.object");
+    public static ProductCategoryException cannotCreateNotOwned() {
+        return new ProductCategoryException("cannot.create.not.owned");
     }
 
-    public static ProductCategoryException createDuplicateRelationship() {
-        return new ProductCategoryException("create.duplicate.relationship");
+    public static ProductCategoryException cannotDeleteWithNullCreatorUuid() {
+        return new ProductCategoryException("cannot.delete.with.null.creator.uuid");
     }
 
-    public static ProductCategoryException createNotOwned() {
-        return new ProductCategoryException("create.not.owned");
+    public static ProductCategoryException cannotDeleteWithNullProductUuid() {
+        return new ProductCategoryException("cannot.delete.with.null.product.uuid");
     }
 
-    public static ProductCategoryException deleteWithNullCreatorUuid() {
-        return new ProductCategoryException("delete.with.null.creator.uuid");
+    public static ProductCategoryException cannotDeleteWithNullCategoryUuid() {
+        return new ProductCategoryException("cannot.delete.with.null.category.uuid");
     }
 
-    public static ProductCategoryException deleteWithNullProductUuid() {
-        return new ProductCategoryException("delete.with.null.product.uuid");
+    public static ProductCategoryException cannotDeleteNotOwned() {
+        return new ProductCategoryException("cannot.delete.not.owned");
     }
 
-    public static ProductCategoryException deleteWithNullCategoryUuid() {
-        return new ProductCategoryException("delete.with.null.category.uuid");
-    }
-
-    public static ProductCategoryException deleteWithNullProductObject() {
-        return new ProductCategoryException("delete.with.null.product.object");
-    }
-
-    public static ProductCategoryException deleteWithNullCategoryObject() {
-        return new ProductCategoryException("delete.with.null.category.object");
-    }
-
-    public static ProductCategoryException deleteNullRelation() {
-        return new ProductCategoryException("delete.null.relation");
-    }
-
-    public static ProductCategoryException deleteNotOwned() {
-        return new ProductCategoryException("delete.not.owned");
+    public static ProductCategoryException cannotDeleteNullRelationship() {
+        return new ProductCategoryException("cannot.delete.null.relationship");
     }
 
 }

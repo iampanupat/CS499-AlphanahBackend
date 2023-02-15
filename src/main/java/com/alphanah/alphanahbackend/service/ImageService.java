@@ -6,6 +6,7 @@ import com.alphanah.alphanahbackend.entity.Review;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.ImageException;
 import com.alphanah.alphanahbackend.repository.ImageRepository;
+import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,223 +27,158 @@ public class ImageService {
     @Autowired
     private ReviewService reviewService;
 
-    private final int IMAGE_PATH_MAX_LENGTH = 255;
-
-    // GET All "Product Image" of Product UUID
-    public List<Image> getAll(UUID productUuid) throws AlphanahBaseException {
+    public List<Image> findAllProductImages(UUID productUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ImageException.getAllWithNullProductUuid();
+            throw ImageException.cannotFindWithNullProductUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.getNullProductObject();
-        }
-
+        Product product = productService.findProduct(productUuid);
         return repository.findAllByProduct(product);
     }
 
-    // GET All "Review Image" of Review UUID
-    public List<Image> getAll(UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
+    public List<Image> findAllReviewImages(UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ImageException.getAllWithNullProductUuid();
+            throw ImageException.cannotFindWithNullProductUuid();
 
         if (Objects.isNull(reviewUuid))
-            throw ImageException.getAllWithNullReviewUuid();
+            throw ImageException.cannotFindWithNullReviewUuid();
 
-        Review review;
-        try {
-            review = reviewService.get(productUuid, reviewUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.getNullReviewObject();
-        }
-
+        Review review = reviewService.findReview(productUuid, reviewUuid);
         return repository.findAllByReview(review);
     }
 
-    // CREATE a "Product Image"
-    public Image create(UUID creatorUuid, UUID productUuid, String path) throws AlphanahBaseException {
-        if (Objects.isNull(creatorUuid))
-            throw ImageException.createWithNullCreatorUuid();
-
+    private Image findProductImage(UUID productUuid, UUID imageUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ImageException.createWithNullProductUuid();
+            throw ImageException.cannotFindWithNullProductUuid();
 
-        if (Objects.isNull(path))
-            throw ImageException.createWithNullPath();
+        if (Objects.isNull(imageUuid))
+            throw ImageException.cannotFindWithNullImageUuid();
 
-        if (path.isEmpty())
-            throw ImageException.createWithEmptyPath();
+        Product product = productService.findProduct(productUuid);
 
-        if (path.length() > IMAGE_PATH_MAX_LENGTH)
-            throw ImageException.createWithMaxLengthPath();
-
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.createWithNullProductObject();
-        }
-
-        if (!product.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ImageException.createNotOwned();
-
-        Image entity = new Image();
-        entity.setProduct(product);
-        entity.setPath(path);
-        return repository.save(entity);
-    }
-
-    // CREATE a "Review Image"
-    public Image create(UUID creatorUuid, UUID productUuid, UUID reviewUuid, String path) throws AlphanahBaseException {
-        if (Objects.isNull(creatorUuid))
-            throw ImageException.createWithNullCreatorUuid();
-
-        if (Objects.isNull(productUuid))
-            throw ImageException.createWithNullProductUuid();
-
-        if (Objects.isNull(reviewUuid))
-            throw ImageException.createWithNullReviewUuid();
-
-        if (Objects.isNull(path))
-            throw ImageException.createWithNullPath();
-
-        if (path.isEmpty())
-            throw ImageException.createWithEmptyPath();
-
-        if (path.length() > IMAGE_PATH_MAX_LENGTH)
-            throw ImageException.createWithMaxLengthPath();
-
-        Review review;
-        try {
-            review = reviewService.get(productUuid, reviewUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.createWithNullReviewObject();
-        }
-
-        if (!review.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ImageException.createNotOwned();
-
-        Image entity = new Image();
-        entity.setReview(review);
-        entity.setPath(path);
-        return repository.save(entity);
-    }
-
-    // DELETE a "Product Image"
-    public void delete(UUID creatorUuid, UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        if (Objects.isNull(creatorUuid))
-            throw ImageException.deleteWithNullCreatorUuid();
-
-        if (Objects.isNull(productUuid))
-            throw ImageException.deleteWithNullProductUuid();
-
-        if (Objects.isNull(uuid))
-            throw ImageException.deleteWithNullUuid();
-
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.deleteWithNullProductObject();
-        }
-
-        Image entity;
-        try {
-            entity = this.get(productUuid, uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.deleteNullObject();
-        }
-
-        if (!entity.getProduct().getCreatorUuid().equals(creatorUuid.toString()))
-            throw ImageException.deleteNotOwned();
-
-        repository.delete(entity);
-    }
-
-    // DELETE a "Review Image"
-    public void delete(UUID creatorUuid, UUID productUuid, UUID reviewUuid, UUID uuid) throws AlphanahBaseException {
-        if (Objects.isNull(creatorUuid))
-            throw ImageException.deleteWithNullCreatorUuid();
-
-        if (Objects.isNull(productUuid))
-            throw ImageException.deleteWithNullProductUuid();
-
-        if (Objects.isNull(reviewUuid))
-            throw ImageException.deleteWithNullReviewUuid();
-
-        if (Objects.isNull(uuid))
-            throw ImageException.deleteWithNullUuid();
-
-        Image entity;
-        try {
-            entity = this.get(productUuid, reviewUuid, uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.deleteNullObject();
-        }
-
-        if (!entity.getReview().getCreatorUuid().equals(creatorUuid.toString()))
-            throw ImageException.deleteNotOwned();
-
-        repository.delete(entity);
-    }
-
-    // GET a Specific "Product Image" of Image UUID
-    // Use for DELETE "Product Image"
-    private Image get(UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        if (Objects.isNull(productUuid))
-            throw ImageException.getWithNullProductUuid();
-
-        if (Objects.isNull(uuid))
-            throw ImageException.getWithNullUuid();
-
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.getWithNullProductObject();
-        }
-
-        Optional<Image> optional = repository.findById(uuid.toString());
+        Optional<Image> optional = repository.findById(imageUuid);
         if (optional.isEmpty())
-            throw ImageException.getNullObject();
+            throw ImageException.notFound();
 
         Image image = optional.get();
         if (!image.getProduct().getUuid().equals(product.getUuid()))
-            throw ImageException.getWithInvalidProductUuid();
+            throw ImageException.cannotFindWithInvalidProductUuid();
 
         return image;
     }
 
-    // GET a Specific "Review Image" of Image UUID
-    // Use for DELETE "Review Image"
-    private Image get(UUID productUuid, UUID reviewUuid, UUID uuid) throws AlphanahBaseException {
+    private Image findReviewImage(UUID productUuid, UUID reviewUuid, UUID imageUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ImageException.getWithNullProductUuid();
+            throw ImageException.cannotFindWithNullProductUuid();
 
         if (Objects.isNull(reviewUuid))
-            throw ImageException.getWithNullReviewUuid();
+            throw ImageException.cannotFindWithNullReviewUuid();
 
-        if (Objects.isNull(uuid))
-            throw ImageException.getWithNullUuid();
+        if (Objects.isNull(imageUuid))
+            throw ImageException.cannotFindWithNullImageUuid();
 
-        Review review;
-        try {
-            review = reviewService.get(productUuid, reviewUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ImageException.getWithNullReviewObject();
-        }
+        Review review = reviewService.findReview(productUuid, reviewUuid);
 
-        Optional<Image> optional = repository.findById(uuid.toString());
+        Optional<Image> optional = repository.findById(imageUuid);
         if (optional.isEmpty())
-            throw ImageException.getNullObject();
+            throw ImageException.notFound();
 
         Image image = optional.get();
         if (!image.getReview().getUuid().equals(review.getUuid()))
-            throw ImageException.getWithInvalidReviewUuid();
+            throw ImageException.cannotFindWithInvalidReviewUuid();
 
         return image;
+    }
+
+    public Image createProductImage(UUID creatorUuid, UUID productUuid, String imagePath) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw ImageException.cannotCreateWithNullCreatorUuid();
+
+        if (Objects.isNull(productUuid))
+            throw ImageException.cannotCreateWithNullProductUuid();
+
+        if (Objects.isNull(imagePath))
+            throw ImageException.cannotCreateWithNullImagePath();
+
+        if (imagePath.isEmpty())
+            throw ImageException.cannotCreateWithEmptyImagePath();
+
+        if (imagePath.length() > Env.IMAGE_PATH_MAX_LENGTH)
+            throw ImageException.cannotCreateWithImagePathExceedMaxLength();
+
+        Product product = productService.findProduct(productUuid);
+        if (!product.getCreatorUuid().equals(creatorUuid))
+            throw ImageException.cannotCreateNotOwned();
+
+        Image entity = new Image();
+        entity.setProduct(product);
+        entity.setPath(imagePath);
+        return repository.save(entity);
+    }
+
+    public Image createReviewImage(UUID creatorUuid, UUID productUuid, UUID reviewUuid, String imagePath) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw ImageException.cannotCreateWithNullCreatorUuid();
+
+        if (Objects.isNull(productUuid))
+            throw ImageException.cannotCreateWithNullProductUuid();
+
+        if (Objects.isNull(reviewUuid))
+            throw ImageException.cannotCreateWithNullReviewUuid();
+
+        if (Objects.isNull(imagePath))
+            throw ImageException.cannotCreateWithNullImagePath();
+
+        if (imagePath.isEmpty())
+            throw ImageException.cannotCreateWithEmptyImagePath();
+
+        if (imagePath.length() > Env.IMAGE_PATH_MAX_LENGTH)
+            throw ImageException.cannotCreateWithImagePathExceedMaxLength();
+
+        Review review = reviewService.findReview(productUuid, reviewUuid);
+        if (!review.getCreatorUuid().equals(creatorUuid))
+            throw ImageException.cannotCreateNotOwned();
+
+        Image entity = new Image();
+        entity.setReview(review);
+        entity.setPath(imagePath);
+        return repository.save(entity);
+    }
+
+    public void deleteProductImage(UUID creatorUuid, UUID productUuid, UUID imageUuid) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw ImageException.cannotDeleteWithNullCreatorUuid();
+
+        if (Objects.isNull(productUuid))
+            throw ImageException.cannotDeleteWithNullProductUuid();
+
+        if (Objects.isNull(imageUuid))
+            throw ImageException.cannotDeleteWithNullImageUuid();
+
+        Image entity = this.findProductImage(productUuid, imageUuid);
+        if (!entity.getProduct().getCreatorUuid().equals(creatorUuid))
+            throw ImageException.cannotDeleteNotOwned();
+
+        repository.delete(entity);
+    }
+
+    public void deleteReviewImage(UUID creatorUuid, UUID productUuid, UUID reviewUuid, UUID imageUuid) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw ImageException.cannotDeleteWithNullCreatorUuid();
+
+        if (Objects.isNull(productUuid))
+            throw ImageException.cannotDeleteWithNullProductUuid();
+
+        if (Objects.isNull(reviewUuid))
+            throw ImageException.cannotDeleteWithNullReviewUuid();
+
+        if (Objects.isNull(imageUuid))
+            throw ImageException.cannotDeleteWithNullImageUuid();
+
+        Image entity = this.findReviewImage(productUuid, reviewUuid, imageUuid);
+        if (!entity.getReview().getCreatorUuid().equals(creatorUuid))
+            throw ImageException.cannotDeleteNotOwned();
+
+        repository.delete(entity);
     }
 
 }

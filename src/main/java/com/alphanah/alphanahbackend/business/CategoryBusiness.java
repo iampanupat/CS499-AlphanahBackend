@@ -20,24 +20,21 @@ public class CategoryBusiness {
     @Autowired
     private CategoryService service;
 
-    @Autowired
-    private AccountUtils accountUtils;
-
     public List<CategoryResponseM3> getAllCategories() throws AlphanahBaseException {
         List<CategoryResponseM3> responses = new ArrayList<>();
-        List<Category> categories = service.getAll();
+        List<Category> categories = service.findAllCategories();
         for (Category category: categories)
             responses.add(category.toCategoryResponseM3(null));
         return responses;
     }
 
     public CategoryResponseM3 getCategory(UUID uuid) throws AlphanahBaseException {
-        Category response = service.get(uuid);
+        Category response = service.findCategory(uuid);
         return response.toCategoryResponseM3(null);
     }
 
     public CategoryResponseM2 createCategory(UUID parentUuid, CategoryRequest request) throws AlphanahBaseException {
-        Category response = service.create(parentUuid, request.getName());
+        Category response = service.createCategory(parentUuid, request.getName());
         return response.toCategoryResponseM2(null);
     }
 

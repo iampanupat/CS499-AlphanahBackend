@@ -5,8 +5,9 @@ import com.alphanah.alphanahbackend.entity.ProductOption;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface ProductOptionRepository extends CrudRepository<ProductOption, String> {
+public interface ProductOptionRepository extends CrudRepository<ProductOption, UUID> {
 
     List<ProductOption> findAllByProduct(Product product);
 

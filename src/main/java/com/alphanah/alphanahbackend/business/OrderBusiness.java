@@ -40,14 +40,14 @@ public class OrderBusiness {
     }
 
     public CartResponseM2 getCartOrder(UUID accountUuid) throws AlphanahBaseException, InterruptedException {
-        Order response = service.getOrCreateCart(accountUuid);
+        Order response = service.findOrCreateCart(accountUuid);
         return response.toCartResponseM2(null);
     }
 
     public List<PaidResponseM2> getAllPaidOrders(UUID accountUuid) throws AlphanahBaseException {
         List<PaidResponseM2> responses = new ArrayList<>();
 
-        List<Order> paidOrders = service.getAllPaidOrders(accountUuid);
+        List<Order> paidOrders = service.findAllPaidOrders(accountUuid);
         Collections.sort(paidOrders);
         for (Order paidOrder: paidOrders)
             responses.add(paidOrder.toPaidResponseM2(null));
@@ -64,11 +64,11 @@ public class OrderBusiness {
         try {
             Account account = AccountUtils.findAccount(accountUuid);
             if (account.getCartUuid() == null)
-                throw OrderException.updateWithNullCartUuid();
+                throw OrderException.cannotUpdateWithNullCartUuid();
 
-            Order cart = service.getOrCreateCart(accountUuid);
+            Order cart = service.findOrCreateCart(accountUuid);
             if (cart.getOrderItems().size() == 0)
-                throw OrderException.updateWithEmptyCart();
+                throw OrderException.cannotUpdateWithEmptyCart();
 
             RequestOptions requestOptions = RequestOptions.builder()
                     .setApiKey(stripeApiKey)

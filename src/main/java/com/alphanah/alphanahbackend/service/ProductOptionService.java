@@ -6,6 +6,7 @@ import com.alphanah.alphanahbackend.entity.ProductOption;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.ProductOptionException;
 import com.alphanah.alphanahbackend.repository.ProductOptionRepository;
+import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,85 +24,70 @@ public class ProductOptionService {
     @Autowired
     private ProductService productService;
 
-    private final int PRODUCT_OPTION_NAME_MAX_LENGTH = 120;
-    private final double PRODUCT_OPTION_PRICE_MAX_VALUE = 1000000;
-    private final int PRODUCT_OPTION_QUANTITY_MAX_VALUE = 1000000;
-
-    public List<ProductOption> getAll(UUID productUuid) throws AlphanahBaseException {
+    public List<ProductOption> findAllProductOptions(UUID productUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ProductOptionException.getAllWithNullProductUuid();
+            throw ProductOptionException.cannotFindWithNullProductUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductOptionException.getNullProductObject();
-        }
-
+        Product product = productService.findProduct(productUuid);
         return repository.findAllByProduct(product);
     }
 
-    public ProductOption get(UUID productUuid, UUID uuid) throws AlphanahBaseException {
+    public ProductOption findProductOption(UUID productUuid, UUID productOptionUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ProductOptionException.getWithNullProductUuid();
+            throw ProductOptionException.cannotFindWithNullProductUuid();
 
-        if (Objects.isNull(uuid))
-            throw ProductOptionException.getWithNullUuid();
+        if (Objects.isNull(productOptionUuid))
+            throw ProductOptionException.cannotFindWithNullProductOptionUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductOptionException.getWithNullProductObject();
-        }
-
-        Optional<ProductOption> optional = repository.findById(uuid.toString());
+        Product product = productService.findProduct(productUuid);
+        Optional<ProductOption> optional = repository.findById(productOptionUuid);
         if (optional.isEmpty())
-            throw ProductOptionException.getNullObject();
+            throw ProductOptionException.notFound();
 
-        if (!optional.get().getProduct().getUuid().equals(product.getUuid()))
-            throw ProductOptionException.getWithInvalidRootProductUuid();
+        ProductOption option = optional.get();
+        if (!option.getProduct().getUuid().equals(product.getUuid()))
+            throw ProductOptionException.notFound();
 
-        return optional.get();
+        return option;
     }
 
-    public ProductOption create(UUID creatorUuid, UUID productUuid, String name, double price, int quantity) throws AlphanahBaseException {
+    public ProductOption createProductOption(UUID creatorUuid, UUID productUuid, String name, Double price, Integer quantity) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ProductOptionException.createWithNullCreatorUuid();
+            throw ProductOptionException.cannotCreateWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ProductOptionException.createWithNullProductUuid();
+            throw ProductOptionException.cannotCreateWithNullProductUuid();
 
         if (Objects.isNull(name))
-            throw ProductOptionException.createWithNullName();
+            throw ProductOptionException.cannotCreateWithNullName();
+
+        if (Objects.isNull(price))
+            throw ProductOptionException.cannotCreateWithNullPrice();
+
+        if (Objects.isNull(quantity))
+            throw ProductOptionException.cannotCreateWithNullQuantity();
 
         if (name.isEmpty())
-            throw ProductOptionException.createWithEmptyName();
+            throw ProductOptionException.cannotCreateWithEmptyName();
 
-        if (price < 0)
-            throw ProductOptionException.createWithNegativePrice();
+        if (price <= 0)
+            throw ProductOptionException.cannotCreateWithNegativeOrZeroPrice();
 
-        if (quantity < 0)
-            throw ProductOptionException.createWithNegativeQuantity();
+        if (quantity <= 0)
+            throw ProductOptionException.cannotCreateWithNegativeOrZeroQuantity();
 
-        if (name.length() > PRODUCT_OPTION_NAME_MAX_LENGTH)
-            throw ProductOptionException.createWithMaxLengthName();
+        if (name.length() > Env.PRODUCT_NAME_MAX_LENGTH)
+            throw ProductOptionException.cannotCreateWithNameExceedMaxLength();
 
-        if (price > PRODUCT_OPTION_PRICE_MAX_VALUE)
-            throw ProductOptionException.createWithMaxValuePrice();
+        if (price > Env.PRODUCT_PRICE_MAX_VALUE)
+            throw ProductOptionException.cannotCreateWithPriceExceedMaxValue();
 
-        if (quantity > PRODUCT_OPTION_QUANTITY_MAX_VALUE)
-            throw ProductOptionException.createWithMaxValueQuantity();
+        if (quantity > Env.PRODUCT_QUANTITY_MAX_VALUE)
+            throw ProductOptionException.cannotCreateWithQuantityExceedMaxValue();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductOptionException.createWithNullProductObject();
-        }
-
-        if (!product.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ProductOptionException.createNotOwned();
+        Product product = productService.findProduct(productUuid);
+        if (!product.getCreatorUuid().equals(creatorUuid))
+            throw ProductOptionException.cannotCreateNotOwned();
 
         ProductOption entity = new ProductOption();
         entity.setProduct(product);
@@ -111,53 +97,47 @@ public class ProductOptionService {
         return repository.save(entity);
     }
 
-    public ProductOption update(UUID creatorUuid, UUID productUuid, UUID uuid, String name, double price, int quantity) throws AlphanahBaseException {
+    public ProductOption updateProductOption(UUID creatorUuid, UUID productUuid, UUID productOptionUuid, String name, Double price, Integer quantity) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ProductOptionException.updateWithNullCreatorUuid();
+            throw ProductOptionException.cannotUpdateWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ProductOptionException.updateWithNullProductUuid();
+            throw ProductOptionException.cannotUpdateWithNullProductUuid();
 
-        if (Objects.isNull(uuid))
-            throw ProductOptionException.updateWithNullUuid();
+        if (Objects.isNull(productOptionUuid))
+            throw ProductOptionException.cannotUpdateWithNullProductOptionUuid();
 
         if (Objects.isNull(name))
-            throw ProductOptionException.updateWithNullName();
+            throw ProductOptionException.cannotUpdateWithNullName();
+
+        if (Objects.isNull(price))
+            throw ProductOptionException.cannotUpdateWithNullPrice();
+
+        if (Objects.isNull(quantity))
+            throw ProductOptionException.cannotUpdateWithNullQuantity();
 
         if (name.isEmpty())
-            throw ProductOptionException.updateWithEmptyName();
+            throw ProductOptionException.cannotUpdateWithEmptyName();
 
-        if (price < 0)
-            throw ProductOptionException.updateWithNegativePrice();
+        if (price <= 0)
+            throw ProductOptionException.cannotUpdateWithNegativeOrZeroPrice();
 
-        if (quantity < 0)
-            throw ProductOptionException.updateWithNegativeQuantity();
+        if (quantity <= 0)
+            throw ProductOptionException.cannotUpdateWithNegativeOrZeroQuantity();
 
-        if (name.length() > PRODUCT_OPTION_NAME_MAX_LENGTH)
-            throw ProductOptionException.updateWithMaxLengthName();
+        if (name.length() > Env.PRODUCT_NAME_MAX_LENGTH)
+            throw ProductOptionException.cannotUpdateWithNameExceedMaxLength();
 
-        if (price > PRODUCT_OPTION_PRICE_MAX_VALUE)
-            throw ProductOptionException.updateWithMaxValuePrice();
+        if (price > Env.PRODUCT_PRICE_MAX_VALUE)
+            throw ProductOptionException.cannotUpdateWithPriceExceedMaxValue();
 
-        if (quantity > PRODUCT_OPTION_QUANTITY_MAX_VALUE)
-            throw ProductOptionException.updateWithMaxValueQuantity();
+        if (quantity > Env.PRODUCT_QUANTITY_MAX_VALUE)
+            throw ProductOptionException.cannotUpdateWithQuantityExceedMaxValue();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductOptionException.updateWithNullProductObject();
-        }
-
-        ProductOption entity;
-        try {
-            entity = this.get(productUuid, uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductOptionException.updateNullObject();
-        }
-
-        if (!product.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ProductOptionException.updateNotOwned();
+        Product product = productService.findProduct(productUuid);
+        ProductOption entity = this.findProductOption(productUuid, productOptionUuid);
+        if (!product.getCreatorUuid().equals(creatorUuid))
+            throw ProductOptionException.cannotUpdateNotOwned();
 
         entity.setName(name);
         entity.setPrice(price);
@@ -165,32 +145,20 @@ public class ProductOptionService {
         return repository.save(entity);
     }
 
-    public void delete(UUID creatorUUID, UUID productUuid, UUID uuid) throws AlphanahBaseException {
+    public void deleteProductOption(UUID creatorUUID, UUID productUuid, UUID productOptionUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUUID))
-            throw ProductOptionException.deleteWithNullCreatorUuid();
+            throw ProductOptionException.cannotDeleteWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ProductOptionException.deleteWithNullProductUuid();
+            throw ProductOptionException.cannotDeleteWithNullProductUuid();
 
-        if (Objects.isNull(uuid))
-            throw ProductOptionException.deleteWithNullUuid();
+        if (Objects.isNull(productOptionUuid))
+            throw ProductOptionException.cannotDeleteWithNullProductOptionUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductOptionException.deleteWithNullProductObject();
-        }
-
-        ProductOption entity;
-        try {
-            entity = this.get(productUuid, uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductOptionException.deleteNullObject();
-        }
-
-        if (!product.getCreatorUuid().equals(creatorUUID.toString()))
-            throw ProductOptionException.deleteNotOwned();
+        Product product = productService.findProduct(productUuid);
+        ProductOption entity = this.findProductOption(productUuid, productOptionUuid);
+        if (!product.getCreatorUuid().equals(creatorUUID))
+            throw ProductOptionException.cannotDeleteNotOwned();
 
         repository.delete(entity);
     }

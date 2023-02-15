@@ -3,10 +3,9 @@ package com.alphanah.alphanahbackend.entity;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
 import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM2;
-import com.alphanah.alphanahbackend.utility.Environment;
+import com.alphanah.alphanahbackend.utility.Env;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -49,7 +48,7 @@ public class Account {
         response.setRole(this.getRole().toString());
         response.setFirstname(this.getFirstname());
         response.setLastname(this.getLastname());
-        response.setImage(Environment.IMAGE_SERVER_URL + this.getImage());
+        response.setImage(Env.IMAGE_SERVER_URL + this.getImage());
         response.setCreateDate(this.getCreateDate());
         return response;
     }

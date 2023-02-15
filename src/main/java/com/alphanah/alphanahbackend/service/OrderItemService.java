@@ -8,6 +8,7 @@ import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.OrderException;
 import com.alphanah.alphanahbackend.exception.OrderItemException;
 import com.alphanah.alphanahbackend.repository.OrderItemRepository;
+import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,52 +26,41 @@ public class OrderItemService {
     @Autowired
     private ProductOptionService optionService;
 
-    private final int ORDER_ITEM_QUANTITY_MAX_VALUE = 1000000;
-
-    public OrderItem createOrUpdateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, int quantity) throws AlphanahBaseException {
+    public OrderItem updateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw OrderItemException.createOrUpdateWithNullCreatorUuid();
+            throw OrderItemException.cannotUpdateWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw OrderItemException.createOrUpdateWithNullProductUuid();
+            throw OrderItemException.cannotUpdateWithNullProductUuid();
 
         if (Objects.isNull(optionUuid))
-            throw OrderItemException.createOrUpdateWithNullProductOptionUuid();
+            throw OrderItemException.cannotUpdateWithNullProductOptionUuid();
 
-        if (quantity < 0)
-            throw OrderItemException.createOrUpdateWithNegativeQuantity();
+        if (Objects.isNull(quantity))
+            throw OrderItemException.cannotUpdateWithNullQuantity();
 
-        if (quantity > ORDER_ITEM_QUANTITY_MAX_VALUE)
-            throw OrderItemException.createOrUpdateWithMaxValueQuantity();
+        if (quantity <= 0)
+            throw OrderItemException.cannotUpdateWithNegativeOrZeroQuantity();
 
-        Order cart;
-        try {
-            cart = orderService.getOrCreateCart(creatorUuid);
-        } catch (AlphanahBaseException exception) {
-            throw OrderItemException.createOrUpdateWithNullOrderObject();
-        }
+        if (quantity > Env.PRODUCT_QUANTITY_MAX_VALUE)
+            throw OrderItemException.cannotUpdateWithQuantityExceedMaxValue();
 
-        ProductOption option;
-        try {
-            option = optionService.get(productUuid, optionUuid);
-        } catch (AlphanahBaseException exception) {
-            throw OrderItemException.createOrUpdateWithNullProductOptionObject();
-        }
-
+        ProductOption option = optionService.findProductOption(productUuid, optionUuid);
         if (quantity > option.getQuantity())
-            throw OrderItemException.createOrUpdateWithOverStockQuantity();
+            throw OrderItemException.cannotUpdateWithQuantityExceedStock();
 
         OrderItem entity;
+        Order cart = orderService.findOrCreateCart(creatorUuid);
         if (!repository.existsByOrderAndProductOption(cart, option)) {
             entity = new OrderItem();
             entity.setPrice(-1.0);
             entity.setOrder(cart);
             entity.setProductOption(option);
-            entity.setDeliveryStatus(DeliveryStatus.CART_ITEM.toString());
+            entity.setDeliveryStatus(DeliveryStatus.CART_ITEM);
         } else {
             Optional<OrderItem> optional = repository.findByOrderAndProductOption(cart, option);
             if (optional.isEmpty())
-                throw OrderItemException.createOrUpdateWithNullOrderItemObject();
+                throw OrderItemException.notFound();
             entity = optional.get();
         }
         entity.setQuantity(quantity);
@@ -79,81 +69,75 @@ public class OrderItemService {
 
     public void deleteCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw OrderItemException.deleteWithNullCreatorUuid();
+            throw OrderItemException.cannotDeleteWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw OrderItemException.deleteWithNullProductUuid();
+            throw OrderItemException.cannotDeleteWithNullProductUuid();
 
         if (Objects.isNull(optionUuid))
-            throw OrderItemException.deleteWithNullProductOptionUuid();
+            throw OrderItemException.cannotDeleteWithNullProductOptionUuid();
 
-        Order cart;
-        try {
-            cart = orderService.getOrCreateCart(creatorUuid);
-        } catch (AlphanahBaseException exception) {
-            throw OrderItemException.deleteWithNullOrderObject();
-        }
-
-        ProductOption option;
-        try {
-            option = optionService.get(productUuid, optionUuid);
-        } catch (AlphanahBaseException exception) {
-            throw OrderItemException.deleteWithNullProductOptionObject();
-        }
+        Order cart = orderService.findOrCreateCart(creatorUuid);
+        ProductOption option = optionService.findProductOption(productUuid, optionUuid);
 
         Optional<OrderItem> optional = repository.findByOrderAndProductOption(cart, option);
         if (optional.isEmpty())
-            throw OrderItemException.deleteNullObject();
+            throw OrderItemException.notFound();
 
         OrderItem entity = optional.get();
         repository.delete(entity);
     }
 
-    public List<OrderItem> findAllPaidOrderItem(UUID productCreatorUuid) throws AlphanahBaseException {
-        if (Objects.isNull(productCreatorUuid))
-            throw OrderItemException.findAllPaidOrderItemWithNullProductCreatorUuid();
+    public List<OrderItem> findAllPaidOrderItem(UUID creatorUuid) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw OrderItemException.cannotFindWithNullCreatorUuid();
 
         List<OrderItem> saleOrderItemList = new ArrayList<>();
         List<OrderItem> orderItemList = (List<OrderItem>) repository.findAll();
         for (OrderItem saleOrderItem: orderItemList) {
-            if (productCreatorUuid.equals(UUID.fromString(saleOrderItem.getProductOption().getProduct().getCreatorUuid())))
-                saleOrderItemList.add(saleOrderItem);
+            if (!saleOrderItem.getOrder().isPaid())
+                continue;
+            if (!creatorUuid.equals(saleOrderItem.getProductOption().getProduct().getCreatorUuid()))
+                continue;
+            saleOrderItemList.add(saleOrderItem);
         }
-
         Collections.sort(saleOrderItemList);
         return saleOrderItemList;
     }
 
-    public OrderItem findPaidOrderItem(UUID productCreatorUuid, UUID orderItemUuid) throws AlphanahBaseException {
-        if (Objects.isNull(productCreatorUuid))
-            throw OrderItemException.findPaidOrderItemWithNullProductCreatorUuid();
+    public OrderItem findPaidOrderItem(UUID creatorUuid, UUID orderItemUuid) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw OrderItemException.cannotFindWithNullCreatorUuid();
 
         if (Objects.isNull(orderItemUuid))
-            throw OrderItemException.findPaidOrderItemWithNullOrderItemUuid();
+            throw OrderItemException.cannotFindWithNullOrderItemUuid();
 
-        Optional<OrderItem> optional = repository.findById(orderItemUuid.toString());
+        Optional<OrderItem> optional = repository.findById(orderItemUuid);
         if (optional.isEmpty())
-            throw OrderItemException.findNullOrderItemObject();
+            throw OrderItemException.notFound();
 
         OrderItem orderItem = optional.get();
-        if (!productCreatorUuid.equals(UUID.fromString(orderItem.getProductOption().getProduct().getCreatorUuid())))
-            throw OrderItemException.findNotOwned();
+        if (!orderItem.getOrder().isPaid())
+            throw OrderItemException.notFound();
+
+        if (!creatorUuid.equals(orderItem.getProductOption().getProduct().getCreatorUuid()))
+            throw OrderItemException.notFound();
 
         return orderItem;
     }
 
-    public OrderItem updateDeliveryStatus(UUID productCreatorUuid, UUID orderItemUuid) throws AlphanahBaseException {
-        if (Objects.isNull(productCreatorUuid))
-            throw OrderItemException.updatePaidOrderItemWithNullProductCreatorUuid();
+    public OrderItem updateDeliveryStatus(UUID creatorUuid, UUID orderItemUuid) throws AlphanahBaseException {
+        if (Objects.isNull(creatorUuid))
+            throw OrderItemException.cannotUpdateWithNullCreatorUuid();
 
         if (Objects.isNull(orderItemUuid))
-            throw OrderItemException.updatePaidOrderItemWithNullOrderItemUuid();
+            throw OrderItemException.cannotUpdateWithNullOrderItemUuid();
 
-        OrderItem entity = this.findPaidOrderItem(productCreatorUuid, orderItemUuid);
-        DeliveryStatus status = DeliveryStatus.valueOf(entity.getDeliveryStatus());
+        OrderItem entity = this.findPaidOrderItem(creatorUuid, orderItemUuid);
+        DeliveryStatus status = entity.getDeliveryStatus();
         switch (status) {
-            case PENDING -> entity.setDeliveryStatus(DeliveryStatus.SHIPPED.toString());
-            case SHIPPED -> entity.setDeliveryStatus(DeliveryStatus.DELIVERED.toString());
+            case PENDING -> entity.setDeliveryStatus(DeliveryStatus.SHIPPED);
+            case SHIPPED -> entity.setDeliveryStatus(DeliveryStatus.DELIVERED);
         }
 
         return repository.save(entity);

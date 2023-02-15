@@ -4,6 +4,7 @@ import com.alphanah.alphanahbackend.entity.Product;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.ProductException;
 import com.alphanah.alphanahbackend.repository.ProductRepository;
+import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,109 +16,96 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
-    private final int PRODUCT_NAME_MAX_LENGTH = 120;
-    private final int PRODUCT_DESCRIPTION_MAX_LENGTH = 255;
-
-    public List<Product> getAll() {
+    public List<Product> findAllProducts() {
         return (List<Product>) repository.findAll();
     }
 
-    public Product get(UUID uuid) throws AlphanahBaseException {
-        if (Objects.isNull(uuid))
-            throw ProductException.getWithNullUuid();
+    public Product findProduct(UUID productUuid) throws AlphanahBaseException {
+        if (Objects.isNull(productUuid))
+            throw ProductException.cannotFindWithNullProductUuid();
 
-        Optional<Product> optional = repository.findById(uuid.toString());
+        Optional<Product> optional = repository.findById(productUuid);
         if (optional.isEmpty())
-            throw ProductException.getNullObject();
+            throw ProductException.notFound();
 
         return optional.get();
     }
 
-    public Product create(UUID creatorUuid, String name, String description) throws AlphanahBaseException {
+    public Product createProduct(UUID creatorUuid, String name, String description) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ProductException.createWithNullCreatorUuid();
+            throw ProductException.cannotCreateWithNullCreatorUuid();
 
         if (Objects.isNull(name))
-            throw ProductException.createWithNullName();
+            throw ProductException.cannotCreateWithNullName();
 
         if (Objects.isNull(description))
-            throw ProductException.createWithNullDescription();
+            throw ProductException.cannotCreateWithNullDescription();
 
         if (name.isEmpty())
-            throw ProductException.createWithEmptyName();
+            throw ProductException.cannotCreateWithEmptyName();
 
         if (description.isEmpty())
-            throw ProductException.createWithEmptyDescription();
+            throw ProductException.cannotCreateWithEmptyDescription();
 
-        if (name.length() > PRODUCT_NAME_MAX_LENGTH)
-            throw ProductException.createWithMaxLengthName();
+        if (name.length() > Env.PRODUCT_NAME_MAX_LENGTH)
+            throw ProductException.cannotCreateWithNameExceedMaxLength();
 
-        if (description.length() > PRODUCT_DESCRIPTION_MAX_LENGTH)
-            throw ProductException.createWithMaxLengthDescription();
+        if (description.length() > Env.PRODUCT_DESCRIPTION_MAX_LENGTH)
+            throw ProductException.cannotCreateWithDescriptionExceedMaxLength();
 
         Product entity = new Product();
-        entity.setCreatorUuid(creatorUuid.toString());
+        entity.setCreatorUuid(creatorUuid);
         entity.setName(name);
         entity.setDescription(description);
         return repository.save(entity);
     }
 
-    public Product update(UUID creatorUuid, UUID uuid, String name, String description) throws AlphanahBaseException {
+    public Product updateProduct(UUID creatorUuid, UUID productUuid, String name, String description) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ProductException.updateWithNullCreatorUuid();
+            throw ProductException.cannotUpdateWithNullCreatorUuid();
 
-        if (Objects.isNull(uuid))
-            throw ProductException.updateWithNullUuid();
+        if (Objects.isNull(productUuid))
+            throw ProductException.cannotUpdateWithNullProductUuid();
 
         if (Objects.isNull(name))
-            throw ProductException.updateWithNullName();
+            throw ProductException.cannotUpdateWithNullName();
 
         if (Objects.isNull(description))
-            throw ProductException.updateWithNullDescription();
+            throw ProductException.cannotUpdateWithNullDescription();
 
         if (name.isEmpty())
-            throw ProductException.updateWithEmptyName();
+            throw ProductException.cannotUpdateWithEmptyName();
 
         if (description.isEmpty())
-            throw ProductException.updateWithEmptyDescription();
+            throw ProductException.cannotUpdateWithEmptyDescription();
 
-        if (name.length() > PRODUCT_NAME_MAX_LENGTH)
-            throw ProductException.updateWithMaxLengthName();
+        if (name.length() > Env.PRODUCT_NAME_MAX_LENGTH)
+            throw ProductException.cannotUpdateWithNameExceedMaxLength();
 
-        if (description.length() > PRODUCT_DESCRIPTION_MAX_LENGTH)
-            throw ProductException.updateWithMaxLengthDescription();
+        if (description.length() > Env.PRODUCT_DESCRIPTION_MAX_LENGTH)
+            throw ProductException.cannotUpdateWithDescriptionExceedMaxLength();
 
-        Product entity;
-        try {
-            entity = this.get(uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductException.updateNullObject();
-        }
+        Product entity = this.findProduct(productUuid);
 
-        if (!entity.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ProductException.updateNotOwned();
+        if (!entity.getCreatorUuid().equals(creatorUuid))
+            throw ProductException.cannotUpdateNotOwned();
 
         entity.setName(name);
         entity.setDescription(description);
         return repository.save(entity);
     }
 
-    public void delete(UUID creatorUuid, UUID uuid) throws AlphanahBaseException {
+    public void deleteProduct(UUID creatorUuid, UUID productUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ProductException.deleteWithNullCreatorUuid();
+            throw ProductException.cannotDeleteWithNullCreatorUuid();
 
-        if (Objects.isNull(uuid))
-            throw ProductException.deleteWithNullUuid();
+        if (Objects.isNull(productUuid))
+            throw ProductException.cannotDeleteWithNullProductUuid();
 
-        Product entity;
-        try {
-            entity = this.get(uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductException.deleteNullObject();
-        }
+        Product entity = this.findProduct(productUuid);
 
-        if (!entity.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ProductException.deleteNotOwned();
+        if (!entity.getCreatorUuid().equals(creatorUuid))
+            throw ProductException.cannotDeleteNotOwned();
 
         repository.delete(entity);
     }

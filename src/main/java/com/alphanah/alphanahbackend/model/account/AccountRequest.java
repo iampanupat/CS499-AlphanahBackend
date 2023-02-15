@@ -1,10 +1,9 @@
 package com.alphanah.alphanahbackend.model.account;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class UpdateAccountRequest {
+public class AccountRequest {
     private String firstname;
     private String lastname;
     private String address;

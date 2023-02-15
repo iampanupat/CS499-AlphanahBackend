@@ -50,7 +50,7 @@ public class Order implements Comparable<Order> {
     @Column(name = "order_recipient_address")
     private String recipientAddress;
 
-    @OneToMany(mappedBy = "order", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @OneToOne
@@ -74,16 +74,16 @@ public class Order implements Comparable<Order> {
         return priceDiscount || deliveryFeeDiscount;
     }
 
-    private Set<String> merchantUuidSet() {
-        Set<String> merchantUuidSet = new HashSet<>();
+    private Set<UUID> merchantUuidSet() {
+        Set<UUID> merchantUuidSet = new HashSet<>();
         for (OrderItem orderItem: orderItems)
             merchantUuidSet.add(orderItem.getProductOption().getProduct().getCreatorUuid());
         return merchantUuidSet;
     }
 
-    private Map<String, Double> merchantTotalPriceMap() {
-        Map<String, Double> totalPriceMap = new HashMap<>();
-        String merchantUuid;
+    private Map<UUID, Double> merchantTotalPriceMap() {
+        Map<UUID, Double> totalPriceMap = new HashMap<>();
+        UUID merchantUuid;
         double totalPrice;
         for (OrderItem orderItem: orderItems) {
             merchantUuid = orderItem.getProductOption().getProduct().getCreatorUuid();
@@ -103,11 +103,11 @@ public class Order implements Comparable<Order> {
 
     public double calculateTotalPriceWithCoupon() {
         double finalPrice = 0;
-        Set<String> merchantUuidSet = this.merchantUuidSet();
-        Map<String, Double> totalPriceMap = this.merchantTotalPriceMap();
-        for (String merchantUuid: merchantUuidSet) {
+        Set<UUID> merchantUuidSet = this.merchantUuidSet();
+        Map<UUID, Double> totalPriceMap = this.merchantTotalPriceMap();
+        for (UUID merchantUuid: merchantUuidSet) {
             double rawTotalPrice = totalPriceMap.getOrDefault(merchantUuid, 0.0);
-            if (!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(UUID.fromString(merchantUuid)) && !coupon.isUsed())
+            if (!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isUsed())
                 switch (coupon.getType()) {
                     case GIFT_CARD -> finalPrice += rawTotalPrice <= coupon.getValue() ? 0 : rawTotalPrice - coupon.getValue();
                     case PERCENTAGE_DISCOUNT -> finalPrice += rawTotalPrice * (100 - coupon.getValue()) / 100;
@@ -121,19 +121,19 @@ public class Order implements Comparable<Order> {
 
     public double calculateRawDeliveryFee() {
         double finalPrice = 0;
-        Set<String> merchantUuidSet = merchantUuidSet();
-        Map<String, Double> totalPriceMap = merchantTotalPriceMap();
-        for (String merchantUuid: merchantUuidSet)
+        Set<UUID> merchantUuidSet = merchantUuidSet();
+        Map<UUID, Double> totalPriceMap = merchantTotalPriceMap();
+        for (UUID merchantUuid: merchantUuidSet)
             finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) < 1000 ? 50 : totalPriceMap.get(merchantUuid);
         return finalPrice;
     }
 
     public double calculateDeliveryFeeWithCoupon() {
         double finalPrice = 0;
-        Set<String> merchantUuidSet = merchantUuidSet();
-        Map<String, Double> totalPriceMap = merchantTotalPriceMap();
-        for (String merchantUuid: merchantUuidSet)
-            if (!(!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(UUID.fromString(merchantUuid)) && !coupon.isUsed() && coupon.getType().equals(CouponType.FREE_SHIPPING)))
+        Set<UUID> merchantUuidSet = merchantUuidSet();
+        Map<UUID, Double> totalPriceMap = merchantTotalPriceMap();
+        for (UUID merchantUuid: merchantUuidSet)
+            if (!(!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isUsed() && coupon.getType().equals(CouponType.FREE_SHIPPING)))
                 finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) < 1000 ? 50 : totalPriceMap.get(merchantUuid) * 0.05;
         return finalPrice;
     }

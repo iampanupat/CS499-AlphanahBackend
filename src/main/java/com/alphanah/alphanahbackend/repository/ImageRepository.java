@@ -6,8 +6,9 @@ import com.alphanah.alphanahbackend.entity.Review;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface ImageRepository extends CrudRepository<Image, String> {
+public interface ImageRepository extends CrudRepository<Image, UUID> {
 
     List<Image> findAllByProduct(Product product);
 

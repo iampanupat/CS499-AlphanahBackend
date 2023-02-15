@@ -7,11 +7,16 @@ import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "product_options")
-public class ProductOption extends BaseEntity {
+public class ProductOption {
+
+    @Id
+    @Column(name = "product_option_uuid", nullable = false, updatable = false)
+    @GeneratedValue
+    private UUID uuid;
 
     @Column(name = "product_option_name", nullable = false, length = 120)
     private String name;
@@ -23,17 +28,17 @@ public class ProductOption extends BaseEntity {
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "product_uuid", nullable = false)
+    @JoinColumn(name = "product_uuid", nullable = false, updatable = false)
     private Product product;
 
-    @OneToMany(mappedBy = "productOption", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productOption", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public ProductOptionResponseM1 toProductOptionResponseM1(ProductOptionResponseM1 response) {
         if (response == null)
             response = new ProductOptionResponseM1();
 
-        response.setOptionUUID(this.getUuid());
+        response.setOptionUUID(this.getUuid().toString());
         response.setName(this.getName());
         response.setPrice(this.getPrice().toString());
         response.setQuantity(this.getQuantity().toString());

@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class CartItemResponseM1 {
-    private String orderItemUuid;
     private String quantity;
 }

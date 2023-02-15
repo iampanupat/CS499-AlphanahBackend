@@ -12,13 +12,18 @@ import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "categories")
-public class Category extends BaseEntity {
+public class Category {
 
-    @Column(name = "category_name", nullable = false, length = 120)
+    @Id
+    @Column(name = "category_uuid", nullable = false, updatable = false)
+    @GeneratedValue
+    private UUID uuid;
+
+    @Column(name = "category_name", nullable = false, updatable = false, length = 120)
     private String name;
 
     @OneToMany(mappedBy = "category", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -62,7 +67,7 @@ public class Category extends BaseEntity {
         if (response == null)
             response = new CategoryResponseM1();
 
-        response.setCategoryUUID(this.getUuid());
+        response.setCategoryUUID(this.getUuid().toString());
         response.setName(this.getName());
         return response;
     }
@@ -96,7 +101,7 @@ public class Category extends BaseEntity {
 
         List<ProductResponseM2> products = new ArrayList<>();
         for (ProductCategory productCategory: productCategoryList) {
-            ProductResponseM2 productResponse = productCategory.toProductResponseM2(null);
+            ProductResponseM2 productResponse = productCategory.getProduct().toProductResponseM2();
             if (products.contains(productResponse))
                 continue;
             products.add(productResponse);

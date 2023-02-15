@@ -5,8 +5,7 @@ import com.alphanah.alphanahbackend.entity.Review;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.ReviewException;
 import com.alphanah.alphanahbackend.repository.ReviewRepository;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,145 +20,121 @@ public class ReviewService {
     @Autowired
     private ProductService productService;
 
-    private final int REVIEW_MESSAGE_MAX_LENGTH = 255;
-    private final int REVIEW_RATING_MAX_VALUE = 5;
-    private final int REVIEW_RATING_MIN_VALUE = 1;
-
-    public List<Review> getAll(UUID productUuid) throws AlphanahBaseException {
+    public List<Review> findAllReviews(UUID productUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ReviewException.getAllWithNullProductUuid();
+            throw ReviewException.cannotFindWithNullProductUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ReviewException.getNullProductObject();
-        }
-
+        Product product = productService.findProduct(productUuid);
         return repository.findAllByProduct(product);
     }
 
-    public Review get(UUID productUuid, UUID uuid) throws AlphanahBaseException {
+    public Review findReview(UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
         if (Objects.isNull(productUuid))
-            throw ReviewException.getWithNullProductUuid();
+            throw ReviewException.cannotFindWithNullProductUuid();
 
-        if (Objects.isNull(uuid))
-            throw ReviewException.getWithNullUuid();
+        if (Objects.isNull(reviewUuid))
+            throw ReviewException.cannotFindWithNullReviewUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ReviewException.getWithNullProductObject();
-        }
+        Product product = productService.findProduct(productUuid);
 
-        Optional<Review> optional = repository.findById(uuid.toString());
+        Optional<Review> optional = repository.findById(reviewUuid);
         if (optional.isEmpty())
-            throw ReviewException.getNullObject();
+            throw ReviewException.notFound();
 
         if (!optional.get().getProduct().getUuid().equals(product.getUuid()))
-            throw ReviewException.getWithInvalidProductUuid();
+            throw ReviewException.cannotFindWithInvalidProductUuid();
 
         return optional.get();
     }
 
-    public Review create(UUID creatorUuid, UUID productUuid, String message, int rating) throws AlphanahBaseException {
+    public Review createReview(UUID creatorUuid, UUID productUuid, String message, Integer rating) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ReviewException.createWithNullCreatorUuid();
+            throw ReviewException.cannotCreateWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ReviewException.createWithNullProductUuid();
+            throw ReviewException.cannotCreateWithNullProductUuid();
 
         if (Objects.isNull(message))
-            throw ReviewException.createWithNullMessage();
+            throw ReviewException.cannotCreateWithNullMessage();
+
+        if (Objects.isNull(rating))
+            throw ReviewException.cannotCreateWithNullRating();
 
         if (message.isEmpty())
-            throw ReviewException.createWithEmptyMessage();
+            throw ReviewException.cannotCreateWithEmptyMessage();
 
-        if (rating < REVIEW_RATING_MIN_VALUE)
-            throw ReviewException.createWithNegativeRating();
+        if (rating < Env.REVIEW_RATING_MIN_VALUE)
+            throw ReviewException.cannotCreateWithRatingLessMinValue();
 
-        if (message.length() > REVIEW_MESSAGE_MAX_LENGTH)
-            throw ReviewException.createWithMaxLengthMessage();
+        if (message.length() > Env.REVIEW_MESSAGE_MAX_LENGTH)
+            throw ReviewException.cannotCreateWithMessageExceedMaxLength();
 
-        if (rating > REVIEW_RATING_MAX_VALUE)
-            throw ReviewException.createWithMaxValueRating();
+        if (rating > Env.REVIEW_RATING_MAX_VALUE)
+            throw ReviewException.cannotCreateWithRatingExceedMaxValue();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ReviewException.createWithNullProductObject();
-        }
+        Product product = productService.findProduct(productUuid);
 
         Review entity = new Review();
-        entity.setCreatorUuid(creatorUuid.toString());
+        entity.setCreatorUuid(creatorUuid);
         entity.setProduct(product);
         entity.setMessage(message);
         entity.setRating(rating);
-        entity.setCreateDate(DateTime.now().toString());
+        entity.setCreateDate(new Date());
         return repository.save(entity);
     }
 
-    public Review update(UUID creatorUuid, UUID productUuid, UUID uuid, String message, int rating) throws AlphanahBaseException {
+    public Review updateReview(UUID creatorUuid, UUID productUuid, UUID reviewUuid, String message, Integer rating) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ReviewException.updateWithNullCreatorUuid();
+            throw ReviewException.cannotUpdateWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ReviewException.updateWithNullProductUuid();
+            throw ReviewException.cannotUpdateWithNullProductUuid();
 
-        if (Objects.isNull(uuid))
-            throw ReviewException.updateWithNullUuid();
+        if (Objects.isNull(reviewUuid))
+            throw ReviewException.cannotUpdateWithNullReviewUuid();
 
         if (Objects.isNull(message))
-            throw ReviewException.updateWithNullMessage();
+            throw ReviewException.cannotUpdateWithNullMessage();
+
+        if (Objects.isNull(rating))
+            throw ReviewException.cannotUpdateWithNullRating();
 
         if (message.isEmpty())
-            throw ReviewException.updateWithEmptyMessage();
+            throw ReviewException.cannotUpdateWithEmptyMessage();
 
-        if (rating < REVIEW_RATING_MIN_VALUE)
-            throw ReviewException.updateWithNegativeRating();
+        if (rating < Env.REVIEW_RATING_MIN_VALUE)
+            throw ReviewException.cannotUpdateWithRatingLessMinValue();
 
-        if (message.length() > REVIEW_MESSAGE_MAX_LENGTH)
-            throw ReviewException.updateWithMaxLengthMessage();
+        if (message.length() > Env.REVIEW_MESSAGE_MAX_LENGTH)
+            throw ReviewException.cannotUpdateWithMessageExceedMaxLength();
 
-        if (rating > REVIEW_RATING_MAX_VALUE)
-            throw ReviewException.updateWithMaxValueRating();
+        if (rating > Env.REVIEW_RATING_MAX_VALUE)
+            throw ReviewException.cannotUpdateWithRatingExceedMaxValue();
 
-        Review entity;
-        try {
-            entity = this.get(productUuid, uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ReviewException.updateNullObject();
-        }
+        Review entity = this.findReview(productUuid, reviewUuid);
 
-        if (!entity.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ReviewException.updateNotOwned();
+        if (!entity.getCreatorUuid().equals(creatorUuid))
+            throw ReviewException.cannotUpdateNotOwned();
 
         entity.setMessage(message);
         entity.setRating(rating);
         return repository.save(entity);
     }
 
-    public void delete(UUID creatorUuid, UUID productUuid, UUID uuid) throws AlphanahBaseException {
+    public void deleteReview(UUID creatorUuid, UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ReviewException.deleteWithNullCreatorUuid();
+            throw ReviewException.cannotDeleteWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ReviewException.deleteWithNullProductUuid();
+            throw ReviewException.cannotDeleteWithNullProductUuid();
 
-        if (Objects.isNull(uuid))
-            throw ReviewException.deleteWithNullUuid();
+        if (Objects.isNull(reviewUuid))
+            throw ReviewException.cannotDeleteWithNullReviewUuid();
 
-        Review entity;
-        try {
-            entity = this.get(productUuid, uuid);
-        } catch (AlphanahBaseException exception) {
-            throw ReviewException.deleteNullObject();
-        }
+        Review entity = this.findReview(productUuid, reviewUuid);
 
-        if (!entity.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ReviewException.deleteNotOwned();
+        if (!entity.getCreatorUuid().equals(creatorUuid))
+            throw ReviewException.cannotDeleteNotOwned();
 
         repository.delete(entity);
     }

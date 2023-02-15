@@ -22,7 +22,7 @@ public class OrderItemBusiness {
     private OrderItemService service;
 
     public CartItemResponseM2 createOrUpdateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
-        OrderItem response = service.createOrUpdateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
+        OrderItem response = service.updateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
         return response.toCartItemResponseM2(null);
     }
 
@@ -34,7 +34,7 @@ public class OrderItemBusiness {
         List<PaidItemResponseM2> responses = new ArrayList<>();
         List<OrderItem> saleOrderItemList = service.findAllPaidOrderItem(merchantUuid);
         for (OrderItem saleOrderItem: saleOrderItemList) {
-            if (saleOrderItem.getOrder().getType().equals(OrderType.CART.toString()))
+            if (saleOrderItem.getOrder().getType().equals(OrderType.CART))
                 continue;
             responses.add(saleOrderItem.toPaidItemResponseM2(null));
         }

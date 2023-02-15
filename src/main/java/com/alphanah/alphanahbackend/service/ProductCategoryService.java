@@ -23,35 +23,23 @@ public class ProductCategoryService {
     @Autowired
     private CategoryService categoryService;
 
-    public List<ProductCategory> create(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
+    public List<ProductCategory> createProductCategory(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ProductCategoryException.createWithNullCreatorUuid();
+            throw ProductCategoryException.cannotCreateWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ProductCategoryException.createWithNullProductUuid();
+            throw ProductCategoryException.cannotCreateWithNullProductUuid();
 
         if (Objects.isNull(categoryUuid))
-            throw ProductCategoryException.createWithNullCategoryUuid();
+            throw ProductCategoryException.cannotCreateWithNullCategoryUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductCategoryException.createWithNullProductObject();
-        }
-
-        Category category;
-        try {
-            category = categoryService.get(categoryUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductCategoryException.createWithNullCategoryObject();
-        }
-
+        Product product = productService.findProduct(productUuid);
+        Category category = categoryService.findCategory(categoryUuid);
         if (repository.existsByProductAndCategory(product, category))
-            throw ProductCategoryException.createDuplicateRelationship();
+            throw ProductCategoryException.cannotCreateDuplicateRelationship();
 
-        if (!product.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ProductCategoryException.createNotOwned();
+        if (!product.getCreatorUuid().equals(creatorUuid))
+            throw ProductCategoryException.cannotCreateNotOwned();
 
         List<ProductCategory> entityList = new ArrayList<>();
         while (category != null) {
@@ -66,49 +54,34 @@ public class ProductCategoryService {
         return (List<ProductCategory>) repository.saveAll(entityList);
     }
 
-    public void delete(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
+    public void deleteProductCategory(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
-            throw ProductCategoryException.deleteWithNullCreatorUuid();
+            throw ProductCategoryException.cannotDeleteWithNullCreatorUuid();
 
         if (Objects.isNull(productUuid))
-            throw ProductCategoryException.deleteWithNullProductUuid();
+            throw ProductCategoryException.cannotDeleteWithNullProductUuid();
 
         if (Objects.isNull(categoryUuid))
-            throw ProductCategoryException.deleteWithNullCategoryUuid();
+            throw ProductCategoryException.cannotDeleteWithNullCategoryUuid();
 
-        Product product;
-        try {
-            product = productService.get(productUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductCategoryException.deleteWithNullProductObject();
-        }
-
-        Category category;
-        try {
-            category = categoryService.get(categoryUuid);
-        } catch (AlphanahBaseException exception) {
-            throw ProductCategoryException.deleteWithNullCategoryObject();
-        }
-
-        if (!product.getCreatorUuid().equals(creatorUuid.toString()))
-            throw ProductCategoryException.deleteNotOwned();
+        Product product = productService.findProduct(productUuid);
+        Category category = categoryService.findCategory(categoryUuid);
+        if (!product.getCreatorUuid().equals(creatorUuid))
+            throw ProductCategoryException.cannotDeleteNotOwned();
 
         List<ProductCategory> entityList = new ArrayList<>();
         List<Category> categoryAndSubcategories = new ArrayList<>();
         categoryAndSubcategories.add(category);
         categoryAndSubcategories.addAll(category.getAllChild());
-
         for (Category currentCategory: categoryAndSubcategories) {
             Optional<ProductCategory> optional = repository.findByProductAndCategory(product, currentCategory);
             if (optional.isEmpty())
                 continue;
-
-            ProductCategory entity = optional.get();
-            entityList.add(entity);
+            entityList.add(optional.get());
         }
 
         if (entityList.isEmpty())
-            throw ProductCategoryException.deleteNullRelation();
+            throw ProductCategoryException.cannotDeleteNullRelationship();
 
         repository.deleteAll(entityList);
     }

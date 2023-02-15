@@ -1,22 +1,18 @@
 package com.alphanah.alphanahbackend.business;
 
 import com.alphanah.alphanahbackend.entity.Account;
-import com.alphanah.alphanahbackend.exception.AccountException;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.model.account.UpdateAccountRequest;
+import com.alphanah.alphanahbackend.model.account.AccountRequest;
 import com.alphanah.alphanahbackend.enumerate.AwsCognitoField;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM2;
 import com.alphanah.alphanahbackend.service.AccountService;
 import com.alphanah.alphanahbackend.service.AmazonS3Service;
-import com.alphanah.alphanahbackend.utility.Environment;
-import com.alphanah.alphanahbackend.utility.PhoneUtils;
 import com.alphanah.alphanahbackend.utility.PictureUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -38,8 +34,8 @@ public class AccountBusiness {
         return response.toAccountResponseM1();
     }
 
-    public AccountResponseM2 updateAccount(String token, UpdateAccountRequest request) throws AlphanahBaseException {
-        service.updateAccount(service.findAccount(token), request.getFirstname(), request.getLastname(), request.getAddress(), request.getPhone());
+    public AccountResponseM2 updateAccount(String token, AccountRequest request) throws AlphanahBaseException {
+        service.updateAccount(token, request.getFirstname(), request.getLastname(), request.getAddress(), request.getPhone());
         Account response = service.findAccount(token);
         return response.toAccountResponseM2();
     }

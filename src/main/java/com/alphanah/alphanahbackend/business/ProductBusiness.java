@@ -22,36 +22,36 @@ public class ProductBusiness {
 
     public List<ProductResponseM3> getAllProducts(String name, String description, UUID merchantUuid) throws AlphanahBaseException {
         List<ProductResponseM3> responses = new ArrayList<>();
-        List<Product> productList = service.getAll();
+        List<Product> productList = service.findAllProducts();
         for (Product product: productList) {
             if (!Objects.isNull(name) && !product.getName().toLowerCase().contains(name.toLowerCase()))
                 continue;
             if (!Objects.isNull(description) && !product.getDescription().toLowerCase().contains(description.toLowerCase()))
                 continue;
-            if (!Objects.isNull(merchantUuid) && !product.getCreatorUuid().equals(merchantUuid.toString()))
+            if (!Objects.isNull(merchantUuid) && !product.getCreatorUuid().equals(merchantUuid))
                 continue;
-            responses.add(product.toProductResponseM3(null));
+            responses.add(product.toProductResponseM3());
         }
         return responses;
     }
 
     public ProductResponseM3 getProduct(UUID uuid) throws AlphanahBaseException {
-        Product response = service.get(uuid);
-        return response.toProductResponseM3(null);
+        Product response = service.findProduct(uuid);
+        return response.toProductResponseM3();
     }
 
     public ProductResponseM1 createProduct(String token, ProductRequest request) throws AlphanahBaseException {
-        Product response = service.create(AccountUtils.findAccount(token).getUuid(), request.getName(), request.getDescription());
-        return response.toProductResponseM1(null);
+        Product response = service.createProduct(AccountUtils.findAccount(token).getUuid(), request.getName(), request.getDescription());
+        return response.toProductResponseM1();
     }
 
     public ProductResponseM1 updateProduct(String token, UUID uuid, ProductRequest request) throws AlphanahBaseException {
-        Product response = service.update(AccountUtils.findAccount(token).getUuid(), uuid, request.getName(), request.getDescription());
-        return response.toProductResponseM1(null);
+        Product response = service.updateProduct(AccountUtils.findAccount(token).getUuid(), uuid, request.getName(), request.getDescription());
+        return response.toProductResponseM1();
     }
 
     public void deleteProduct(String token, UUID uuid) throws AlphanahBaseException {
-        service.delete(AccountUtils.findAccount(token).getUuid(), uuid);
+        service.deleteProduct(AccountUtils.findAccount(token).getUuid(), uuid);
     }
 
 }

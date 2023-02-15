@@ -22,29 +22,29 @@ public class ReviewBusiness {
 
     public List<ReviewResponseM3> getAllReviews(UUID productUuid) throws AlphanahBaseException {
         List<ReviewResponseM3> responses = new ArrayList<>();
-        List<Review> reviews = service.getAll(productUuid);
+        List<Review> reviews = service.findAllReviews(productUuid);
         for (Review review : reviews)
             responses.add(review.toReviewResponseM3(null));
         return responses;
     }
 
     public ReviewResponseM3 getReview(UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        Review response = service.get(productUuid, uuid);
+        Review response = service.findReview(productUuid, uuid);
         return response.toReviewResponseM3(null);
     }
 
     public ReviewResponseM1 createReview(String token, UUID productUuid, ReviewRequest request) throws AlphanahBaseException {
-        Review response = service.create(AccountUtils.findAccount(token).getUuid(), productUuid, request.getMessage(), request.getRating());
+        Review response = service.createReview(AccountUtils.findAccount(token).getUuid(), productUuid, request.getMessage(), request.getRating());
         return response.toReviewResponseM1(null);
     }
 
     public ReviewResponseM1 updateReview(String token, UUID productUuid, UUID uuid, ReviewRequest request) throws AlphanahBaseException {
-        Review response = service.update(AccountUtils.findAccount(token).getUuid(), productUuid, uuid, request.getMessage(), request.getRating());
+        Review response = service.updateReview(AccountUtils.findAccount(token).getUuid(), productUuid, uuid, request.getMessage(), request.getRating());
         return response.toReviewResponseM1(null);
     }
 
     public void deleteReview(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        service.delete(AccountUtils.findAccount(token).getUuid(), productUuid, uuid);
+        service.deleteReview(AccountUtils.findAccount(token).getUuid(), productUuid, uuid);
     }
 
 }

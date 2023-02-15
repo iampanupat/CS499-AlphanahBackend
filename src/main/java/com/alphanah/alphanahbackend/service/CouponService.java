@@ -5,6 +5,7 @@ import com.alphanah.alphanahbackend.enumerate.CouponType;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.exception.CouponException;
 import com.alphanah.alphanahbackend.repository.CouponRepository;
+import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,6 @@ public class CouponService {
 
     @Autowired
     private CouponRepository repository;
-
-    private final int COUPON_PERCENTAGE_DISCOUNT_MAX_VALUE = 100;
-    private final int COUPON_GIFT_CARD_MAX_VALUE = 1000000;
 
     public List<Coupon> findAllCoupons() {
         return (List<Coupon>) repository.findAll();
@@ -44,10 +42,10 @@ public class CouponService {
         if ((type.equals(CouponType.GIFT_CARD) || type.equals(CouponType.PERCENTAGE_DISCOUNT)) && value <= 0)
             throw CouponException.cannotCreateWithNegativeOrZeroValue();
 
-        if (type.equals(CouponType.GIFT_CARD) && value > COUPON_GIFT_CARD_MAX_VALUE)
+        if (type.equals(CouponType.GIFT_CARD) && value > Env.COUPON_GIFT_CARD_MAX_VALUE)
             throw CouponException.cannotCreateWithValueExceedGiftCardMaxValue();
 
-        if (type.equals(CouponType.PERCENTAGE_DISCOUNT) && value > COUPON_PERCENTAGE_DISCOUNT_MAX_VALUE)
+        if (type.equals(CouponType.PERCENTAGE_DISCOUNT) && value > Env.COUPON_PERCENTAGE_DISCOUNT_MAX_VALUE)
             throw CouponException.cannotCreateWithValueExceedPercentageDiscountMaxValue();
 
         Coupon entity = new Coupon();

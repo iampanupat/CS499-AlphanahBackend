@@ -6,104 +6,88 @@ public class ProductException extends AlphanahBaseException {
         super("product." + message);
     }
 
-    public static ProductException searchWithNullKeyword() {
-        return new ProductException("search.with.null.keyword");
+    public static ProductException cannotFindWithNullProductUuid() {
+        return new ProductException("cannot.find.with.null.product.uuid");
     }
 
-    public static ProductException searchWithEmptyKeyword() {
-        return new ProductException("search.with.empty.keyword");
+    public static ProductException notFound() {
+        return new ProductException("not.found");
     }
 
-    public static ProductException getWithNullUuid() {
-        return new ProductException("get.with.null.uuid");
+    public static ProductException cannotCreateWithNullCreatorUuid() {
+        return new ProductException("cannot.create.with.null.creator.uuid");
     }
 
-    public static ProductException getNullObject() {
-        return new ProductException("get.null.object");
+    public static ProductException cannotCreateWithNullName() {
+        return new ProductException("cannot.create.with.null.name");
     }
 
-    public static ProductException createWithNullCreatorUuid() {
-        return new ProductException("create.with.null.creator.uuid");
+    public static ProductException cannotCreateWithNullDescription() {
+        return new ProductException("cannot.create.with.null.description");
     }
 
-    public static ProductException createWithNullName() {
-        return new ProductException("create.with.null.name");
+    public static ProductException cannotCreateWithEmptyName() {
+        return new ProductException("cannot.create.with.empty.name");
     }
 
-    public static ProductException createWithNullDescription() {
-        return new ProductException("create.with.null.description");
+    public static ProductException cannotCreateWithEmptyDescription() {
+        return new ProductException("cannot.create.with.empty.description");
     }
 
-    public static ProductException createWithEmptyName() {
-        return new ProductException("create.with.empty.name");
+    public static ProductException cannotCreateWithNameExceedMaxLength() {
+        return new ProductException("cannot.create.with.name.exceed.max.length");
     }
 
-    public static ProductException createWithEmptyDescription() {
-        return new ProductException("create.with.empty.description");
+    public static ProductException cannotCreateWithDescriptionExceedMaxLength() {
+        return new ProductException("cannot.create.with.description.exceed.max.length");
     }
 
-    public static ProductException createWithMaxLengthName() {
-        return new ProductException("create.with.max.length.name");
+    public static ProductException cannotUpdateWithNullCreatorUuid() {
+        return new ProductException("cannot.update.with.null.creator.uuid");
     }
 
-    public static ProductException createWithMaxLengthDescription() {
-        return new ProductException("create.with.max.length.description");
+    public static ProductException cannotUpdateWithNullProductUuid() {
+        return new ProductException("cannot.update.with.null.product.uuid");
     }
 
-    public static ProductException updateWithNullCreatorUuid() {
-        return new ProductException("update.with.null.creator.uuid");
+    public static ProductException cannotUpdateWithNullName() {
+        return new ProductException("cannot.update.with.null.name");
     }
 
-    public static ProductException updateWithNullUuid() {
-        return new ProductException("update.with.null.uuid");
+    public static ProductException cannotUpdateWithNullDescription() {
+        return new ProductException("cannot.update.with.null.description");
     }
 
-    public static ProductException updateWithNullName() {
-        return new ProductException("update.with.null.name");
+    public static ProductException cannotUpdateWithEmptyName() {
+        return new ProductException("cannot.update.with.empty.name");
     }
 
-    public static ProductException updateWithNullDescription() {
-        return new ProductException("update.with.null.description");
+    public static ProductException cannotUpdateWithEmptyDescription() {
+        return new ProductException("cannot.update.with.empty.description");
     }
 
-    public static ProductException updateWithEmptyName() {
-        return new ProductException("update.with.empty.name");
+    public static ProductException cannotUpdateWithNameExceedMaxLength() {
+        return new ProductException("cannot.update.with.name.exceed.max.length");
     }
 
-    public static ProductException updateWithEmptyDescription() {
-        return new ProductException("update.with.empty.description");
+    public static ProductException cannotUpdateWithDescriptionExceedMaxLength() {
+        return new ProductException("cannot.update.with.description.exceed.max.length");
     }
 
-    public static ProductException updateWithMaxLengthName() {
-        return new ProductException("update.with.max.length.name");
+    public static ProductException cannotUpdateNotOwned() {
+        return new ProductException("cannot.update.not.owned");
     }
 
-    public static ProductException updateWithMaxLengthDescription() {
-        return new ProductException("update.with.max.length.description");
+    public static ProductException cannotDeleteWithNullCreatorUuid() {
+        return new ProductException("cannot.delete.with.null.creator.uuid");
     }
 
-    public static ProductException updateNullObject() {
-        return new ProductException("update.null.object");
+    public static ProductException cannotDeleteWithNullProductUuid() {
+        return new ProductException("cannot.delete.with.null.product.uuid");
     }
 
-    public static ProductException updateNotOwned() {
-        return new ProductException("update.not.owned");
-    }
-
-    public static ProductException deleteWithNullCreatorUuid() {
-        return new ProductException("delete.with.null.creator.uuid");
-    }
-
-    public static ProductException deleteWithNullUuid() {
-        return new ProductException("delete.with.null.uuid");
-    }
-
-    public static ProductException deleteNullObject() {
-        return new ProductException("delete.null.object");
-    }
-
-    public static ProductException deleteNotOwned() {
-        return new ProductException("delete.not.owned");
+    public static ProductException cannotDeleteNotOwned() {
+        return new ProductException("cannot.delete.not.owned");
     }
 
 }
