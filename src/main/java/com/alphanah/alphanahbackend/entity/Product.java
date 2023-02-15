@@ -78,6 +78,7 @@ public class Product extends BaseEntity {
         // "Image" Base Response
         List<ImageResponseM1> images = new ArrayList<>();
         List<Image> imageList = this.getImages();
+
         for (Image image : imageList)
             images.add(image.toImageResponseM1(null));
         response.setImages(images);
@@ -85,8 +86,14 @@ public class Product extends BaseEntity {
         // "Review" with Image Response
         List<ReviewResponseM2> reviews = new ArrayList<>();
         List<Review> reviewList = this.getReviews();
-        for (Review review : reviewList)
+        double sumReview = 0;
+        int count = 0;
+        for (Review review : reviewList) {
+            sumReview += review.getRating();
+            count++;
             reviews.add(review.toReviewResponseM2(null));
+        }
+        response.setReviewScore(reviews.isEmpty() ? null : Math.round(sumReview / count * 10.0) / 10.0);
         response.setReviews(reviews);
 
         return response;

@@ -16,8 +16,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         String[] anonymousEndpoints = {
-                "/register/customer",
-                "/register/merchant",
+                "/register",
                 "/login"
         };
 
@@ -26,8 +25,7 @@ public class SecurityConfig {
                 "/product",
                 "/product/*",
                 "/category",
-                "/category/*",
-                "/pay"
+                "/category/*"
         };
 
         httpSecurity

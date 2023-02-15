@@ -1,11 +1,11 @@
 ## API
 
 ### Authentication API
-| HTTP Methods | Endpoints            | Action               | Access Right |
-|--------------|----------------------|----------------------|--------------|
-| `POST`       | `/register/customer` | Register as Customer | **ALL**      |
-| `POST`       | `/register/merchant` | Register as Merchant | **ALL**      |
-| `POST`       | `/login`             | Login                | **ALL**      |
+| HTTP Methods | Endpoints                 | Action               | Access Right |
+|--------------|---------------------------|----------------------|--------------|
+| `POST`       | `/register?role=CUSTOMER` | Register as Customer | **ALL**      |
+| `POST`       | `/register?role=MERCHANT` | Register as Merchant | **ALL**      |
+| `POST`       | `/login`                  | Login                | **ALL**      |
 
 ### Account API
 | HTTP Methods | Endpoints                 | Action                             | Access Right | 

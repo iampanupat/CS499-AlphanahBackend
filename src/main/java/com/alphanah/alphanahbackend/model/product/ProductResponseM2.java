@@ -13,5 +13,6 @@ public class ProductResponseM2 extends ProductResponseM1 {
     private Double maxPrice;
     private List<ProductOptionResponseM1> options;
     private List<ImageResponseM1> images;
+    private Double reviewScore;
     private List<ReviewResponseM2> reviews;
 }

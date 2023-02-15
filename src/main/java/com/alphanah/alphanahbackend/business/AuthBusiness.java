@@ -24,15 +24,7 @@ public class AuthBusiness {
     private static final int EMAIL_MAX_LENGTH = 128;
     private static final int PASSWORD_MAX_LENGTH = 256;
 
-    public RegisterResponse customerRegister(RegisterRequest request) throws AlphanahBaseException {
-        return register(request, Role.CUSTOMER);
-    }
-
-    public RegisterResponse merchantRegister(RegisterRequest request) throws AlphanahBaseException {
-        return register(request, Role.MERCHANT);
-    }
-
-    private RegisterResponse register(RegisterRequest request, Role role) throws AlphanahBaseException {
+    public RegisterResponse register(RegisterRequest request, Role role) throws AlphanahBaseException {
         if (request == null)
             throw AuthException.registerRequestNull();
 
