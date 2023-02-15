@@ -127,16 +127,16 @@ public class AccountService {
             throw AccountException.cannotUpdateWithNullPhone();
 
         if (firstname.length() > Environment.FIRSTNAME_MAX_LENGTH)
-            throw AccountException.cannotUpdateWithOverFirstnameMaxLength();
+            throw AccountException.cannotUpdateWithFirstnameExceedMaxLength();
 
         if (lastname.length() > Environment.LASTNAME_MAX_LENGTH)
-            throw AccountException.cannotUpdateWithOverLastnameMaxLength();
+            throw AccountException.cannotUpdateWithLastnameExceedMaxLength();
 
         if (address.length() > Environment.ADDRESS_MAX_LENGTH)
-            throw AccountException.cannotUpdateWithOverAddressMaxLength();
+            throw AccountException.cannotUpdateWithAddressExceedMaxLength();
 
         if (phone.length() > Environment.PHONE_MAX_LENGTH)
-            throw AccountException.cannotUpdateWithOverPhoneMaxLength();
+            throw AccountException.cannotUpdateWithPhoneExceedMaxLength();
 
         this.updateAwsCognitoField(account, AwsCognitoField.FIRSTNAME, firstname);
         this.updateAwsCognitoField(account, AwsCognitoField.LASTNAME, lastname);
@@ -171,7 +171,7 @@ public class AccountService {
             throw AccountException.cannotUpdateWithNullValue();
 
         if (value.length() > Environment.AWS_COGNITO_VALUE_MAX_LENGTH)
-            throw AccountException.cannotUpdateWithOverAwsCognitoValueMaxLength();
+            throw AccountException.cannotUpdateWithAwsCognitoValueExceedMaxLength();
 
         try {
             cognitoClient.adminUpdateUserAttributes(new AdminUpdateUserAttributesRequest()

@@ -26,12 +26,12 @@ public class CouponException extends AlphanahBaseException {
         return new CouponException("cannot.create.with.negative.or.zero.value");
     }
 
-    public static CouponException cannotCreateWithOverCouponGiftCardMaxValue() {
-        return new CouponException("cannot.create.with.over.coupon.gift.card.max.value");
+    public static CouponException cannotCreateWithValueExceedGiftCardMaxValue() {
+        return new CouponException("cannot.create.with.value.exceed.gift.card.max.value");
     }
 
-    public static CouponException cannotCreateWithOverCouponPercentageDiscountMaxValue() {
-        return new CouponException("cannot.create.with.over.coupon.percentage.discount.max.value");
+    public static CouponException cannotCreateWithValueExceedPercentageDiscountMaxValue() {
+        return new CouponException("cannot.create.with.value.exceed.percentage.discount.max.value");
     }
 
     public static CouponException cannotCreateWithUnsupportedCouponType() {

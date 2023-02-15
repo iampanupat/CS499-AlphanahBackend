@@ -8,6 +8,7 @@ import com.alphanah.alphanahbackend.model.authentication.RegisterRequest;
 import com.alphanah.alphanahbackend.model.authentication.RegisterResponse;
 import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.service.AuthService;
+import com.alphanah.alphanahbackend.utility.Environment;
 import com.amazonaws.services.cognitoidp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,45 +22,39 @@ public class AuthBusiness {
     @Autowired
     private AuthService service;
 
-    private static final int EMAIL_MAX_LENGTH = 128;
-    private static final int PASSWORD_MAX_LENGTH = 256;
-
     public RegisterResponse register(RegisterRequest request, Role role) throws AlphanahBaseException {
-        if (request == null)
-            throw AuthException.registerRequestNull();
-
-        if (role == null)
-            throw AuthException.registerRoleNull();
-
         if (Objects.isNull(request.getEmail()))
-            throw AuthException.registerEmailNull();
+            throw AuthException.cannotRegisterWithNullEmail();
 
         if (Objects.isNull(request.getPassword()))
-            throw AuthException.registerPasswordNull();
+            throw AuthException.cannotRegisterWithNullPassword();
 
         if (Objects.isNull(request.getConfirmPassword()))
-            throw AuthException.registerConfirmPasswordNull();
+            throw AuthException.cannotRegisterWithNullConfirmPassword();
+
+        if (role == null)
+            throw AuthException.cannotRegisterWithNullRole();
 
         if (request.getEmail().isEmpty())
-            throw AuthException.registerEmailEmpty();
+            throw AuthException.cannotRegisterWithEmptyEmail();
 
         if (request.getPassword().isEmpty())
-            throw AuthException.registerPasswordEmpty();
+            throw AuthException.cannotRegisterWithEmptyPassword();
 
         if (request.getConfirmPassword().isEmpty())
-            throw AuthException.registerConfirmPasswordEmpty();
+            throw AuthException.cannotRegisterWithEmptyConfirmPassword();
 
-        if (request.getEmail().length() > EMAIL_MAX_LENGTH)
-            throw AuthException.registerEmailMaxLength();
+        if (request.getEmail().length() > Environment.EMAIL_MAX_LENGTH)
+            throw AuthException.cannotRegisterWithEmailExceedMaxLength();
 
-        if (request.getPassword().length() > PASSWORD_MAX_LENGTH)
-            throw AuthException.registerPasswordMaxLength();
+        if (request.getPassword().length() > Environment.PASSWORD_MAX_LENGTH)
+            throw AuthException.cannotRegisterWithPasswordExceedMaxLength();
 
-        if (request.getConfirmPassword().length() > PASSWORD_MAX_LENGTH)
-            throw AuthException.registerConfirmPasswordMaxLength();
+        if (request.getConfirmPassword().length() > Environment.PASSWORD_MAX_LENGTH)
+            throw AuthException.cannotRegisterWithConfirmPasswordExceedMaxLength();
 
         if ( !(Objects.equals(request.getPassword(), request.getConfirmPassword())) )
-            throw AuthException.registerPasswordsNotMatch();
+            throw AuthException.cannotRegisterWithPasswordsNotMatch();
 
         Map<String, String> accountDetail = service.createAccount(request.getEmail(), request.getPassword(), role);
         RegisterResponse response = new RegisterResponse();
@@ -69,26 +64,23 @@ public class AuthBusiness {
     }
 
     public LoginResponse login(LoginRequest request) throws AlphanahBaseException {
-        if (request == null)
-            throw AuthException.loginRequestNull();
-
         if (Objects.isNull(request.getEmail()))
-            throw AuthException.loginEmailNull();
+            throw AuthException.cannotLoginWithNullEmail();
 
         if (Objects.isNull(request.getPassword()))
-            throw AuthException.loginPasswordNull();
+            throw AuthException.cannotLoginWithNullPassword();
 
         if (request.getEmail().isEmpty())
-            throw AuthException.loginEmailEmpty();
+            throw AuthException.cannotLoginWithEmptyEmail();
 
         if (request.getPassword().isEmpty())
-            throw AuthException.loginPasswordEmpty();
+            throw AuthException.cannotLoginWithEmptyPassword();
 
-        if (request.getEmail().length() > EMAIL_MAX_LENGTH)
-            throw AuthException.loginEmailMaxLength();
+        if (request.getEmail().length() > Environment.EMAIL_MAX_LENGTH)
+            throw AuthException.cannotLoginWithEmailExceedMaxLength();
 
-        if (request.getPassword().length() > PASSWORD_MAX_LENGTH)
-            throw AuthException.loginPasswordMaxLength();
+        if (request.getPassword().length() > Environment.PASSWORD_MAX_LENGTH)
+            throw AuthException.cannotLoginWithPasswordExceedMaxLength();
 
         AuthenticationResultType authenticationResult = service.signInAccount(request.getEmail(), request.getPassword());
         LoginResponse response = new LoginResponse();

@@ -46,20 +46,20 @@ public class AccountException extends AlphanahBaseException {
         return new AccountException("cannot.update.with.null.phone");
     }
 
-    public static AccountException cannotUpdateWithOverFirstnameMaxLength() {
-        return new AccountException("cannot.update.with.over.firstname.max.length");
+    public static AccountException cannotUpdateWithFirstnameExceedMaxLength() {
+        return new AccountException("cannot.update.with.firstname.exceed.max.length");
     }
 
-    public static AccountException cannotUpdateWithOverLastnameMaxLength() {
-        return new AccountException("cannot.update.with.over.lastname.max.length");
+    public static AccountException cannotUpdateWithLastnameExceedMaxLength() {
+        return new AccountException("cannot.update.with.lastname.exceed.max.length");
     }
 
-    public static AccountException cannotUpdateWithOverAddressMaxLength() {
-        return new AccountException("cannot.update.with.over.address.max.length");
+    public static AccountException cannotUpdateWithAddressExceedMaxLength() {
+        return new AccountException("cannot.update.with.address.exceed.max.length");
     }
 
-    public static AccountException cannotUpdateWithOverPhoneMaxLength() {
-        return new AccountException("cannot.update.with.over.phone.max.length");
+    public static AccountException cannotUpdateWithPhoneExceedMaxLength() {
+        return new AccountException("cannot.update.with.phone.exceed.max.length");
     }
 
     public static AccountException cannotUpdateWithNullAwsCognitoField() {
@@ -70,8 +70,8 @@ public class AccountException extends AlphanahBaseException {
         return new AccountException("cannot.update.with.null.value");
     }
 
-    public static AccountException cannotUpdateWithOverAwsCognitoValueMaxLength() {
-        return new AccountException("cannot.update.with.over.aws.cognito.value.max.length");
+    public static AccountException cannotUpdateWithAwsCognitoValueExceedMaxLength() {
+        return new AccountException("cannot.update.with.aws.cognito.value.exceed.max.length");
     }
 
 }

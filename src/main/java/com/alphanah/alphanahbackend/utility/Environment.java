@@ -14,6 +14,9 @@ public interface Environment {
 
     int AWS_COGNITO_VALUE_MAX_LENGTH = 2048;
 
+    int EMAIL_MAX_LENGTH = 128;
+    int PASSWORD_MAX_LENGTH = 256;
+
     int FIRSTNAME_MAX_LENGTH = 50;
     int LASTNAME_MAX_LENGTH = 50;
     int ADDRESS_MAX_LENGTH = 2048;
