@@ -44,7 +44,7 @@ public class CouponAPI {
             @RequestBody CouponRequest request
     ) throws AlphanahBaseException {
         AccountUtils.merchantVerify(token);
-        CouponResponseM1 response = business.createCoupon(AccountUtils.getAccountWithToken(token).getUuid(), request);
+        CouponResponseM1 response = business.createCoupon(AccountUtils.findAccount(token).getUuid(), request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -54,7 +54,7 @@ public class CouponAPI {
             @PathVariable("coupon_uuid") UUID couponUuid
     ) throws AlphanahBaseException {
         AccountUtils.merchantVerify(token);
-        business.deleteCoupon(AccountUtils.getAccountWithToken(token).getUuid(), couponUuid);
+        business.deleteCoupon(AccountUtils.findAccount(token).getUuid(), couponUuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

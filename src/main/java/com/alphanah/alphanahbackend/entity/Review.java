@@ -48,7 +48,7 @@ public class Review extends BaseEntity {
         response.setMessage(this.getMessage());
         response.setRating(this.getRating().toString());
         response.setCreateDate(this.getCreateDate());
-        response.setCreator(AccountUtils.getAccountWithUuid(UUID.fromString(this.getCreatorUuid())).toAccountResponseM1(null));
+        response.setCreator(AccountUtils.findAccount(UUID.fromString(this.getCreatorUuid())).toAccountResponseM1());
         return response;
     }
 

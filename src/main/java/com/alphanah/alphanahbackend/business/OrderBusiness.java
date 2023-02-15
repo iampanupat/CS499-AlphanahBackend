@@ -62,7 +62,7 @@ public class OrderBusiness {
         PaymentIntent intent = new PaymentIntent();
 
         try {
-            Account account = AccountUtils.getAccountWithUuid(accountUuid);
+            Account account = AccountUtils.findAccount(accountUuid);
             if (account.getCartUuid() == null)
                 throw OrderException.updateWithNullCartUuid();
 

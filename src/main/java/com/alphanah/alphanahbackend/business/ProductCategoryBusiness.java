@@ -20,7 +20,7 @@ public class ProductCategoryBusiness {
 
     public List<ProductCategoryResponseM1> createProductCategory(String token, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
         List<ProductCategoryResponseM1> responses = new ArrayList<>();
-        List<ProductCategory> productCategories = service.create(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, categoryUuid);
+        List<ProductCategory> productCategories = service.create(AccountUtils.findAccount(token).getUuid(), productUuid, categoryUuid);
 
         for (ProductCategory productCategory : productCategories)
             responses.add(productCategory.toProductCategoryResponseM1(null));
@@ -29,7 +29,7 @@ public class ProductCategoryBusiness {
     }
 
     public void deleteProductCategory(String token, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
-        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, categoryUuid);
+        service.delete(AccountUtils.findAccount(token).getUuid(), productUuid, categoryUuid);
     }
 
 }

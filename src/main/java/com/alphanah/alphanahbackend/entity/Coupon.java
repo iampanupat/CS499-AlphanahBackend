@@ -59,7 +59,7 @@ public class Coupon {
         response.setType(type);
         response.setValue(value);
         response.setUsageStatus(usageStatus);
-        response.setCreator(AccountUtils.getAccountWithUuid(creatorUuid).toAccountResponseM1(null));
+        response.setCreator(AccountUtils.findAccount(creatorUuid).toAccountResponseM1());
         response.setExpiredDate(Objects.isNull(expiredDate) ? null : DateUtils.timeZoneConverter(expiredDate, DateTimeZone.forID("Asia/Bangkok")));
         return response;
     }

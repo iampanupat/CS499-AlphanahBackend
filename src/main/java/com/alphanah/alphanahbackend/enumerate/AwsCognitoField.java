@@ -1,6 +1,6 @@
 package com.alphanah.alphanahbackend.enumerate;
 
-public enum CognitoField {
+public enum AwsCognitoField {
 
     UUID("sub"),
     EMAIL("email"),
@@ -14,41 +14,41 @@ public enum CognitoField {
 
     private final String fieldName;
 
-    private CognitoField(String fieldName) {
+    private AwsCognitoField(String fieldName) {
         this.fieldName = fieldName;
     }
 
     public String getFieldName() {
         return fieldName;
     }
-    public static CognitoField get(String fieldName) {
+    public static AwsCognitoField get(String fieldName) {
         switch (fieldName) {
             case "sub" -> {
-                return CognitoField.UUID;
+                return AwsCognitoField.UUID;
             }
             case "email" -> {
-                return CognitoField.EMAIL;
+                return AwsCognitoField.EMAIL;
             }
             case "custom:role" -> {
-                return CognitoField.ROLE;
+                return AwsCognitoField.ROLE;
             }
             case "name" -> {
-                return CognitoField.FIRSTNAME;
+                return AwsCognitoField.FIRSTNAME;
             }
             case "family_name" -> {
-                return CognitoField.LASTNAME;
+                return AwsCognitoField.LASTNAME;
             }
             case "address" -> {
-                return CognitoField.ADDRESS;
+                return AwsCognitoField.ADDRESS;
             }
             case "phone_number" -> {
-                return CognitoField.PHONE;
+                return AwsCognitoField.PHONE;
             }
             case "picture" -> {
-                return CognitoField.IMAGE;
+                return AwsCognitoField.IMAGE;
             }
             case "custom:cart_uuid" -> {
-                return CognitoField.CART_UUID;
+                return AwsCognitoField.CART_UUID;
             }
             default -> {
                 return null;

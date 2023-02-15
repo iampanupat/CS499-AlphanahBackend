@@ -15,27 +15,28 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")
-public class AccountApi {
+public class AccountAPI {
 
     @Autowired
     private AccountBusiness business;
 
     @GetMapping
-    public ResponseEntity<AccountResponseM2> getAccount(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
-        AccountResponseM2 response = business.getAccount(token);
+    public ResponseEntity<AccountResponseM2> getAccountWithToken(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
+        AccountResponseM2 response = business.getAccountWithToken(token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<AccountResponseM1> getAccountByUuid(@PathVariable("uuid") UUID uuid) throws AlphanahBaseException {
-        AccountResponseM1 response = business.getAccountByUuid(uuid);
+    @GetMapping("/{account_uuid}")
+    public ResponseEntity<AccountResponseM1> getAccountWithUuid(@PathVariable("account_uuid") UUID accountUuid) throws AlphanahBaseException {
+        AccountResponseM1 response = business.getAccountWithUuid(accountUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<AccountResponseM2> updateAccount(
             @RequestHeader(value = "Authorization") String token,
-            @RequestBody UpdateAccountRequest request) throws AlphanahBaseException {
+            @RequestBody UpdateAccountRequest request
+    ) throws AlphanahBaseException {
         AccountResponseM2 response = business.updateAccount(token, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -44,7 +45,7 @@ public class AccountApi {
     public ResponseEntity<AccountResponseM2> updateAccountImage(
             @RequestHeader(value = "Authorization") String token,
             @RequestBody MultipartFile image) throws AlphanahBaseException {
-        AccountResponseM2 response = business.updateAccountPicture(token, image);
+        AccountResponseM2 response = business.updateAccountImage(token, image);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

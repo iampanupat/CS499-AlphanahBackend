@@ -7,5 +7,5 @@ public class AccountResponseM2 extends AccountResponseM1 {
     private String email;
     private String address;
     private String phone;
-    private String cartUuid;
+    private String cartUUID;
 }

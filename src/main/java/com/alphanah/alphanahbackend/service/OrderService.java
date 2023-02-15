@@ -1,7 +1,7 @@
 package com.alphanah.alphanahbackend.service;
 
 import com.alphanah.alphanahbackend.entity.*;
-import com.alphanah.alphanahbackend.enumerate.CognitoField;
+import com.alphanah.alphanahbackend.enumerate.AwsCognitoField;
 import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
 import com.alphanah.alphanahbackend.enumerate.OrderType;
 import com.alphanah.alphanahbackend.enumerate.PayType;
@@ -11,11 +11,6 @@ import com.alphanah.alphanahbackend.repository.OrderItemRepository;
 import com.alphanah.alphanahbackend.repository.OrderRepository;
 import com.alphanah.alphanahbackend.repository.ProductOptionRepository;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
-import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import org.aspectj.weaver.ast.Or;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +82,7 @@ public class OrderService {
         if (Objects.isNull(creatorUuid))
             throw OrderException.getWithNullCreatorUuid();
 
-        Account account = AccountUtils.getAccountWithUuid(creatorUuid);
+        Account account = AccountUtils.findAccount(creatorUuid);
         if (account.getCartUuid() == null) {
             return createCart(creatorUuid);
         }
@@ -107,7 +102,7 @@ public class OrderService {
         if (Objects.isNull(creatorUuid))
             throw OrderException.createWithNullCreatorUuid();
 
-        Account account = AccountUtils.getAccountWithUuid(creatorUuid);
+        Account account = AccountUtils.findAccount(creatorUuid);
         if (account.getCartUuid() != null)
             throw OrderException.createDuplicateCart();
 
@@ -116,7 +111,7 @@ public class OrderService {
         entity.setType(OrderType.CART);
         entity.setPayType(PayType.NONE);
         repository.save(entity);
-        accountService.update(account.getUuid(), CognitoField.CART_UUID, entity.getUuid().toString());
+        accountService.updateAwsCognitoField(account, AwsCognitoField.CART_UUID, entity.getUuid().toString());
         return this.getOrCreateCart(creatorUuid);
     }
 
@@ -161,7 +156,7 @@ public class OrderService {
         if (address.length() > ORDER_ADDRESS_MAX_LENGTH)
             throw OrderException.updateWithMaxLengthAddress();
 
-        if (Objects.isNull(AccountUtils.getAccountWithUuid(creatorUUID).getCartUuid()))
+        if (Objects.isNull(AccountUtils.findAccount(creatorUUID).getCartUuid()))
             throw OrderException.updateWithNullCartUuid();
 
         Order entity = this.getOrCreateCart(creatorUUID);
@@ -198,7 +193,7 @@ public class OrderService {
             couponService.updateCouponUsageStatus(coupon.getUuid());
         orderItemRepository.saveAll(orderItemEntityList);
         productOptionRepository.saveAll(productOptionEntityList);
-        accountService.update(creatorUUID, CognitoField.CART_UUID, "");
+        accountService.updateAwsCognitoField(creatorUUID, AwsCognitoField.CART_UUID, "");
         return repository.save(entity);
     }
 

@@ -3,6 +3,7 @@ package com.alphanah.alphanahbackend.entity;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
 import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.model.account.AccountResponseM2;
+import com.alphanah.alphanahbackend.utility.Environment;
 import lombok.Data;
 
 import java.util.Date;
@@ -25,7 +26,7 @@ public class Account {
 
     public Account() {
         this.role = Role.CUSTOMER;
-        this.image = "https://images.alphanah.com/defaultProfilePicture.jpg";
+        this.image = "/defaultProfilePicture.jpg";
     }
 
     public boolean isCustomer() {
@@ -36,7 +37,11 @@ public class Account {
         return this.role == Role.MERCHANT;
     }
 
-    public AccountResponseM1 toAccountResponseM1(AccountResponseM1 response) {
+    public AccountResponseM1 toAccountResponseM1() {
+        return this.toAccountResponseM1(null);
+    }
+
+    private AccountResponseM1 toAccountResponseM1(AccountResponseM1 response) {
         if (response == null)
             response = new AccountResponseM1();
 
@@ -44,12 +49,16 @@ public class Account {
         response.setRole(this.getRole().toString());
         response.setFirstname(this.getFirstname());
         response.setLastname(this.getLastname());
-        response.setImage(this.getImage());
+        response.setImage(Environment.IMAGE_SERVER_URL + this.getImage());
         response.setCreateDate(this.getCreateDate());
         return response;
     }
 
-    public AccountResponseM2 toAccountResponseM2(AccountResponseM2 response) {
+    public AccountResponseM2 toAccountResponseM2() {
+        return this.toAccountResponseM2(null);
+    }
+
+    private AccountResponseM2 toAccountResponseM2(AccountResponseM2 response) {
         if (response == null)
             response = new AccountResponseM2();
 
@@ -57,8 +66,7 @@ public class Account {
         response.setEmail(this.getEmail());
         response.setAddress(this.getAddress());
         response.setPhone(this.getPhone());
-        if (!Objects.isNull(this.getCartUuid()))
-            response.setCartUuid(this.getCartUuid().toString());
+        response.setCartUUID(Objects.isNull(this.getCartUuid()) ? null : this.getCartUuid().toString());
         return response;
     }
 

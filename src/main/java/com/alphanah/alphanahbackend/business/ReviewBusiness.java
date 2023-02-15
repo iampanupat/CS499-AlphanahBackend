@@ -34,17 +34,17 @@ public class ReviewBusiness {
     }
 
     public ReviewResponseM1 createReview(String token, UUID productUuid, ReviewRequest request) throws AlphanahBaseException {
-        Review response = service.create(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, request.getMessage(), request.getRating());
+        Review response = service.create(AccountUtils.findAccount(token).getUuid(), productUuid, request.getMessage(), request.getRating());
         return response.toReviewResponseM1(null);
     }
 
     public ReviewResponseM1 updateReview(String token, UUID productUuid, UUID uuid, ReviewRequest request) throws AlphanahBaseException {
-        Review response = service.update(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid, request.getMessage(), request.getRating());
+        Review response = service.update(AccountUtils.findAccount(token).getUuid(), productUuid, uuid, request.getMessage(), request.getRating());
         return response.toReviewResponseM1(null);
     }
 
     public void deleteReview(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid);
+        service.delete(AccountUtils.findAccount(token).getUuid(), productUuid, uuid);
     }
 
 }

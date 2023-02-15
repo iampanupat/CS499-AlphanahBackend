@@ -9,5 +9,4 @@ public class UpdateAccountRequest {
     private String lastname;
     private String address;
     private String phone;
-    private MultipartFile picture;
 }

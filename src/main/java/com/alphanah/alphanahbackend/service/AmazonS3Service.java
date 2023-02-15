@@ -30,7 +30,7 @@ public class AmazonS3Service {
         String fileName = id + "." + contentTypeName;
         File convertedFile = convertMultiPartToFile(file);
         PutObjectResult result = amazonS3.putObject(bucketName, fileName, convertedFile);
-        return "https://images.alphanah.com/" + fileName;
+        return "/" + fileName;
     }
 
     private File convertMultiPartToFile(MultipartFile file) {

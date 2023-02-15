@@ -33,17 +33,17 @@ public class ProductOptionBusiness {
     }
 
     public ProductOptionResponseM1 createProductOption(String token, UUID productUuid, ProductOptionRequest request) throws AlphanahBaseException {
-        ProductOption response = service.create(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, request.getName(), request.getPrice(), request.getQuantity());
+        ProductOption response = service.create(AccountUtils.findAccount(token).getUuid(), productUuid, request.getName(), request.getPrice(), request.getQuantity());
         return response.toProductOptionResponseM1(null);
     }
 
     public ProductOptionResponseM1 updateProductOption(String token, UUID productUuid, UUID uuid, ProductOptionRequest request) throws AlphanahBaseException {
-        ProductOption response = service.update(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid, request.getName(), request.getPrice(), request.getQuantity());
+        ProductOption response = service.update(AccountUtils.findAccount(token).getUuid(), productUuid, uuid, request.getName(), request.getPrice(), request.getQuantity());
         return response.toProductOptionResponseM1(null);
     }
 
     public void deleteProductOption(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
-        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), productUuid, uuid);
+        service.delete(AccountUtils.findAccount(token).getUuid(), productUuid, uuid);
     }
 
 }

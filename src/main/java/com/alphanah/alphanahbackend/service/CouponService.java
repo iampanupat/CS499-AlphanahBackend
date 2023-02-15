@@ -45,10 +45,10 @@ public class CouponService {
             throw CouponException.cannotCreateWithNegativeOrZeroValue();
 
         if (type.equals(CouponType.GIFT_CARD) && value > COUPON_GIFT_CARD_MAX_VALUE)
-            throw CouponException.cannotCreateWithOverMaxCouponGiftCardValue();
+            throw CouponException.cannotCreateWithOverCouponGiftCardMaxValue();
 
         if (type.equals(CouponType.PERCENTAGE_DISCOUNT) && value > COUPON_PERCENTAGE_DISCOUNT_MAX_VALUE)
-            throw CouponException.cannotCreateWithOverMaxCouponPercentageDiscountValue();
+            throw CouponException.cannotCreateWithOverCouponPercentageDiscountMaxValue();
 
         Coupon entity = new Coupon();
         switch (type) {

@@ -19,22 +19,22 @@ public class AccountUtils {
         AccountUtils.accountService = accountService;
     }
 
-    public static Account getAccountWithUuid(UUID uuid) throws AlphanahBaseException {
-        return accountService.get(uuid);
+    public static Account findAccount(UUID uuid) throws AlphanahBaseException {
+        return accountService.findAccount(uuid);
     }
 
-    public static Account getAccountWithToken(String token) throws AlphanahBaseException {
-        return accountService.get(token);
+    public static Account findAccount(String token) throws AlphanahBaseException {
+        return accountService.findAccount(token);
     }
 
     public static void merchantVerify(String token) throws AlphanahBaseException {
-        if (accountService.get(token).isMerchant())
+        if (accountService.findAccount(token).isMerchant())
             return;
         throw AuthException.roleNotAllowed();
     }
 
     public static void customerVerify(String token) throws AlphanahBaseException {
-        if (accountService.get(token).isCustomer())
+        if (accountService.findAccount(token).isCustomer())
             return;
         throw AuthException.roleNotAllowed();
     }

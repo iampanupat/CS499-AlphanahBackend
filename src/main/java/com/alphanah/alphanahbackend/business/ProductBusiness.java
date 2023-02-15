@@ -41,17 +41,17 @@ public class ProductBusiness {
     }
 
     public ProductResponseM1 createProduct(String token, ProductRequest request) throws AlphanahBaseException {
-        Product response = service.create(AccountUtils.getAccountWithToken(token).getUuid(), request.getName(), request.getDescription());
+        Product response = service.create(AccountUtils.findAccount(token).getUuid(), request.getName(), request.getDescription());
         return response.toProductResponseM1(null);
     }
 
     public ProductResponseM1 updateProduct(String token, UUID uuid, ProductRequest request) throws AlphanahBaseException {
-        Product response = service.update(AccountUtils.getAccountWithToken(token).getUuid(), uuid, request.getName(), request.getDescription());
+        Product response = service.update(AccountUtils.findAccount(token).getUuid(), uuid, request.getName(), request.getDescription());
         return response.toProductResponseM1(null);
     }
 
     public void deleteProduct(String token, UUID uuid) throws AlphanahBaseException {
-        service.delete(AccountUtils.getAccountWithToken(token).getUuid(), uuid);
+        service.delete(AccountUtils.findAccount(token).getUuid(), uuid);
     }
 
 }

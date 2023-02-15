@@ -143,7 +143,7 @@ public class Order implements Comparable<Order> {
             response = new CartResponseM1();
 
         response.setOrderUuid(uuid.toString());
-        response.setCreator(AccountUtils.getAccountWithUuid(creatorUuid).toAccountResponseM1(null));
+        response.setCreator(AccountUtils.findAccount(creatorUuid).toAccountResponseM1());
         response.setOrderType(type.toString());
         return response;
     }

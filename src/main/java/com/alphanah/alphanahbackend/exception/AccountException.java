@@ -6,76 +6,72 @@ public class AccountException extends AlphanahBaseException {
         super("account." + message);
     }
 
-    public static AccountException getWithNullToken() {
-        return new AccountException("get.with.null.token");
+    public static AccountException cannotFindByNullToken() {
+        return new AccountException("cannot.find.by.null.token");
     }
 
-    public static AccountException getWithNullUuid() {
-        return new AccountException("get.with.null.uuid");
+    public static AccountException cannotFindByNullAccountUuid() {
+        return new AccountException("cannot.find.by.null.account.uuid");
     }
 
-    public static AccountException getNullObject() {
-        return new AccountException("get.null.object");
+    public static AccountException notFound() {
+        return new AccountException("not.found");
     }
 
-    public static AccountException updateWithNullToken() {
-        return new AccountException("update.with.null.token");
+    public static AccountException cannotUpdateWithNullToken() {
+        return new AccountException("cannot.update.with.null.token");
     }
 
-    public static AccountException updateWithNullUuid() {
-        return new AccountException("update.with.null.uuid");
+    public static AccountException cannotUpdateWithNullAccountUuid() {
+        return new AccountException("cannot.update.with.null.account.uuid");
     }
 
-    public static AccountException updateWithNullCognitoField() {
-        return new AccountException("update.with.null.cognito.field");
+    public static AccountException cannotUpdateWithNullAccount() {
+        return new AccountException("cannot.update.with.null.account");
     }
 
-    public static AccountException updateWithNullValue() {
-        return new AccountException("update.with.null.value");
+    public static AccountException cannotUpdateWithNullFirstname() {
+        return new AccountException("cannot.update.with.null.firstname");
     }
 
-    public static AccountException updateWithEmptyValue() {
-        return new AccountException("update.with.empty.value");
+    public static AccountException cannotUpdateWithNullLastname() {
+        return new AccountException("cannot.update.with.null.lastname");
     }
 
-    public static AccountException updateWithMaxLengthValue() {
-        return new AccountException("update.with.max.length.value");
+    public static AccountException cannotUpdateWithNullAddress() {
+        return new AccountException("cannot.update.with.null.address");
     }
 
-    public static AccountException updateNullObject() {
-        return new AccountException("update.null.object");
+    public static AccountException cannotUpdateWithNullPhone() {
+        return new AccountException("cannot.update.with.null.phone");
     }
 
-    public static AccountException updateWithNullFirstname() {
-        return new AccountException("update.with.null.firstname");
+    public static AccountException cannotUpdateWithOverFirstnameMaxLength() {
+        return new AccountException("cannot.update.with.over.firstname.max.length");
     }
 
-    public static AccountException updateWithNullLastname() {
-        return new AccountException("update.with.null.lastname");
+    public static AccountException cannotUpdateWithOverLastnameMaxLength() {
+        return new AccountException("cannot.update.with.over.lastname.max.length");
     }
 
-    public static AccountException updateWithNullAddress() {
-        return new AccountException("update.with.null.address");
+    public static AccountException cannotUpdateWithOverAddressMaxLength() {
+        return new AccountException("cannot.update.with.over.address.max.length");
     }
 
-    public static AccountException updateWithNullPhone() {
-        return new AccountException("update.with.null.phone");
+    public static AccountException cannotUpdateWithOverPhoneMaxLength() {
+        return new AccountException("cannot.update.with.over.phone.max.length");
     }
 
-    public static AccountException updateWithMaxLengthFirstname() {
-        return new AccountException("update.with.max.length.firstname");
+    public static AccountException cannotUpdateWithNullAwsCognitoField() {
+        return new AccountException("cannot.update.with.null.aws.cognito.field");
     }
 
-    public static AccountException updateWithMaxLengthLastname() {
-        return new AccountException("updateWithMaxLengthLastname");
+    public static AccountException cannotUpdateWithNullValue() {
+        return new AccountException("cannot.update.with.null.value");
     }
 
-    public static AccountException updateWithMaxLengthAddress() {
-        return new AccountException("update.with.max.length.address");
-    }
-
-    public static AccountException updateWithMaxLengthPhone() {
-        return new AccountException("update.with.max.length.phone");
+    public static AccountException cannotUpdateWithOverAwsCognitoValueMaxLength() {
+        return new AccountException("cannot.update.with.over.aws.cognito.value.max.length");
     }
 
 }
