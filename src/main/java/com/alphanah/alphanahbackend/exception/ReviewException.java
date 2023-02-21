@@ -54,6 +54,10 @@ public class ReviewException extends AlphanahBaseException {
         return new ReviewException("cannot.create.with.rating.exceed.max.value");
     }
 
+    public static ReviewException cannotCreateTwiceWithOneAccount() {
+        return new ReviewException("cannot.create.twice.with.one.account");
+    }
+
     public static ReviewException cannotUpdateWithNullCreatorUuid() {
         return new ReviewException("cannot.update.with.null.creator.uuid");
     }

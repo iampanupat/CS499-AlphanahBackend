@@ -25,10 +25,10 @@ public class ProductAPI {
     @GetMapping
     public ResponseEntity<ListResponse> getAllProducts(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String category,
             @RequestParam(required = false) UUID merchant
     ) throws AlphanahBaseException {
-        List<ProductResponseM3> rawResponse = business.getAllProducts(name, description, merchant);
+        List<ProductResponseM3> rawResponse = business.getAllProducts(name, category, merchant);
         ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

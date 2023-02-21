@@ -21,68 +21,90 @@ public class CouponService {
         return (List<Coupon>) repository.findAll();
     }
 
-    public Coupon findCoupon(UUID couponUuid) throws AlphanahBaseException {
-        if (Objects.isNull(couponUuid))
-            throw CouponException.cannotFindByNullCouponUuid();
+    public Coupon findCoupon(String couponCode) throws AlphanahBaseException {
+        if (Objects.isNull(couponCode))
+            throw CouponException.cannotFindByNullCouponCode();
 
-        Optional<Coupon> optional = repository.findById(couponUuid);
+        Optional<Coupon> optional = repository.findById(couponCode);
         if (optional.isEmpty())
             throw CouponException.notFound();
 
         return optional.get();
     }
 
-    public Coupon createCoupon(UUID creatorUuid, CouponType type, long value, Date expiredDate) throws AlphanahBaseException {
+    public Coupon createCoupon(UUID creatorUuid, String couponCode, CouponType couponType, Long couponValue, Date couponStartDate, Date couponEndDate, Integer couponMaxUse) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
             throw CouponException.cannotCreateWithNullCreatorUuid();
 
-        if (Objects.isNull(type))
+        if (Objects.isNull(couponCode))
+            throw CouponException.cannotCreateWithNullCouponCode();
+
+        if (Objects.isNull(couponType))
             throw CouponException.cannotCreateWithNullCouponType();
 
-        if ((type.equals(CouponType.GIFT_CARD) || type.equals(CouponType.PERCENTAGE_DISCOUNT)) && value <= 0)
+        if (Objects.isNull(couponValue))
+            throw CouponException.cannotCreateWithNullCouponValue();
+
+        if (Objects.isNull(couponStartDate))
+            throw CouponException.cannotCreateWithNullCouponStartDate();
+
+        if (repository.existsById(couponCode.toUpperCase()))
+            throw CouponException.cannotCreateDuplicateCouponCode();
+
+        if ((couponType.equals(CouponType.GIFT_CARD) || couponType.equals(CouponType.PERCENTAGE_DISCOUNT)) && couponValue <= 0)
             throw CouponException.cannotCreateWithNegativeOrZeroValue();
 
-        if (type.equals(CouponType.GIFT_CARD) && value > Env.COUPON_GIFT_CARD_MAX_VALUE)
+        if (couponType.equals(CouponType.GIFT_CARD) && couponValue > Env.COUPON_GIFT_CARD_MAX_VALUE)
             throw CouponException.cannotCreateWithValueExceedGiftCardMaxValue();
 
-        if (type.equals(CouponType.PERCENTAGE_DISCOUNT) && value > Env.COUPON_PERCENTAGE_DISCOUNT_MAX_VALUE)
+        if (couponType.equals(CouponType.PERCENTAGE_DISCOUNT) && couponValue > Env.COUPON_PERCENTAGE_DISCOUNT_MAX_VALUE)
             throw CouponException.cannotCreateWithValueExceedPercentageDiscountMaxValue();
 
+        if (!Objects.isNull(couponEndDate) && couponStartDate.after(couponEndDate))
+            throw CouponException.cannotCreateWithInvalidDate();
+
+        if (!Objects.isNull(couponMaxUse) && couponMaxUse <= 0)
+            throw CouponException.cannotCreateWithNegativeOrZeroCouponMaxUse();
+
         Coupon entity = new Coupon();
-        switch (type) {
+        switch (couponType) {
             case FREE_SHIPPING, GIFT_CARD, PERCENTAGE_DISCOUNT -> {
-                entity.setType(type);
-                entity.setValue(value);
+                entity.setCode(couponCode.toUpperCase());
+                entity.setType(couponType);
+                entity.setValue(couponValue);
+                entity.setStartDate(couponStartDate);
+                entity.setEndDate(couponEndDate);
                 entity.setCreatorUuid(creatorUuid);
-                entity.setExpiredDate(expiredDate);
+                entity.setUseCount(0);
+                entity.setMaxUse(Objects.isNull(couponMaxUse) ? null : couponMaxUse);
             }
             default -> throw CouponException.cannotCreateWithUnsupportedCouponType();
         }
         return repository.save(entity);
     }
 
-    public Coupon updateCouponUsageStatus(UUID couponUuid) throws AlphanahBaseException {
-        if (Objects.isNull(couponUuid))
-            throw CouponException.cannotUpdateWithNullCouponUuid();
+    public Coupon updateCouponUsage(String couponCode) throws AlphanahBaseException {
+        if (Objects.isNull(couponCode))
+            throw CouponException.cannotUpdateWithNullCouponCode();
 
-        Coupon entity = this.findCoupon(couponUuid);
-        entity.setUsageStatus(true);
+        Coupon entity = this.findCoupon(couponCode);
+        if (entity.isRunOut())
+            throw CouponException.cannotUpdateWithRunOutCoupon();
+
+        entity.setUseCount(entity.getUseCount() + 1);
         return repository.save(entity);
     }
 
-    public void deleteCoupon(UUID creatorUuid, UUID couponUuid) throws AlphanahBaseException {
+    public void deleteCoupon(UUID creatorUuid, String couponCode) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
             throw CouponException.cannotDeleteWithNullCreatorUuid();
 
-        if (Objects.isNull(couponUuid))
-            throw CouponException.cannotDeleteWithNullCouponUuid();
+        if (Objects.isNull(couponCode))
+            throw CouponException.cannotDeleteWithNullCouponCode();
 
-        Coupon entity = this.findCoupon(couponUuid);
+        Coupon entity = this.findCoupon(couponCode);
         if (!creatorUuid.equals(entity.getCreatorUuid()))
             throw CouponException.cannotDeleteNotOwned();
-
-        if (entity.getUsageStatus())
-            throw CouponException.cannotDeleteUsed();
 
         repository.delete(entity);
     }

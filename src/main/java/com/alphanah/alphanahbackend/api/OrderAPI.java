@@ -21,12 +21,12 @@ public class OrderAPI {
     @Autowired
     private OrderBusiness business;
 
-    @PostMapping("/cart/coupon/{coupon_uuid}")
+    @PostMapping("/cart/coupon/{coupon_code}")
     public ResponseEntity<CartResponseM2> addCoupon(
             @RequestHeader(value = "Authorization") String token,
-            @PathVariable("coupon_uuid") UUID couponUuid
+            @PathVariable("coupon_code") String couponCode
     ) throws AlphanahBaseException {
-        CartResponseM2 response = business.updateCoupon(AccountUtils.findAccount(token).getUuid(), couponUuid);
+        CartResponseM2 response = business.updateCoupon(AccountUtils.findAccount(token).getUuid(), couponCode);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -46,6 +46,15 @@ public class OrderAPI {
     public ResponseEntity<ListResponse> getAllPaidOrders(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
         List<PaidResponseM2> rawResponse = business.getAllPaidOrders(AccountUtils.findAccount(token).getUuid());
         ListResponse response = new ListResponse(rawResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/purchase_order/{order_uuid}")
+    public ResponseEntity<PaidResponseM2> getPaidOrder(
+            @RequestHeader(value = "Authorization") String token,
+            @PathVariable("order_uuid") UUID orderUuid
+    ) throws AlphanahBaseException {
+        PaidResponseM2 response = business.getPaidOrder(AccountUtils.findAccount(token).getUuid(), orderUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

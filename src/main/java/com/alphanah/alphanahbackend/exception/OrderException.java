@@ -10,6 +10,10 @@ public class OrderException extends AlphanahBaseException {
         return new OrderException("checkout.failure");
     }
 
+    public static OrderException cannotApplyAlreadyUsedCoupon() {
+        return new OrderException("cannot.apply.already.used.coupon");
+    }
+
     public static OrderException cannotFindWithNullCreatorUuid() {
         return new OrderException("cannot.find.with.null.creator.uuid");
     }

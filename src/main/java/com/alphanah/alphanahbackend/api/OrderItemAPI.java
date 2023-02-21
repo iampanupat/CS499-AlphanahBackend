@@ -1,6 +1,7 @@
 package com.alphanah.alphanahbackend.api;
 
 import com.alphanah.alphanahbackend.business.OrderItemBusiness;
+import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
@@ -22,13 +23,24 @@ public class OrderItemAPI {
     private OrderItemBusiness business;
 
     @PostMapping("/cart/{product_uuid}/option/{product_option_uuid}")
-    public ResponseEntity<CartItemResponseM2> createOrUpdateCartItem(
+    public ResponseEntity<CartItemResponseM2> addOrCreateCartItem(
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("product_uuid") UUID productUuid,
             @PathVariable("product_option_uuid") UUID optionUuid,
             @RequestBody OrderItemRequest request
     ) throws AlphanahBaseException {
-        CartItemResponseM2 response = business.createOrUpdateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
+        CartItemResponseM2 response = business.addOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/cart/{product_uuid}/option/{product_option_uuid}")
+    public ResponseEntity<CartItemResponseM2> updateOrCreateCartItem(
+            @RequestHeader(value = "Authorization") String token,
+            @PathVariable("product_uuid") UUID productUuid,
+            @PathVariable("product_option_uuid") UUID optionUuid,
+            @RequestBody OrderItemRequest request
+    ) throws AlphanahBaseException {
+        CartItemResponseM2 response = business.updateOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -43,8 +55,11 @@ public class OrderItemAPI {
     }
 
     @GetMapping("/sale_order")
-    public ResponseEntity<ListResponse> getAllSaleOrderItem(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
-        List<PaidItemResponseM2> rawResponse = business.getAllSaleOrderItem(AccountUtils.findAccount(token).getUuid());
+    public ResponseEntity<ListResponse> getAllSaleOrderItem(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestParam(required = false) DeliveryStatus deliveryStatus
+    ) throws AlphanahBaseException {
+        List<PaidItemResponseM2> rawResponse = business.getAllSaleOrderItem(AccountUtils.findAccount(token).getUuid(), deliveryStatus);
         ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

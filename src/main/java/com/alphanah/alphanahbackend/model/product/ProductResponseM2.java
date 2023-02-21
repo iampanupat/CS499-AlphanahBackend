@@ -12,7 +12,13 @@ public class ProductResponseM2 extends ProductResponseM1 {
     private Double minPrice;
     private Double maxPrice;
     private List<ProductOptionResponseM1> options;
+    private ImageResponseM1 mainImage;
     private List<ImageResponseM1> images;
     private Double reviewScore;
+    private Integer reviewFiveStar;
+    private Integer reviewFourStar;
+    private Integer reviewThreeStar;
+    private Integer reviewTwoStar;
+    private Integer reviewOneStar;
     private List<ReviewResponseM2> reviews;
 }

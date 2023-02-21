@@ -58,6 +58,7 @@ public class CategoryService {
 
         Category entity = new Category();
         entity.setName(name);
+        entity.setLevel(Objects.isNull(parentCategory) ? 0 : parentCategory.getLevel() + 1);
         entity.setParentCategory(parentCategory);
         return repository.save(entity);
     }

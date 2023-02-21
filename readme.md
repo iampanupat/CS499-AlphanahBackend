@@ -16,16 +16,16 @@
 | `PUT`        | `/account/image`          | Update current account image       | **ALL**      |
 
 ### Product API
-| HTTP Methods | Endpoints                            | Action                                   | Access Right |
-|--------------|--------------------------------------|------------------------------------------|--------------|
-| `GET`        | `/product`                           | Get all product details                  | **ALL**      |
-| `GET`        | `/product?name={name}`               | Get all product details by Name          | **ALL**      |
-| `GET`        | `/product?description={description}` | Get all product details by Description   | **ALL**      |
-| `GET`        | `/product?merchant={merchant}`       | Get all product details by Merchant UUID | **ALL**      |
-| `GET`        | `/product/{product_uuid}`            | Get product detail by Product UUID       | **ALL**      |
-| `POST`       | `/product`                           | Create product                           | **MERCHANT** |
-| `PUT`        | `/product/{product_uuid}`            | Update product detail                    | **MERCHANT** |
-| `DELETE`     | `/product/{product_uuid}`            | Delete product                           | **MERCHANT** |
+| HTTP Methods | Endpoints                    | Action                                   | Access Right |
+|--------------|------------------------------|------------------------------------------|--------------|
+| `GET`        | `/product`                   | Get all product details                  | **ALL**      |
+| `GET`        | `/product?name={String}`     | Get all product details by Name          | **ALL**      |
+| `GET`        | `/product?category={String}` | Get all product details by Category      | **ALL**      |
+| `GET`        | `/product?merchant={UUID}`   | Get all product details by Merchant UUID | **ALL**      |
+| `GET`        | `/product/{product_uuid}`    | Get product detail by Product UUID       | **ALL**      |
+| `POST`       | `/product`                   | Create product                           | **MERCHANT** |
+| `PUT`        | `/product/{product_uuid}`    | Update product detail                    | **MERCHANT** |
+| `DELETE`     | `/product/{product_uuid}`    | Delete product                           | **MERCHANT** |
 
 ### Product Option API
 | HTTP Methods | Endpoints                                              | Action                                           | Access Right |
@@ -62,6 +62,7 @@
 ### Image API
 | HTTP Methods | Endpoints                                                         | Action                                 | Access Right |
 |--------------|-------------------------------------------------------------------|----------------------------------------|--------------|
+| `POST`       | `/product/{product_uuid}/main_image`                              | Create product main image              | **MERCHANT** |
 | `GET`        | `/product/{product_uuid}/image`                                   | Get all product images by Product UUID | **ALL**      |
 | `POST`       | `/product/{product_uuid}/image`                                   | Create product image                   | **MERCHANT** |
 | `DELETE`     | `/product/{product_uuid}/image/{image_uuid}`                      | Delete product image                   | **MERCHANT** |
@@ -70,29 +71,34 @@
 | `DELETE`     | `/product/{product_uuid}/review/{review_uuid}/image/{image_uuid}` | Delete review image                    | **CUSTOMER** |
 
 ### Order API
-| HTTP Methods | Endpoints         | Action                   | Access Right |
-|--------------|-------------------|--------------------------|--------------|
-| `GET`        | `/cart`           | Get shopping cart detail | **CUSTOMER** |
-| `GET`        | `/purchase_order` | Get all purchase history | **CUSTOMER** |
-| `POST`       | `/checkout`       | Checkout shopping cart   | **CUSTOMER** |
+| HTTP Methods | Endpoints                      | Action                                  | Access Right |
+|--------------|--------------------------------|-----------------------------------------|--------------|
+| `POST`       | `/cart/coupon/{coupon_code}`   | Apply coupon to shopping cart           | **CUSTOMER** |
+| `DELETE`     | `/cart/coupon`                 | Remove coupon from shopping cart        | **CUSTOMER** |
+| `GET`        | `/cart`                        | Get shopping cart detail                | **CUSTOMER** |
+| `GET`        | `/purchase_order`              | Get all purchase history                | **CUSTOMER** |
+| `GET`        | `/purchase_order/{order_uuid}` | Get purchase order detail by Order UUID | **CUSTOMER** |
+| `POST`       | `/checkout`                    | Checkout shopping cart                  | **CUSTOMER** |
 
 ### Order Item API
 | HTTP Methods | Endpoints                                           | Action                                                | Access Right |
 |--------------|-----------------------------------------------------|-------------------------------------------------------|--------------|
 | `POST`       | `/cart/{product_uuid}/option/{product_option_uuid}` | Add product to cart                                   | **CUSTOMER** |
+| `PUT`        | `/cart/{product_uuid}/option/{product_option_uuid}` | Update product quantity in shopping cart              | **CUSTOMER** |
 | `DELETE`     | `/cart/{product_uuid}/option/{product_option_uuid}` | Remove product from cart                              | **CUSTOMER** |
 | `GET`        | `/sale_order`                                       | Get all sales order details                           | **MERCHANT** |
 | `GET`        | `/sale_order/{order_item_uuid}`                     | Get sales order detail by Order Item UUID             | **MERCHANT** |
 | `PUT`        | `/sale_order/{order_item_uuid}`                     | Update sales order delivery status by Order Item UUID | **MERCHANT** |
 
 ### Coupon API
-| HTTP Methods | Endpoints                     | Action                                  | Access Right |
-|--------------|-------------------------------|-----------------------------------------|--------------|
-| `GET`        | `/coupon`                     | Get all coupon details                  | **ALL**      |
-| `GET`        | `/coupon?type={type}`         | Get all coupon details by Type          | **ALL**      |   
-| `GET`        | `/coupon?usage={usage}`       | Get all coupon details by Usage         | **ALL**      |   
-| `GET`        | `/coupon?expired={expired}`   | Get all coupon details by Expired       | **ALL**      |   
-| `GET`        | `/coupon?merchant={merchant}` | Get all coupon details by Merchant UUID | **ALL**      |         
-| `GET`        | `/coupon/{coupon_uuid}`       | Get coupon detail by Coupon UUID        | **ALL**      |        
-| `POST`       | `/coupon`                     | Create coupon                           | **MERCHANT** |
-| `DELETE`     | `/coupon/{coupon_uuid}`       | Delete unused coupon                    | **MERCHANT** |
+| HTTP Methods | Endpoints                   | Action                                    | Access Right |
+|--------------|-----------------------------|-------------------------------------------|--------------|
+| `GET`        | `/coupon`                   | Get all coupon details                    | **ALL**      |
+| `GET`        | `/coupon?type={Enum}`       | Get all coupon details by Type            | **ALL**      |   
+| `GET`        | `/coupon?started={Boolean}` | Get all coupon details by Started Boolean | **ALL**      |   
+| `GET`        | `/coupon?expired={Boolean}` | Get all coupon details by Expired Boolean | **ALL**      |   
+| `GET`        | `/coupon?runOut={Boolean}`  | Get all coupon details by Run Out Boolean | **ALL**      |   
+| `GET`        | `/coupon?merchant={UUID}`   | Get all coupon details by Merchant UUID   | **ALL**      |         
+| `GET`        | `/coupon/{coupon_code}`     | Get coupon detail by Coupon Code          | **ALL**      |        
+| `POST`       | `/coupon`                   | Create coupon                             | **MERCHANT** |
+| `DELETE`     | `/coupon/{coupon_code}`     | Delete coupon                             | **MERCHANT** |

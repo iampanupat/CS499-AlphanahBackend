@@ -9,6 +9,7 @@ import com.alphanah.alphanahbackend.exception.OrderException;
 import com.alphanah.alphanahbackend.exception.OrderItemException;
 import com.alphanah.alphanahbackend.repository.OrderItemRepository;
 import com.alphanah.alphanahbackend.utility.Env;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,19 @@ public class OrderItemService {
     @Autowired
     private ProductOptionService optionService;
 
-    public OrderItem updateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
+    public OrderItem addOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
+        Order cart = orderService.findOrCreateCart(creatorUuid);
+        List<OrderItem> orderItems = cart.getOrderItems();
+        for (OrderItem orderItem: orderItems) {
+            if (orderItem.getProductOption().getUuid().equals(optionUuid)) {
+                quantity += orderItem.getQuantity();
+                break;
+            }
+        }
+        return this.updateOrCreateCartItem(creatorUuid, productUuid, optionUuid, quantity);
+    }
+
+    public OrderItem updateOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
             throw OrderItemException.cannotUpdateWithNullCreatorUuid();
 

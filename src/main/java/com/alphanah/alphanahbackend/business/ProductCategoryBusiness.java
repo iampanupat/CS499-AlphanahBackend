@@ -1,15 +1,18 @@
 package com.alphanah.alphanahbackend.business;
 
+import com.alphanah.alphanahbackend.entity.Product;
 import com.alphanah.alphanahbackend.entity.ProductCategory;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.product_category.ProductCategoryResponseM1;
 import com.alphanah.alphanahbackend.service.ProductCategoryService;
+import com.alphanah.alphanahbackend.service.ProductService;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service

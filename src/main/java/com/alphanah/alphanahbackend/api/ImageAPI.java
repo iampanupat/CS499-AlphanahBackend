@@ -4,6 +4,7 @@ import com.alphanah.alphanahbackend.business.ImageBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
+import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,16 @@ public class ImageAPI {
     ) throws AlphanahBaseException {
         List<ImageResponseM1> rawResponse = business.getAllProductImages(productUuid);
         ListResponse response = new ListResponse(rawResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{productUuid}/main_image")
+    public ResponseEntity<ProductResponseM3> createProductMainImage(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestBody MultipartFile image,
+            @PathVariable("productUuid") UUID productUuid
+    ) throws AlphanahBaseException {
+        ProductResponseM3 response = business.createProductMainImage(token, productUuid, image);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

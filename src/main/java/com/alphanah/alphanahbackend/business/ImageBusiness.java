@@ -1,8 +1,10 @@
 package com.alphanah.alphanahbackend.business;
 
 import com.alphanah.alphanahbackend.entity.Image;
+import com.alphanah.alphanahbackend.entity.Product;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
+import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
 import com.alphanah.alphanahbackend.service.AmazonS3Service;
 import com.alphanah.alphanahbackend.service.ImageService;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
@@ -29,6 +31,11 @@ public class ImageBusiness {
         for (Image image : images)
             responses.add(image.toImageResponseM1(null));
         return responses;
+    }
+
+    public ProductResponseM3 createProductMainImage(String token, UUID productUuid, MultipartFile image) throws AlphanahBaseException {
+        Product response = service.createProductMainImage(AccountUtils.findAccount(token).getUuid(), productUuid, amazonS3Service.saveFile(image));
+        return response.toProductResponseM3();
     }
 
     public ImageResponseM1 createProductImage(String token, UUID productUuid, MultipartFile image) throws AlphanahBaseException {

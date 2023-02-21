@@ -20,6 +20,10 @@ public class ProductCategoryException extends AlphanahBaseException {
         return new ProductCategoryException("cannot.create.with.null.category.uuid");
     }
 
+    public static ProductCategoryException cannotCreateMultipleRelationship() {
+        return new ProductCategoryException("cannot.create.multiple.relationship");
+    }
+
     public static ProductCategoryException cannotCreateDuplicateRelationship() {
         return new ProductCategoryException("cannot.create.duplicate.relationship");
     }

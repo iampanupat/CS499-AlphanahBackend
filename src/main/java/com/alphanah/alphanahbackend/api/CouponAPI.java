@@ -24,17 +24,20 @@ public class CouponAPI {
 
     @GetMapping
     public ResponseEntity<ListResponse> getAllCouponsWithUsage(
-            @RequestParam(required = false) CouponType type, @RequestParam(required = false) Boolean usage,
-            @RequestParam(required = false) Boolean expired, @RequestParam(required = false) UUID merchant
+            @RequestParam(required = false) CouponType type,
+            @RequestParam(required = false) Boolean started,
+            @RequestParam(required = false) Boolean expired,
+            @RequestParam(required = false) Boolean runOut,
+            @RequestParam(required = false) UUID merchant
     ) throws AlphanahBaseException {
-        List<CouponResponseM1> rawResponses = business.getAllCoupons(type, usage, expired, merchant);
+        List<CouponResponseM1> rawResponses = business.getAllCoupons(type, started, expired, runOut, merchant);
         ListResponse response = new ListResponse(rawResponses);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/{coupon_uuid}")
-    public ResponseEntity<CouponResponseM1> getCoupon(@PathVariable("coupon_uuid") UUID couponUuid) throws AlphanahBaseException {
-        CouponResponseM1 response = business.getCoupon(couponUuid);
+    @GetMapping("/{coupon_code}")
+    public ResponseEntity<CouponResponseM1> getCoupon(@PathVariable("coupon_code") String couponCode) throws AlphanahBaseException {
+        CouponResponseM1 response = business.getCoupon(couponCode);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -48,13 +51,13 @@ public class CouponAPI {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{coupon_uuid}")
+    @DeleteMapping("/{coupon_code}")
     public ResponseEntity<Void> deleteCoupon(
             @RequestHeader(value = "Authorization") String token,
-            @PathVariable("coupon_uuid") UUID couponUuid
+            @PathVariable("coupon_code") String couponCode
     ) throws AlphanahBaseException {
         AccountUtils.merchantVerify(token);
-        business.deleteCoupon(AccountUtils.findAccount(token).getUuid(), couponUuid);
+        business.deleteCoupon(AccountUtils.findAccount(token).getUuid(), couponCode);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

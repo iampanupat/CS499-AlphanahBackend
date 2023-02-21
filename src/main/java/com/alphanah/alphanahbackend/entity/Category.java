@@ -26,6 +26,9 @@ public class Category {
     @Column(name = "category_name", nullable = false, updatable = false, length = 120)
     private String name;
 
+    @Column(name = "category_level", nullable = false, updatable = false)
+    private Integer level = 0;
+
     @OneToMany(mappedBy = "category", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductCategory> productCategories = new ArrayList<>();
 
@@ -62,13 +65,13 @@ public class Category {
         return allParentList;
     }
 
-
     public CategoryResponseM1 toCategoryResponseM1(CategoryResponseM1 response) {
         if (response == null)
             response = new CategoryResponseM1();
 
         response.setCategoryUUID(this.getUuid().toString());
         response.setName(this.getName());
+        response.setLevel(this.getLevel());
         return response;
     }
 

@@ -34,6 +34,9 @@ public class ProductCategoryService {
             throw ProductCategoryException.cannotCreateWithNullCategoryUuid();
 
         Product product = productService.findProduct(productUuid);
+        if (!Objects.isNull(product.getProductCategories()))
+            throw ProductCategoryException.cannotCreateMultipleRelationship();
+
         Category category = categoryService.findCategory(categoryUuid);
         if (repository.existsByProductAndCategory(product, category))
             throw ProductCategoryException.cannotCreateDuplicateRelationship();

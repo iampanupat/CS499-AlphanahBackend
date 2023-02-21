@@ -1,6 +1,7 @@
 package com.alphanah.alphanahbackend.entity;
 
 import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
+import com.alphanah.alphanahbackend.utility.Env;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,7 @@ public class Image {
             response = new ImageResponseM1();
 
         response.setImageUUID(this.getUuid().toString());
-        response.setPath(this.getPath());
+        response.setPath(Env.IMAGE_SERVER_URL + this.getPath());
         return response;
     }
 

@@ -20,15 +20,17 @@ public class CouponBusiness {
     @Autowired
     private CouponService service;
 
-    public List<CouponResponseM1> getAllCoupons(CouponType type, Boolean usage, Boolean expired, UUID merchant) throws AlphanahBaseException {
+    public List<CouponResponseM1> getAllCoupons(CouponType type, Boolean started, Boolean expired, Boolean runOut, UUID merchant) throws AlphanahBaseException {
         List<CouponResponseM1> responses = new ArrayList<>();
         List<Coupon> couponList = service.findAllCoupons();
         for (Coupon coupon: couponList) {
             if (!Objects.isNull(type) && !coupon.getType().equals(type))
                 continue;
-            if (!Objects.isNull(usage) && (coupon.isUsed() != usage))
+            if (!Objects.isNull(started) && (coupon.isStarted() != started))
                 continue;
             if (!Objects.isNull(expired) && (coupon.isExpired() != expired))
+                continue;
+            if (!Objects.isNull(runOut) && (coupon.isRunOut() != runOut))
                 continue;
             if (!Objects.isNull(merchant) && !coupon.getCreatorUuid().equals(merchant))
                 continue;
@@ -37,18 +39,18 @@ public class CouponBusiness {
         return responses;
     }
 
-    public CouponResponseM1 getCoupon(UUID couponUuid) throws AlphanahBaseException {
-        Coupon coupon = service.findCoupon(couponUuid);
+    public CouponResponseM1 getCoupon(String couponCode) throws AlphanahBaseException {
+        Coupon coupon = service.findCoupon(couponCode);
         return coupon.toCouponResponseM1();
     }
 
     public CouponResponseM1 createCoupon(UUID creatorUuid, CouponRequest request) throws AlphanahBaseException {
-        Coupon coupon = service.createCoupon(creatorUuid, request.getType(), request.getValue(), request.getExpiredDate());
+        Coupon coupon = service.createCoupon(creatorUuid, request.getCode(), request.getType(), request.getValue(), request.getStartDate(), request.getEndDate(), request.getMaxUse());
         return coupon.toCouponResponseM1();
     }
 
-    public void deleteCoupon(UUID creatorUuid, UUID couponUuid) throws AlphanahBaseException {
-        service.deleteCoupon(creatorUuid, couponUuid);
+    public void deleteCoupon(UUID creatorUuid, String couponCode) throws AlphanahBaseException {
+        service.deleteCoupon(creatorUuid, couponCode);
     }
 
 }

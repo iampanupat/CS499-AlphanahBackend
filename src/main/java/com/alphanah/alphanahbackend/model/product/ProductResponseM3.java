@@ -8,5 +8,7 @@ import java.util.List;
 @Data
 public class ProductResponseM3 extends ProductResponseM2 {
     private List<CategoryResponseM1> categories;
+    private Integer saleCount = 0;
+    private Integer outOfStock = 0;
 }
 

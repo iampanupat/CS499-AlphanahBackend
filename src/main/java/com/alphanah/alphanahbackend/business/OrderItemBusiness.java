@@ -1,6 +1,7 @@
 package com.alphanah.alphanahbackend.business;
 
 import com.alphanah.alphanahbackend.entity.OrderItem;
+import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
 import com.alphanah.alphanahbackend.enumerate.OrderType;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -21,8 +23,13 @@ public class OrderItemBusiness {
     @Autowired
     private OrderItemService service;
 
-    public CartItemResponseM2 createOrUpdateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
-        OrderItem response = service.updateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
+    public CartItemResponseM2 addOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
+        OrderItem response = service.addOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
+        return response.toCartItemResponseM2(null);
+    }
+
+    public CartItemResponseM2 updateOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
+        OrderItem response = service.updateOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
         return response.toCartItemResponseM2(null);
     }
 
@@ -30,11 +37,13 @@ public class OrderItemBusiness {
         service.deleteCartItem(accountUuid, productUuid, optionUuid);
     }
 
-    public List<PaidItemResponseM2> getAllSaleOrderItem(UUID merchantUuid) throws AlphanahBaseException {
+    public List<PaidItemResponseM2> getAllSaleOrderItem(UUID merchantUuid, DeliveryStatus deliveryStatus) throws AlphanahBaseException {
         List<PaidItemResponseM2> responses = new ArrayList<>();
         List<OrderItem> saleOrderItemList = service.findAllPaidOrderItem(merchantUuid);
         for (OrderItem saleOrderItem: saleOrderItemList) {
             if (saleOrderItem.getOrder().getType().equals(OrderType.CART))
+                continue;
+            if (!Objects.isNull(deliveryStatus) && !saleOrderItem.getDeliveryStatus().equals(deliveryStatus))
                 continue;
             responses.add(saleOrderItem.toPaidItemResponseM2(null));
         }

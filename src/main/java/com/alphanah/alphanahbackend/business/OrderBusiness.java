@@ -34,8 +34,8 @@ public class OrderBusiness {
     @Value("${Stripe.apiKey}")
     private String stripeApiKey;
 
-    public CartResponseM2 updateCoupon(UUID creatorUuid, UUID couponUuid) throws AlphanahBaseException {
-        Order response = service.updateCoupon(creatorUuid, couponUuid);
+    public CartResponseM2 updateCoupon(UUID creatorUuid, String couponCode) throws AlphanahBaseException {
+        Order response = service.updateCoupon(creatorUuid, couponCode);
         return response.toCartResponseM2(null);
     }
 
@@ -52,6 +52,11 @@ public class OrderBusiness {
         for (Order paidOrder: paidOrders)
             responses.add(paidOrder.toPaidResponseM2(null));
         return responses;
+    }
+
+    public PaidResponseM2 getPaidOrder(UUID accountUuid, UUID orderUuid) throws AlphanahBaseException {
+        Order response = service.findPaidOrder(accountUuid, orderUuid);
+        return response.toPaidResponseM2(null);
     }
 
     public ResponseEntity<Map<String, Object>> checkout(UUID accountUuid, byte[] stripeRequest) {

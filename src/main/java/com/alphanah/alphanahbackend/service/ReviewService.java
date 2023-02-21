@@ -74,6 +74,12 @@ public class ReviewService {
 
         Product product = productService.findProduct(productUuid);
 
+        List<Review> reviews = this.findAllReviews(product.getUuid());
+        for (Review review: reviews) {
+            if (review.getCreatorUuid().equals(creatorUuid))
+                throw ReviewException.cannotCreateTwiceWithOneAccount();
+        }
+
         Review entity = new Review();
         entity.setCreatorUuid(creatorUuid);
         entity.setProduct(product);

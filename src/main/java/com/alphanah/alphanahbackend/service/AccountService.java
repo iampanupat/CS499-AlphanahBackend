@@ -126,6 +126,18 @@ public class AccountService {
         if (Objects.isNull(phone))
             throw AccountException.cannotUpdateWithNullPhone();
 
+        if (firstname.isEmpty())
+            throw AccountException.cannotUpdateWithEmptyFirstname();
+
+        if (lastname.isEmpty())
+            throw AccountException.cannotUpdateWithEmptyLastname();
+
+        if (address.isEmpty())
+            throw AccountException.cannotUpdateWithEmptyAddress();
+
+        if (phone.isEmpty())
+            throw AccountException.cannotUpdateWithEmptyPhone();
+
         if (firstname.length() > Env.FIRSTNAME_MAX_LENGTH)
             throw AccountException.cannotUpdateWithFirstnameExceedMaxLength();
 

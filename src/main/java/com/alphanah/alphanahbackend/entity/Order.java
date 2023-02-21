@@ -107,7 +107,7 @@ public class Order implements Comparable<Order> {
         Map<UUID, Double> totalPriceMap = this.merchantTotalPriceMap();
         for (UUID merchantUuid: merchantUuidSet) {
             double rawTotalPrice = totalPriceMap.getOrDefault(merchantUuid, 0.0);
-            if (!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isUsed())
+            if (!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isRunOut() && coupon.isStarted() && !coupon.isExpired())
                 switch (coupon.getType()) {
                     case GIFT_CARD -> finalPrice += rawTotalPrice <= coupon.getValue() ? 0 : rawTotalPrice - coupon.getValue();
                     case PERCENTAGE_DISCOUNT -> finalPrice += rawTotalPrice * (100 - coupon.getValue()) / 100;
@@ -133,7 +133,7 @@ public class Order implements Comparable<Order> {
         Set<UUID> merchantUuidSet = merchantUuidSet();
         Map<UUID, Double> totalPriceMap = merchantTotalPriceMap();
         for (UUID merchantUuid: merchantUuidSet)
-            if (!(!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isUsed() && coupon.getType().equals(CouponType.FREE_SHIPPING)))
+            if ( !(!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isRunOut() && coupon.isStarted() && !coupon.isExpired() && coupon.getType().equals(CouponType.FREE_SHIPPING)) )
                 finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) < 1000 ? 50 : totalPriceMap.get(merchantUuid) * 0.05;
         return finalPrice;
     }
@@ -194,7 +194,9 @@ public class Order implements Comparable<Order> {
 
         response.setDiscount(Objects.isNull(coupon) ? null : this.isCouponActive());
         response.setCoupon(Objects.isNull(coupon) ? null : coupon.toCouponResponseM1());
+        response.setRawTotalPrice(this.calculateRawTotalPrice());
         response.setTotalPrice(this.calculateTotalPriceWithCoupon());
+        response.setRawDeliveryFee(this.calculateRawDeliveryFee());
         response.setDeliveryFee(this.calculateDeliveryFeeWithCoupon());
         response.setOrderItems(paidItems);
         return response;

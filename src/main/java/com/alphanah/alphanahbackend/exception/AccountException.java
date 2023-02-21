@@ -46,6 +46,22 @@ public class AccountException extends AlphanahBaseException {
         return new AccountException("cannot.update.with.null.phone");
     }
 
+    public static AccountException cannotUpdateWithEmptyFirstname() {
+        return new AccountException("cannot.update.with.empty.firstname");
+    }
+
+    public static AccountException cannotUpdateWithEmptyLastname() {
+        return new AccountException("cannot.update.with.empty.lastname");
+    }
+
+    public static AccountException cannotUpdateWithEmptyAddress() {
+        return new AccountException("cannot.update.with.empty.address");
+    }
+
+    public static AccountException cannotUpdateWithEmptyPhone() {
+        return new AccountException("cannot.update.with.empty.phone");
+    }
+
     public static AccountException cannotUpdateWithFirstnameExceedMaxLength() {
         return new AccountException("cannot.update.with.firstname.exceed.max.length");
     }

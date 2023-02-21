@@ -35,9 +35,16 @@ public class OrderService {
     @Autowired
     private CouponService couponService;
 
-    public Order updateCoupon(UUID creatorUuid, UUID couponUuid) throws AlphanahBaseException {
+    public Order updateCoupon(UUID creatorUuid, String couponCode) throws AlphanahBaseException {
         Order entity = this.findOrCreateCart(creatorUuid);
-        Coupon coupon = Objects.isNull(couponUuid) ? null : couponService.findCoupon(couponUuid);
+
+        Coupon coupon = Objects.isNull(couponCode) ? null : couponService.findCoupon(couponCode);
+        List<Order> orders = repository.findAllByCreatorUuid(creatorUuid);
+        for (Order order : orders) {
+            if (!Objects.isNull(order.getCoupon()) && order.getCoupon().equals(coupon))
+                throw OrderException.cannotApplyAlreadyUsedCoupon();
+        }
+
         entity.setCoupon(coupon);
         return repository.save(entity);
     }
@@ -185,7 +192,7 @@ public class OrderService {
 
         Coupon coupon = entity.getCoupon();
         if (!Objects.isNull(coupon) && entity.isCouponActive())
-            couponService.updateCouponUsageStatus(coupon.getUuid());
+            couponService.updateCouponUsage(coupon.getCode());
         else
             entity.setCoupon(null);
         orderItemRepository.saveAll(orderItemEntityList);

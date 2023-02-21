@@ -8,7 +8,10 @@ import java.util.UUID;
 
 @Data
 public class CouponRequest {
+    private String code;
     private CouponType type;
     private Long value = -1L;
-    private Date expiredDate;
+    private Date startDate = new Date();
+    private Date endDate;
+    private Integer maxUse = 1;
 }

@@ -6,4 +6,5 @@ import lombok.Data;
 public class CategoryResponseM1 {
     private String categoryUUID;
     private String name;
+    private Integer level;
 }

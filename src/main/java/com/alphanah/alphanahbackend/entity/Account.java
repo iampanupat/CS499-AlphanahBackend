@@ -46,8 +46,8 @@ public class Account {
 
         response.setAccountUUID(this.getUuid().toString());
         response.setRole(this.getRole().toString());
-        response.setFirstname(this.getFirstname());
-        response.setLastname(this.getLastname());
+        response.setFirstname(Objects.isNull(firstname) & Objects.isNull(lastname) ? String.valueOf(role) : firstname);
+        response.setLastname(Objects.isNull(firstname) & Objects.isNull(lastname) ? String.valueOf(uuid) : lastname);
         response.setImage(Env.IMAGE_SERVER_URL + this.getImage());
         response.setCreateDate(this.getCreateDate());
         return response;

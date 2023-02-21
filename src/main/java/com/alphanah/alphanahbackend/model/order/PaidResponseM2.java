@@ -11,7 +11,9 @@ import java.util.List;
 public class PaidResponseM2 extends PaidResponseM1 {
     private Boolean discount;
     private CouponResponseM1 coupon;
-    private Double totalPrice;
-    private Double deliveryFee;
+    private Double rawTotalPrice = 0.0;
+    private Double totalPrice = 0.0;
+    private Double rawDeliveryFee = 0.0;
+    private Double deliveryFee = 0.0;
     private List<PaidItemResponseM2> orderItems;
 }

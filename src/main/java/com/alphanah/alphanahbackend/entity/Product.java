@@ -1,5 +1,6 @@
 package com.alphanah.alphanahbackend.entity;
 
+import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.category.CategoryResponseM1;
 import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
@@ -41,6 +43,10 @@ public class Product {
 
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductCategory> productCategories = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "product_main_image")
+    private Image image;
 
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
@@ -87,6 +93,8 @@ public class Product {
         response.setMaxPrice(max);
         response.setOptions(options);
 
+        response.setMainImage(Objects.isNull(image) ? null : image.toImageResponseM1(null));
+
         // "Image" Base Response
         List<ImageResponseM1> images = new ArrayList<>();
         List<Image> imageList = this.getImages();
@@ -98,13 +106,25 @@ public class Product {
         List<ReviewResponseM2> reviews = new ArrayList<>();
         List<Review> reviewList = this.getReviews();
         double sumReview = 0;
-        int count = 0;
+        int totalCount = 0, oneStarCount = 0, twoStarCount = 0, threeStarCount = 0, fourStarCount = 0, fiveStarCount = 0;
         for (Review review : reviewList) {
+            switch (review.getRating()) {
+                case 1 -> oneStarCount++;
+                case 2 -> twoStarCount++;
+                case 3 -> threeStarCount++;
+                case 4 -> fourStarCount++;
+                case 5 -> fiveStarCount++;
+            }
             sumReview += review.getRating();
-            count++;
+            totalCount++;
             reviews.add(review.toReviewResponseM2(null));
         }
-        response.setReviewScore(reviews.isEmpty() ? null : Math.round(sumReview / count * 10.0) / 10.0);
+        response.setReviewScore(reviews.isEmpty() ? 0 : Math.round(sumReview / totalCount * 10.0) / 10.0);
+        response.setReviewFiveStar(fiveStarCount);
+        response.setReviewFourStar(fourStarCount);
+        response.setReviewThreeStar(threeStarCount);
+        response.setReviewTwoStar(twoStarCount);
+        response.setReviewOneStar(oneStarCount);
         response.setReviews(reviews);
         return response;
     }
@@ -125,6 +145,22 @@ public class Product {
         for (ProductCategory productCategory : productCategoryList)
             categories.add(productCategory.getCategory().toCategoryResponseM1(null));
         response.setCategories(categories);
+
+        int saleCount = 0;
+        int outOfStock = 0;
+        List<ProductOption> productOptionList = this.options;
+        for (ProductOption option : productOptionList) {
+            if (option.getQuantity() == 0)
+                outOfStock++;
+
+            for (OrderItem orderItem : option.getOrderItems()) {
+                if (orderItem.getDeliveryStatus().equals(DeliveryStatus.CART_ITEM))
+                    continue;
+                saleCount += orderItem.getQuantity();
+            }
+        }
+        response.setSaleCount(saleCount);
+        response.setOutOfStock(outOfStock);
         return response;
     }
 
