@@ -89,8 +89,8 @@ public class Product {
             max = option.getPrice() > max ? option.getPrice() : max;
             options.add(option.toProductOptionResponseM1(null));
         }
-        response.setMinPrice(min);
-        response.setMaxPrice(max);
+        response.setMinPrice(min == Double.MAX_VALUE ? 0 : min);
+        response.setMaxPrice(max == Double.MIN_VALUE ? 0 : max);
         response.setOptions(options);
 
         response.setMainImage(Objects.isNull(image) ? null : image.toImageResponseM1(null));

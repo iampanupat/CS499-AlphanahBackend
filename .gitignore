@@ -35,4 +35,6 @@ build/
 application.yaml
 secret.yaml
 
+out/
+
 src/main/java/com/alphanah/alphanahbackend/_sandbox/*
