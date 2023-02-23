@@ -13,5 +13,5 @@ public class CouponRequest {
     private Long value = -1L;
     private Date startDate = new Date();
     private Date endDate;
-    private Integer maxUse = 1;
+    private Integer maxUse;
 }

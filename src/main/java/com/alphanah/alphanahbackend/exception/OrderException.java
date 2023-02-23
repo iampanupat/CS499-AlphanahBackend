@@ -10,6 +10,10 @@ public class OrderException extends AlphanahBaseException {
         return new OrderException("checkout.failure");
     }
 
+    public static OrderException cannotApplyUnavailableCoupon() {
+        return new OrderException("cannot.apply.unavailable.coupon");
+    }
+
     public static OrderException cannotApplyAlreadyUsedCoupon() {
         return new OrderException("cannot.apply.already.used.coupon");
     }
