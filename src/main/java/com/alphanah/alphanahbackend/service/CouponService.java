@@ -25,7 +25,7 @@ public class CouponService {
         if (Objects.isNull(couponCode))
             throw CouponException.cannotFindByNullCouponCode();
 
-        Optional<Coupon> optional = repository.findById(couponCode);
+        Optional<Coupon> optional = repository.findById(couponCode.toUpperCase());
         if (optional.isEmpty())
             throw CouponException.notFound();
 

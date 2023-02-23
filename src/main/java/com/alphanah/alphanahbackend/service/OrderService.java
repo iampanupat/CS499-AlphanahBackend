@@ -47,7 +47,7 @@ public class OrderService {
             if (Objects.isNull(coupon))
                 break;
 
-            if (!Objects.isNull(order.getCoupon()) && order.getCoupon().equals(coupon))
+            if (!Objects.isNull(order.getCoupon()) && order.getCoupon().getCode().equalsIgnoreCase(coupon.getCode()))
                 throw OrderException.cannotApplyAlreadyUsedCoupon();
         }
 
