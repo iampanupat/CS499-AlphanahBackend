@@ -26,24 +26,28 @@ public class OrderAPI {
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("coupon_code") String couponCode
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         CartResponseM2 response = business.updateCoupon(AccountUtils.findAccount(token).getUuid(), couponCode);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/cart/coupon")
     public ResponseEntity<CartResponseM2> removeCoupon(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         CartResponseM2 response = business.updateCoupon(AccountUtils.findAccount(token).getUuid(), null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/cart")
     public ResponseEntity<CartResponseM2> getCartOrder(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException, InterruptedException {
+        AccountUtils.customerVerify(token);
         CartResponseM2 response = business.getCartOrder(AccountUtils.findAccount(token).getUuid());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/purchase_order")
     public ResponseEntity<ListResponse> getAllPaidOrders(@RequestHeader(value = "Authorization") String token) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         List<PaidResponseM2> rawResponse = business.getAllPaidOrders(AccountUtils.findAccount(token).getUuid());
         ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -54,6 +58,7 @@ public class OrderAPI {
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("order_uuid") UUID orderUuid
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         PaidResponseM2 response = business.getPaidOrder(AccountUtils.findAccount(token).getUuid(), orderUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -63,6 +68,7 @@ public class OrderAPI {
             @RequestHeader(value = "Authorization") String token,
             @RequestBody byte[] stripeRequest
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         return business.checkout(AccountUtils.findAccount(token).getUuid(), stripeRequest);
     }
 

@@ -5,6 +5,7 @@ import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
+import com.alphanah.alphanahbackend.utility.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,7 @@ public class ImageAPI {
             @RequestBody MultipartFile image,
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         ProductResponseM3 response = business.createProductMainImage(token, productUuid, image);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -46,6 +48,7 @@ public class ImageAPI {
             @RequestBody MultipartFile image,
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         ImageResponseM1 response = business.createProductImage(token, productUuid, image);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -56,6 +59,7 @@ public class ImageAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("uuid") UUID uuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         business.deleteProductImage(token, productUuid, uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -77,6 +81,7 @@ public class ImageAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("reviewUuid") UUID reviewUuid
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         ImageResponseM1 response = business.createReviewImage(token, productUuid, reviewUuid, image);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -88,6 +93,7 @@ public class ImageAPI {
             @PathVariable("reviewUuid") UUID reviewUuid,
             @PathVariable("uuid") UUID uuid
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         business.deleteReviewImage(token, productUuid, reviewUuid, uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }

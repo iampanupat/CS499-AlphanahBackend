@@ -5,6 +5,7 @@ import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.product_option.ProductOptionRequest;
 import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
+import com.alphanah.alphanahbackend.utility.AccountUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,7 @@ public class ProductOptionAPI {
             @Valid @RequestBody ProductOptionRequest request,
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         ProductOptionResponseM1 response = business.createProductOption(token, productUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -51,6 +53,7 @@ public class ProductOptionAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("uuid") UUID uuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         ProductOptionResponseM1 response = business.updateProductOption(token, productUuid, uuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -61,6 +64,7 @@ public class ProductOptionAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("uuid") UUID uuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         business.deleteProductOption(token, productUuid, uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -4,6 +4,7 @@ import com.alphanah.alphanahbackend.business.ProductCategoryBusiness;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.product_category.ProductCategoryResponseM1;
+import com.alphanah.alphanahbackend.utility.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class ProductCategoryAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("categoryUuid") UUID categoryUuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         List<ProductCategoryResponseM1> rawResponse = business.createProductCategory(token, productUuid, categoryUuid);
         ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -36,6 +38,7 @@ public class ProductCategoryAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("categoryUuid") UUID categoryUuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         business.deleteProductCategory(token, productUuid, categoryUuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -6,6 +6,7 @@ import com.alphanah.alphanahbackend.model.ListResponse;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM1;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM3;
 import com.alphanah.alphanahbackend.model.review.ReviewRequest;
+import com.alphanah.alphanahbackend.utility.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ public class ReviewAPI {
             @RequestBody ReviewRequest request,
             @PathVariable("productUuid") UUID productUuid
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         ReviewResponseM1 response = business.createReview(token, productUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -51,6 +53,7 @@ public class ReviewAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("uuid") UUID uuid
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         ReviewResponseM1 response = business.updateReview(token, productUuid, uuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -61,6 +64,7 @@ public class ReviewAPI {
             @PathVariable("productUuid") UUID productUuid,
             @PathVariable("uuid") UUID uuid
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         business.deleteReview(token, productUuid, uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }

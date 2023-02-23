@@ -29,6 +29,7 @@ public class OrderItemAPI {
             @PathVariable("product_option_uuid") UUID optionUuid,
             @RequestBody OrderItemRequest request
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         CartItemResponseM2 response = business.addOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -40,6 +41,7 @@ public class OrderItemAPI {
             @PathVariable("product_option_uuid") UUID optionUuid,
             @RequestBody OrderItemRequest request
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         CartItemResponseM2 response = business.updateOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -50,6 +52,7 @@ public class OrderItemAPI {
             @PathVariable("product_uuid") UUID productUuid,
             @PathVariable("product_option_uuid") UUID optionUuid
     ) throws AlphanahBaseException {
+        AccountUtils.customerVerify(token);
         business.deleteCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -59,6 +62,7 @@ public class OrderItemAPI {
             @RequestHeader(value = "Authorization") String token,
             @RequestParam(required = false) DeliveryStatus deliveryStatus
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         List<PaidItemResponseM2> rawResponse = business.getAllSaleOrderItem(AccountUtils.findAccount(token).getUuid(), deliveryStatus);
         ListResponse response = new ListResponse(rawResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -69,6 +73,7 @@ public class OrderItemAPI {
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("order_item_uuid") UUID orderItemUuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         PaidItemResponseM2 response = business.getSaleOrderItem(AccountUtils.findAccount(token).getUuid(), orderItemUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -78,6 +83,7 @@ public class OrderItemAPI {
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("order_item_uuid") UUID orderItemUuid
     ) throws AlphanahBaseException {
+        AccountUtils.merchantVerify(token);
         PaidItemResponseM2 response = business.updateDeliveryStatus(AccountUtils.findAccount(token).getUuid(), orderItemUuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
