@@ -7,6 +7,24 @@
 | `POST`       | `/register?role=MERCHANT` | Register as Merchant | **ALL**      |
 | `POST`       | `/login`                  | Login                | **ALL**      |
 
+**`POST` | `/register?role=CUSTOMER` & `/register?role=MERCHANT` : JSON Request Body**
+```
+{
+    "email" : "dummy@email.com",
+    "password" : "Qwertyui1",
+    "confirmPassword" : "Qwertyui1"
+}
+```
+
+**`POST` | `/login` : JSON Request Body**
+```
+{
+    "email" : "dummy@email.com",
+    "password" : "Qwertyui1"
+}
+```
+
+
 ### Account API
 | HTTP Methods | Endpoints                 | Action                             | Access Right | 
 |--------------|---------------------------|------------------------------------|--------------|
@@ -14,6 +32,17 @@
 | `GET`        | `/account/{account_uuid}` | Get account detail by Account UUID | **ALL**      |
 | `PUT`        | `/account`                | Update current account detail      | **ALL**      |
 | `PUT`        | `/account/image`          | Update current account image       | **ALL**      |
+
+**`PUT` | `/account` : JSON Request Body**
+```
+{
+    "firstname" : "Stop"
+    "lastname" : "Jeep"
+    "address" : "1 Infinite Loop, Cupertino, CA 95014"
+    "phone" : 0901111111
+}
+```
+
 
 ### Product API
 | HTTP Methods | Endpoints                    | Action                                   | Access Right |
@@ -27,6 +56,17 @@
 | `PUT`        | `/product/{product_uuid}`    | Update product detail                    | **MERCHANT** |
 | `DELETE`     | `/product/{product_uuid}`    | Delete product                           | **MERCHANT** |
 
+**`POST` | `/product` : JSON Request Body**
+
+**`PUT` | `/product/{product_uuid}` : JSON Request Body**
+```
+{
+    "name" : "iPhone 14 Pro Max"
+    "description" : "An expensive phone"
+}
+```
+
+
 ### Product Option API
 | HTTP Methods | Endpoints                                              | Action                                           | Access Right |
 |--------------|--------------------------------------------------------|--------------------------------------------------|--------------|
@@ -36,6 +76,18 @@
 | `PUT `       | `/product/{product_uuid}/option/{product_option_uuid}` | Update product option detail                     | **MERCHANT** |
 | `DELETE`     | `/product/{product_uuid}/option/{product_option_uuid}` | Delete product option                            | **MERCHANT** |
 
+**`POST` | `/product/{product_uuid}/option` : JSON Request Body**
+
+**`PUT` | `/product/{product_uuid}/option/{product_option_uuid}` : JSON Request Body**
+```
+{
+    "name" : "128GB"
+    "price" : 44900
+    "quantity" : 100 
+}
+```
+
+
 ### Review API
 | HTTP Methods | Endpoints                                      | Action                                 | Access Right |
 |--------------|------------------------------------------------|----------------------------------------|--------------|
@@ -44,6 +96,17 @@
 | `POST`       | `/product/{product_uuid}/review`               | Create review                          | **CUSTOMER** |
 | `PUT`        | `/product/{product_uuid}/review/{review_uuid}` | Update review detail                   | **CUSTOMER** |
 | `DELETE`     | `/product/{product_uuid}/review/{review_uuid}` | Delete review                          | **CUSTOMER** |
+
+**`POST` | `/product/{product_uuid}/review` : JSON Request Body**
+
+**`PUT` | `/product/{product_uuid}/review/{review_uuid}` : JSON Request Body**
+```
+{
+    "message" : "Good Product",
+    "rating" : 5,
+}
+```
+
 
 ### Category API
 | HTTP Methods | Endpoints                          | Action                               | Access Right |
@@ -80,6 +143,19 @@
 | `GET`        | `/purchase_order/{order_uuid}` | Get purchase order detail by Order UUID | **CUSTOMER** |
 | `POST`       | `/checkout`                    | Checkout shopping cart                  | **CUSTOMER** |
 
+**`POST` | `/checkout` : JSON Request Body**
+```
+{
+    "paymentMethodId" : "",
+    "paymentIntentId" : "",
+    "firstname" : "Jebs",
+    "lastname" : "Brazil",
+    "phone" : "0800000000",
+    "address" : "50 Ngamwongwan Rd, Chatuchak Bangkok 10900 Thailand"
+}
+```
+
+
 ### Order Item API
 | HTTP Methods | Endpoints                                           | Action                                                | Access Right |
 |--------------|-----------------------------------------------------|-------------------------------------------------------|--------------|
@@ -89,6 +165,14 @@
 | `GET`        | `/sale_order`                                       | Get all sales order details                           | **MERCHANT** |
 | `GET`        | `/sale_order/{order_item_uuid}`                     | Get sales order detail by Order Item UUID             | **MERCHANT** |
 | `PUT`        | `/sale_order/{order_item_uuid}`                     | Update sales order delivery status by Order Item UUID | **MERCHANT** |
+
+**`POST` & `PUT` | `/cart/{product_uuid}/option/{product_option_uuid}` : JSON Request Body**
+```
+{
+    "quantity" : 5
+}
+```
+
 
 ### Coupon API
 | HTTP Methods | Endpoints                   | Action                                    | Access Right |
@@ -102,3 +186,15 @@
 | `GET`        | `/coupon/{coupon_code}`     | Get coupon detail by Coupon Code          | **ALL**      |        
 | `POST`       | `/coupon`                   | Create coupon                             | **MERCHANT** |
 | `DELETE`     | `/coupon/{coupon_code}`     | Delete coupon                             | **MERCHANT** |
+
+**`POST` | `/coupon` : JSON Request Body**
+```
+{ 
+    "code" : "ALPHANAH",
+    "type" : "FREE_SHIPPING" / "GIFT_CARD" / "PERCENTAGE_DISCOUNT",
+    "value" : 50,
+    "startDate" : "2023-03-01T00:00:00.000+07:00",
+    "endDate" : "2023-04-01T00:00:00.000+07:00",
+    "maxUse" : 10
+}
+```
