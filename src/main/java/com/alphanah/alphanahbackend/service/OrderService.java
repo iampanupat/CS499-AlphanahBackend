@@ -39,11 +39,14 @@ public class OrderService {
         Order entity = this.findOrCreateCart(creatorUuid);
 
         Coupon coupon = Objects.isNull(couponCode) ? null : couponService.findCoupon(couponCode);
-        if (!coupon.isAvailable())
+        if (!Objects.isNull(coupon) && !coupon.isAvailable())
             throw OrderException.cannotApplyUnavailableCoupon();
 
         List<Order> orders = repository.findAllByCreatorUuid(creatorUuid);
         for (Order order : orders) {
+            if (Objects.isNull(coupon))
+                break;
+
             if (!Objects.isNull(order.getCoupon()) && order.getCoupon().equals(coupon))
                 throw OrderException.cannotApplyAlreadyUsedCoupon();
         }
