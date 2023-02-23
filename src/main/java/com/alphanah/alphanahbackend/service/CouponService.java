@@ -29,7 +29,11 @@ public class CouponService {
         if (optional.isEmpty())
             throw CouponException.notFound();
 
-        return optional.get();
+        Coupon coupon = optional.get();
+        if (coupon.isDeleted())
+            throw CouponException.notFound();
+
+        return coupon;
     }
 
     public Coupon createCoupon(UUID creatorUuid, String couponCode, CouponType couponType, Long couponValue, Date couponStartDate, Date couponEndDate, Integer couponMaxUse) throws AlphanahBaseException {
@@ -88,6 +92,9 @@ public class CouponService {
             throw CouponException.cannotUpdateWithNullCouponCode();
 
         Coupon entity = this.findCoupon(couponCode);
+        if (entity.isDeleted())
+            throw CouponException.cannotUpdateWithDeletedCoupon();
+
         if (entity.isRunOut())
             throw CouponException.cannotUpdateWithRunOutCoupon();
 
@@ -106,7 +113,8 @@ public class CouponService {
         if (!creatorUuid.equals(entity.getCreatorUuid()))
             throw CouponException.cannotDeleteNotOwned();
 
-        repository.delete(entity);
+        entity.setSoftDelete(true);
+        repository.save(entity);
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Data
 public class CouponResponseM1 {
+    private Boolean softDelete;
     private String couponCode;
     private CouponType type;
     private Long value;

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class CartResponseM1 {
-    private String orderUuid;
+    private String orderUUID;
     private AccountResponseM1 creator;
     private String orderType;
 }

@@ -8,6 +8,8 @@ import com.alphanah.alphanahbackend.model.order.*;
 import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
 import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
+import com.alphanah.alphanahbackend.utility.DateUtils;
+import com.alphanah.alphanahbackend.utility.Env;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -107,7 +109,7 @@ public class Order implements Comparable<Order> {
         Map<UUID, Double> totalPriceMap = this.merchantTotalPriceMap();
         for (UUID merchantUuid: merchantUuidSet) {
             double rawTotalPrice = totalPriceMap.getOrDefault(merchantUuid, 0.0);
-            if (!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isRunOut() && coupon.isStarted() && !coupon.isExpired())
+            if (!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && coupon.isAvailable())
                 switch (coupon.getType()) {
                     case GIFT_CARD -> finalPrice += rawTotalPrice <= coupon.getValue() ? 0 : rawTotalPrice - coupon.getValue();
                     case PERCENTAGE_DISCOUNT -> finalPrice += rawTotalPrice * (100 - coupon.getValue()) / 100;
@@ -124,7 +126,7 @@ public class Order implements Comparable<Order> {
         Set<UUID> merchantUuidSet = merchantUuidSet();
         Map<UUID, Double> totalPriceMap = merchantTotalPriceMap();
         for (UUID merchantUuid: merchantUuidSet)
-            finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) < 1000 ? 50 : totalPriceMap.get(merchantUuid);
+            finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) < 1000 ? 50 : totalPriceMap.get(merchantUuid) * 0.05;
         return finalPrice;
     }
 
@@ -133,7 +135,7 @@ public class Order implements Comparable<Order> {
         Set<UUID> merchantUuidSet = merchantUuidSet();
         Map<UUID, Double> totalPriceMap = merchantTotalPriceMap();
         for (UUID merchantUuid: merchantUuidSet)
-            if ( !(!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && !coupon.isRunOut() && coupon.isStarted() && !coupon.isExpired() && coupon.getType().equals(CouponType.FREE_SHIPPING)) )
+            if ( !(!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && coupon.isAvailable() && coupon.getType().equals(CouponType.FREE_SHIPPING)) )
                 finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) < 1000 ? 50 : totalPriceMap.get(merchantUuid) * 0.05;
         return finalPrice;
     }
@@ -142,7 +144,7 @@ public class Order implements Comparable<Order> {
         if (response == null)
             response = new CartResponseM1();
 
-        response.setOrderUuid(uuid.toString());
+        response.setOrderUUID(uuid.toString());
         response.setCreator(AccountUtils.findAccount(creatorUuid).toAccountResponseM1());
         response.setOrderType(type.toString());
         return response;
@@ -160,7 +162,9 @@ public class Order implements Comparable<Order> {
 
         response.setDiscount(Objects.isNull(coupon) ? null : this.isCouponActive());
         response.setCoupon(Objects.isNull(coupon) ? null : coupon.toCouponResponseM1());
+        response.setRawTotalPrice(this.calculateRawTotalPrice());
         response.setTotalPrice(this.calculateTotalPriceWithCoupon());
+        response.setRawDeliveryFee(this.calculateRawDeliveryFee());
         response.setDeliveryFee(this.calculateDeliveryFeeWithCoupon());
         response.setCartItems(cartItems);
         return response;
@@ -171,8 +175,8 @@ public class Order implements Comparable<Order> {
             response = new PaidResponseM1();
 
         response = (PaidResponseM1) this.toCartResponseM1(response);
-        response.setCheckoutDate(checkoutDate.toString());
-        response.setPayType(type.toString());
+        response.setCheckoutDate(DateUtils.timeZoneConverter(checkoutDate, Env.bangkokZone));
+        response.setPayType(payType.toString());
         DeliveryInformation information = new DeliveryInformation();
         information.setFirstname(this.recipientFirstname);
         information.setLastname(this.recipientLastname);

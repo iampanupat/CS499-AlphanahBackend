@@ -24,6 +24,8 @@ public class CouponBusiness {
         List<CouponResponseM1> responses = new ArrayList<>();
         List<Coupon> couponList = service.findAllCoupons();
         for (Coupon coupon: couponList) {
+            if (coupon.isDeleted())
+                continue;
             if (!Objects.isNull(type) && !coupon.getType().equals(type))
                 continue;
             if (!Objects.isNull(started) && (coupon.isStarted() != started))

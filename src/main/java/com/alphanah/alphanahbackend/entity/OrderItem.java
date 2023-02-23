@@ -53,6 +53,7 @@ public class OrderItem implements Comparable<OrderItem> {
         if (response == null)
             response = new CartItemResponseM1();
 
+        response.setOrderItemUUID(uuid.toString());
         response.setQuantity(this.getQuantity().toString());
         return response;
     }

@@ -44,6 +44,13 @@ public class Coupon {
     @Column(name = "coupon_max_use", updatable = false)
     private Integer maxUse = null;
 
+    @Column(name = "coupon_soft_delete", nullable = false)
+    private Boolean softDelete = false;
+
+    public boolean isAvailable() {
+        return this.isStarted() && !this.isExpired() && !this.isRunOut() && !this.isDeleted();
+    }
+
     public boolean isStarted() {
         return this.startDate.before(new Date());
     }
@@ -60,6 +67,10 @@ public class Coupon {
         return useCount >= maxUse;
     }
 
+    public boolean isDeleted() {
+        return softDelete;
+    }
+
     public CouponResponseM1 toCouponResponseM1() throws AlphanahBaseException {
         return this.toCouponResponseM1(null);
     }
@@ -68,6 +79,7 @@ public class Coupon {
         if (response == null)
             response = new CouponResponseM1();
 
+        response.setSoftDelete(softDelete);
         response.setCouponCode(code);
         response.setType(type);
         response.setValue(value);

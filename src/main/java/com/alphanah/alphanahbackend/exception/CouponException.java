@@ -70,6 +70,10 @@ public class CouponException extends AlphanahBaseException {
         return new CouponException("cannot.update.with.null.coupon.code");
     }
 
+    public static CouponException cannotUpdateWithDeletedCoupon() {
+        return new CouponException("cannot.update.with.deleted.coupon");
+    }
+
     public static CouponException cannotUpdateWithRunOutCoupon() {
         return new CouponException("cannot.update.with.run.out.coupon");
     }
