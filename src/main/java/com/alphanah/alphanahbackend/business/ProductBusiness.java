@@ -3,13 +3,12 @@ package com.alphanah.alphanahbackend.business;
 import com.alphanah.alphanahbackend.entity.Product;
 import com.alphanah.alphanahbackend.entity.ProductCategory;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
-import com.alphanah.alphanahbackend.exception.ProductException;
+import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
 import com.alphanah.alphanahbackend.model.product.ProductRequest;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM1;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
 import com.alphanah.alphanahbackend.service.ProductService;
 import com.alphanah.alphanahbackend.utility.AccountUtils;
-import org.mapstruct.ap.shaded.freemarker.template.utility.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +47,24 @@ public class ProductBusiness {
     }
 
     public ProductResponseM3 getProduct(UUID uuid) throws AlphanahBaseException {
-        Product response = service.findProduct(uuid);
-        return response.toProductResponseM3();
+        Product product = service.findProduct(uuid);
+        ProductResponseM3 response = product.toProductResponseM3();
+
+        long productCount = 0L;
+        long reviewCount = 0L;
+        List<Product> productList = service.findAllProducts();
+        for (Product prod: productList) {
+            if (prod.getCreatorUuid().equals((product.getCreatorUuid()))) {
+                productCount++;
+                reviewCount += prod.getReviews().size();
+            }
+        }
+
+        AccountResponseM1 merchantResponse = AccountUtils.findAccount(product.getCreatorUuid()).toAccountResponseM1();
+        merchantResponse.setProductCount(productCount);
+        merchantResponse.setReviewCount(reviewCount);
+        response.setCreator(merchantResponse);
+        return response;
     }
 
     public ProductResponseM1 createProduct(String token, ProductRequest request) throws AlphanahBaseException {

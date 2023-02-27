@@ -9,11 +9,8 @@ import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM1;
 import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM2;
-import com.alphanah.alphanahbackend.utility.AccountUtils;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +62,6 @@ public class Product {
         response.setProductUUID(uuid.toString());
         response.setName(name);
         response.setDescription(description);
-        response.setCreator(AccountUtils.findAccount(creatorUuid).toAccountResponseM1());
         return response;
     }
 

@@ -12,4 +12,6 @@ public class AccountResponseM1 {
     private String lastname;
     private String image;
     private String createDate;
+    private Long productCount;
+    private Long reviewCount;
 }
