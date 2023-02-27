@@ -24,7 +24,7 @@ public class AuthAPI {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request, @RequestParam Role role) throws AlphanahBaseException {
         RegisterResponse response = business.register(request, role);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/login")
