@@ -9,6 +9,7 @@ import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM1;
 import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM2;
+import com.alphanah.alphanahbackend.utility.AccountUtils;
 import com.alphanah.alphanahbackend.utility.DateUtils;
 import com.alphanah.alphanahbackend.utility.Env;
 import jakarta.persistence.*;
@@ -64,6 +65,7 @@ public class Product {
         response.setProductUUID(uuid.toString());
         response.setName(name);
         response.setDescription(description);
+        response.setCreator(AccountUtils.findAccount(creatorUuid).toAccountResponseM1());
         response.setCreateDate(DateUtils.timeZoneConverter(createDate, Env.bangkokZone));
         return response;
     }

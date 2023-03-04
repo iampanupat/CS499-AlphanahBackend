@@ -63,7 +63,7 @@ public class OrderItem implements Comparable<OrderItem> {
             response = new CartItemResponseM2();
 
         response = (CartItemResponseM2) this.toCartItemResponseM1(response);
-        response.setProduct(this.getProductOption().getProduct().toProductResponseM1());
+        response.setProduct(this.getProductOption().getProduct().toProductResponseM3());
         response.setOption(this.getProductOption().toProductOptionResponseM1(null));
         return response;
     }
@@ -83,7 +83,7 @@ public class OrderItem implements Comparable<OrderItem> {
             response = new PaidItemResponseM2();
 
         response = (PaidItemResponseM2) this.toPaidItemResponseM1(response);
-        response.setProduct(this.getProductOption().getProduct().toProductResponseM1());
+        response.setProduct(this.getProductOption().getProduct().toProductResponseM3());
         response.setOption(this.getProductOption().toProductOptionResponseM1(null));
         response.setOrder(this.getOrder().toPaidResponseM1(null));
         return response;
