@@ -58,6 +58,7 @@ public class ProductService {
         entity.setCreatorUuid(creatorUuid);
         entity.setName(name);
         entity.setDescription(description);
+        entity.setCreateDate(new Date());
         return repository.save(entity);
     }
 

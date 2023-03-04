@@ -8,5 +8,6 @@ public class ProductResponseM1 {
     private String productUUID;
     private String name;
     private String description;
+    private String createDate;
     private AccountResponseM1 creator;
 }

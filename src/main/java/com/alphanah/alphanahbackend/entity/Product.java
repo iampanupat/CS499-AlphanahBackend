@@ -9,13 +9,12 @@ import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
 import com.alphanah.alphanahbackend.model.product.ProductResponseM1;
 import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
 import com.alphanah.alphanahbackend.model.review.ReviewResponseM2;
+import com.alphanah.alphanahbackend.utility.DateUtils;
+import com.alphanah.alphanahbackend.utility.Env;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @Entity(name = "products")
@@ -31,6 +30,9 @@ public class Product {
 
     @Column(name = "product_description")
     private String description;
+
+    @Column(name = "product_create_date", nullable = false, updatable = false)
+    private Date createDate;
 
     @Column(name = "product_creator_uuid", nullable = false, updatable = false)
     private UUID creatorUuid;
@@ -62,6 +64,7 @@ public class Product {
         response.setProductUUID(uuid.toString());
         response.setName(name);
         response.setDescription(description);
+        response.setCreateDate(DateUtils.timeZoneConverter(createDate, Env.bangkokZone));
         return response;
     }
 
