@@ -8,6 +8,7 @@ import com.alphanah.alphanahbackend.model.authentication.RegisterRequest;
 import com.alphanah.alphanahbackend.model.authentication.RegisterResponse;
 import com.alphanah.alphanahbackend.enumerate.Role;
 import com.alphanah.alphanahbackend.service.AuthService;
+import com.alphanah.alphanahbackend.utility.AccountUtils;
 import com.alphanah.alphanahbackend.utility.Env;
 import com.amazonaws.services.cognitoidp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,7 @@ public class AuthBusiness {
         response.setRefreshToken(authenticationResult.getRefreshToken());
         response.setTokenType(authenticationResult.getTokenType());
         response.setExpiresIn(authenticationResult.getExpiresIn());
+        response.setAccount(AccountUtils.findAccount(authenticationResult.getAccessToken()).toAccountResponseM2());
         return response;
     }
 
