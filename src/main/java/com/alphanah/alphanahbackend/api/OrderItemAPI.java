@@ -4,6 +4,7 @@ import com.alphanah.alphanahbackend.business.OrderItemBusiness;
 import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
 import com.alphanah.alphanahbackend.model.ListResponse;
+import com.alphanah.alphanahbackend.model.order.CartResponseM2;
 import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
 import com.alphanah.alphanahbackend.model.order_item.OrderItemRequest;
 import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
@@ -23,38 +24,38 @@ public class OrderItemAPI {
     private OrderItemBusiness business;
 
     @PostMapping("/cart/{product_uuid}/option/{product_option_uuid}")
-    public ResponseEntity<CartItemResponseM2> addOrCreateCartItem(
+    public ResponseEntity<CartResponseM2> addOrCreateCartItem(
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("product_uuid") UUID productUuid,
             @PathVariable("product_option_uuid") UUID optionUuid,
             @RequestBody OrderItemRequest request
     ) throws AlphanahBaseException {
         AccountUtils.customerVerify(token);
-        CartItemResponseM2 response = business.addOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
+        CartResponseM2 response = business.addOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/cart/{product_uuid}/option/{product_option_uuid}")
-    public ResponseEntity<CartItemResponseM2> updateOrCreateCartItem(
+    public ResponseEntity<CartResponseM2> updateOrCreateCartItem(
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("product_uuid") UUID productUuid,
             @PathVariable("product_option_uuid") UUID optionUuid,
             @RequestBody OrderItemRequest request
     ) throws AlphanahBaseException {
         AccountUtils.customerVerify(token);
-        CartItemResponseM2 response = business.updateOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
+        CartResponseM2 response = business.updateOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/cart/{product_uuid}/option/{product_option_uuid}")
-    public ResponseEntity<Void> deleteCartItem(
+    public ResponseEntity<CartResponseM2> deleteCartItem(
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("product_uuid") UUID productUuid,
             @PathVariable("product_option_uuid") UUID optionUuid
     ) throws AlphanahBaseException {
         AccountUtils.customerVerify(token);
-        business.deleteCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid);
-        return new ResponseEntity<>(HttpStatus.OK);
+        CartResponseM2 response = business.deleteCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/sale_order")

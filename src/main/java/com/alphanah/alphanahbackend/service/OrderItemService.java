@@ -27,7 +27,7 @@ public class OrderItemService {
     @Autowired
     private ProductOptionService optionService;
 
-    public OrderItem addOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
+    public Order addOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
         Order cart = orderService.findOrCreateCart(creatorUuid);
         List<OrderItem> orderItems = cart.getOrderItems();
         for (OrderItem orderItem: orderItems) {
@@ -39,7 +39,7 @@ public class OrderItemService {
         return this.updateOrCreateCartItem(creatorUuid, productUuid, optionUuid, quantity);
     }
 
-    public OrderItem updateOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
+    public Order updateOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
             throw OrderItemException.cannotUpdateWithNullCreatorUuid();
 
@@ -77,10 +77,10 @@ public class OrderItemService {
             entity = optional.get();
         }
         entity.setQuantity(quantity);
-        return repository.save(entity);
+        return repository.save(entity).getOrder();
     }
 
-    public void deleteCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid) throws AlphanahBaseException {
+    public Order deleteCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid) throws AlphanahBaseException {
         if (Objects.isNull(creatorUuid))
             throw OrderItemException.cannotDeleteWithNullCreatorUuid();
 
@@ -99,6 +99,7 @@ public class OrderItemService {
 
         OrderItem entity = optional.get();
         repository.delete(entity);
+        return orderService.findOrCreateCart(creatorUuid);
     }
 
     public List<OrderItem> findAllPaidOrderItem(UUID creatorUuid) throws AlphanahBaseException {

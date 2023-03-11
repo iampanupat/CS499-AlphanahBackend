@@ -1,9 +1,11 @@
 package com.alphanah.alphanahbackend.business;
 
+import com.alphanah.alphanahbackend.entity.Order;
 import com.alphanah.alphanahbackend.entity.OrderItem;
 import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
 import com.alphanah.alphanahbackend.enumerate.OrderType;
 import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+import com.alphanah.alphanahbackend.model.order.CartResponseM2;
 import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
 import com.alphanah.alphanahbackend.model.order_item.OrderItemRequest;
 import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
@@ -23,18 +25,19 @@ public class OrderItemBusiness {
     @Autowired
     private OrderItemService service;
 
-    public CartItemResponseM2 addOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
-        OrderItem response = service.addOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
-        return response.toCartItemResponseM2(null);
+    public CartResponseM2 addOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
+        Order response = service.addOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
+        return response.toCartResponseM2(null);
     }
 
-    public CartItemResponseM2 updateOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
-        OrderItem response = service.updateOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
-        return response.toCartItemResponseM2(null);
+    public CartResponseM2 updateOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
+        Order response = service.updateOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());
+        return response.toCartResponseM2(null);
     }
 
-    public void deleteCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid) throws AlphanahBaseException {
-        service.deleteCartItem(accountUuid, productUuid, optionUuid);
+    public CartResponseM2 deleteCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid) throws AlphanahBaseException {
+        Order response = service.deleteCartItem(accountUuid, productUuid, optionUuid);
+        return response.toCartResponseM2(null);
     }
 
     public List<PaidItemResponseM2> getAllSaleOrderItem(UUID merchantUuid, DeliveryStatus deliveryStatus) throws AlphanahBaseException {
