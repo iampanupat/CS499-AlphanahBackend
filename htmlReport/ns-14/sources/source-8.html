@@ -1,0 +1,313 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.service</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderService (com.alphanah.alphanahbackend.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0.8%
+  </span>
+  <span class="absValue">
+    (1/118)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.service;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.*;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.AwsCognitoField;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.OrderType;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.PayType;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.exception.OrderException;
+&nbsp;import com.alphanah.alphanahbackend.repository.OrderItemRepository;
+&nbsp;import com.alphanah.alphanahbackend.repository.OrderRepository;
+&nbsp;import com.alphanah.alphanahbackend.repository.ProductOptionRepository;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class OrderService {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private OrderRepository repository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private OrderItemRepository orderItemRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductOptionRepository productOptionRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private AccountService accountService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CouponService couponService;
+&nbsp;
+&nbsp;    public Order updateCoupon(UUID creatorUuid, String couponCode) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Order entity = this.findOrCreateCart(creatorUuid);</b>
+&nbsp;
+<b class="nc">&nbsp;        Coupon coupon = Objects.isNull(couponCode) ? null : couponService.findCoupon(couponCode);</b>
+<b class="nc">&nbsp;        if (!Objects.isNull(coupon) &amp;&amp; !coupon.isAvailable())</b>
+<b class="nc">&nbsp;            throw OrderException.cannotApplyUnavailableCoupon();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Order&gt; orders = repository.findAllByCreatorUuid(creatorUuid);</b>
+<b class="nc">&nbsp;        for (Order order : orders) {</b>
+<b class="nc">&nbsp;            if (Objects.isNull(coupon))</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;
+<b class="nc">&nbsp;            if (!Objects.isNull(order.getCoupon()) &amp;&amp; order.getCoupon().getCode().equalsIgnoreCase(coupon.getCode()))</b>
+<b class="nc">&nbsp;                throw OrderException.cannotApplyAlreadyUsedCoupon();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        entity.setCoupon(coupon);</b>
+<b class="nc">&nbsp;        return repository.save(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Order&gt; findAllPaidOrders(UUID creatorUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotFindWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Order&gt; paidList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Order&gt; orderList = repository.findAllByCreatorUuid(creatorUuid);</b>
+<b class="nc">&nbsp;        for (Order paidOrder: orderList) {</b>
+<b class="nc">&nbsp;            if (paidOrder.getType().equals(OrderType.PAID))</b>
+<b class="nc">&nbsp;                paidList.add(paidOrder);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return paidList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Order findPaidOrder(UUID creatorUuid, UUID orderUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotFindWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(orderUuid))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotFindWithNullOrderUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Order&gt; optional = repository.findById(orderUuid);</b>
+<b class="nc">&nbsp;        if (optional.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        Order order = optional.get();</b>
+<b class="nc">&nbsp;        if (!order.getType().equals(OrderType.PAID))</b>
+<b class="nc">&nbsp;            throw OrderException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        return order;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Order findOrCreateCart(UUID creatorUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotFindWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Account account = AccountUtils.findAccount(creatorUuid);</b>
+<b class="nc">&nbsp;        if (account.getCartUuid() == null)</b>
+<b class="nc">&nbsp;            return createCart(creatorUuid);</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Order&gt; optional = repository.findById(account.getCartUuid());</b>
+<b class="nc">&nbsp;        if (optional.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        Order cart = optional.get();</b>
+<b class="nc">&nbsp;        if (!cart.getType().equals(OrderType.CART))</b>
+<b class="nc">&nbsp;            throw OrderException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        return cart;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Order createCart(UUID creatorUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotCreateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Account account = AccountUtils.findAccount(creatorUuid);</b>
+<b class="nc">&nbsp;        if (account.getCartUuid() != null)</b>
+<b class="nc">&nbsp;            throw OrderException.cannotCreateDuplicateCart();</b>
+&nbsp;
+<b class="nc">&nbsp;        Order entity = new Order();</b>
+<b class="nc">&nbsp;        entity.setCreatorUuid(creatorUuid);</b>
+<b class="nc">&nbsp;        entity.setType(OrderType.CART);</b>
+<b class="nc">&nbsp;        entity.setPayType(PayType.NONE);</b>
+<b class="nc">&nbsp;        repository.save(entity);</b>
+<b class="nc">&nbsp;        accountService.updateAwsCognitoField(account, AwsCognitoField.CART_UUID, entity.getUuid().toString());</b>
+<b class="nc">&nbsp;        return this.findOrCreateCart(creatorUuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Order updateCartToPaid(UUID creatorUUID, PayType payType, String firstname, String lastname, String phone, String address) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUUID))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(payType))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithNullPayType();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(firstname))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithNullFirstname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(lastname))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithNullLastname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(phone))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithNullPhone();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(address))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithNullAddress();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (firstname.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithEmptyFirstname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (lastname.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithEmptyLastname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (phone.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithEmptyPhone();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (address.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithEmptyAddress();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (firstname.length() &gt; Env.FIRSTNAME_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithFirstnameExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (lastname.length() &gt; Env.LASTNAME_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithLastnameExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (phone.length() &gt; Env.PHONE_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithPhoneExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (address.length() &gt; Env.ADDRESS_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithAddressExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(AccountUtils.findAccount(creatorUUID).getCartUuid()))</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithNullCartUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Order entity = this.findOrCreateCart(creatorUUID);</b>
+<b class="nc">&nbsp;        if (entity.getOrderItems().size() == 0)</b>
+<b class="nc">&nbsp;            throw OrderException.cannotUpdateWithEmptyCart();</b>
+&nbsp;
+<b class="nc">&nbsp;        entity.setType(OrderType.PAID);</b>
+<b class="nc">&nbsp;        entity.setPayType(payType);</b>
+<b class="nc">&nbsp;        entity.setRecipientFirstname(firstname);</b>
+<b class="nc">&nbsp;        entity.setRecipientLastname(lastname);</b>
+<b class="nc">&nbsp;        entity.setRecipientPhone(phone);</b>
+<b class="nc">&nbsp;        entity.setRecipientAddress(address);</b>
+<b class="nc">&nbsp;        entity.setCheckoutDate(new Date());</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;OrderItem&gt; orderItemEntityList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;ProductOption&gt; productOptionEntityList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (OrderItem orderItem: entity.getOrderItems()) {</b>
+&nbsp;            // Update All OrderItem to Delivery Status PENDING
+<b class="nc">&nbsp;            orderItem.setPrice(orderItem.getProductOption().getPrice());</b>
+<b class="nc">&nbsp;            orderItem.setDeliveryStatus(DeliveryStatus.PENDING);</b>
+<b class="nc">&nbsp;            orderItemEntityList.add(orderItem);</b>
+&nbsp;
+&nbsp;            // Reduce All ProductOption Quantity after Checkout
+<b class="nc">&nbsp;            ProductOption productOption = orderItem.getProductOption();</b>
+<b class="nc">&nbsp;            if (productOption.getQuantity() &lt; orderItem.getQuantity())</b>
+<b class="nc">&nbsp;                throw OrderException.cannotUpdateWithQuantityExceedStock();</b>
+<b class="nc">&nbsp;            productOption.setQuantity(productOption.getQuantity() - orderItem.getQuantity());</b>
+<b class="nc">&nbsp;            productOptionEntityList.add(productOption);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        Coupon coupon = entity.getCoupon();</b>
+<b class="nc">&nbsp;        if (!Objects.isNull(coupon) &amp;&amp; entity.isCouponActive())</b>
+<b class="nc">&nbsp;            couponService.updateCouponUsage(coupon.getCode());</b>
+&nbsp;        else
+<b class="nc">&nbsp;            entity.setCoupon(null);</b>
+<b class="nc">&nbsp;        orderItemRepository.saveAll(orderItemEntityList);</b>
+<b class="nc">&nbsp;        productOptionRepository.saveAll(productOptionEntityList);</b>
+<b class="nc">&nbsp;        accountService.updateAwsCognitoField(creatorUUID, AwsCognitoField.CART_UUID, &quot;&quot;);</b>
+<b class="nc">&nbsp;        return repository.save(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

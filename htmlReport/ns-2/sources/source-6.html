@@ -1,0 +1,162 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ErrorAdvisor</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.api</a>
+</div>
+
+<h1>Coverage Summary for Class: ErrorAdvisor (com.alphanah.alphanahbackend.api)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ErrorAdvisor</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.api;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.ErrorResponse;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import com.amazonaws.AmazonServiceException;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.http.converter.HttpMessageNotReadableException;
+&nbsp;import org.springframework.web.HttpRequestMethodNotSupportedException;
+&nbsp;import org.springframework.web.bind.MethodArgumentNotValidException;
+&nbsp;import org.springframework.web.bind.annotation.ControllerAdvice;
+&nbsp;import org.springframework.web.bind.annotation.ExceptionHandler;
+&nbsp;
+&nbsp;@ControllerAdvice
+<b class="fc">&nbsp;public class ErrorAdvisor {</b>
+&nbsp;
+&nbsp;    @ExceptionHandler(MethodArgumentNotValidException.class)
+&nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleValidationException(MethodArgumentNotValidException exception) {
+<b class="nc">&nbsp;        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;</b>
+<b class="nc">&nbsp;        ErrorResponse response = new ErrorResponse(httpStatus, Env.ALPHANAH, exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, httpStatus);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Handle function exception from this backend application
+&nbsp;    @ExceptionHandler(AlphanahBaseException.class)
+&nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleAlphanahBaseException(AlphanahBaseException e) {
+<b class="nc">&nbsp;        return handleException(e, Env.ALPHANAH);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(AmazonServiceException.class)
+&nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleAmazonServiceException(AmazonServiceException exception) {
+<b class="nc">&nbsp;        HttpStatus httpStatus = HttpStatus.valueOf(exception.getStatusCode());</b>
+<b class="nc">&nbsp;        ErrorResponse response = new ErrorResponse(httpStatus, Env.AMAZON, exception.getErrorMessage());</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, httpStatus);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Handle http request method not allowed
+&nbsp;    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+&nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+<b class="nc">&nbsp;        return handleException(e, Env.SPRING_FRAMEWORK, HttpStatus.valueOf(e.getStatusCode().value()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Handle json invalid syntax
+&nbsp;    @ExceptionHandler(HttpMessageNotReadableException.class)
+&nbsp;    public ResponseEntity&lt;ErrorResponse&gt; handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+<b class="nc">&nbsp;        return handleException(e, Env.SPRING_FRAMEWORK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ResponseEntity&lt;ErrorResponse&gt; handleException(Exception e, String owner) {
+<b class="nc">&nbsp;        return handleException(e, owner, HttpStatus.EXPECTATION_FAILED);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ResponseEntity&lt;ErrorResponse&gt; handleException(Exception e, String owner, HttpStatus httpStatus) {
+<b class="nc">&nbsp;        ErrorResponse response = new ErrorResponse(httpStatus, owner, e.getMessage());</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, httpStatus);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

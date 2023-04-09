@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ImageBusiness</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.business</a>
+</div>
+
+<h1>Coverage Summary for Class: ImageBusiness (com.alphanah.alphanahbackend.business)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImageBusiness</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.3%
+  </span>
+  <span class="absValue">
+    (1/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.business;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Image;
+&nbsp;import com.alphanah.alphanahbackend.entity.Product;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
+&nbsp;import com.alphanah.alphanahbackend.service.AmazonS3Service;
+&nbsp;import com.alphanah.alphanahbackend.service.ImageService;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ImageBusiness {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ImageService service;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private AmazonS3Service amazonS3Service;
+&nbsp;
+&nbsp;    public List&lt;ImageResponseM1&gt; getAllProductImages(UUID productUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        List&lt;ImageResponseM1&gt; responses = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Image&gt; images = service.findAllProductImages(productUuid);</b>
+<b class="nc">&nbsp;        for (Image image : images)</b>
+<b class="nc">&nbsp;            responses.add(image.toImageResponseM1(null));</b>
+<b class="nc">&nbsp;        return responses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ProductResponseM3 createProductMainImage(String token, UUID productUuid, MultipartFile image) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Product response = service.createProductMainImage(AccountUtils.findAccount(token).getUuid(), productUuid, amazonS3Service.saveFile(image));</b>
+<b class="nc">&nbsp;        return response.toProductResponseM3();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ImageResponseM1 createProductImage(String token, UUID productUuid, MultipartFile image) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Image response = service.createProductImage(AccountUtils.findAccount(token).getUuid(), productUuid, amazonS3Service.saveFile(image));</b>
+<b class="nc">&nbsp;        return response.toImageResponseM1(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteProductImage(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        service.deleteProductImage(AccountUtils.findAccount(token).getUuid(), productUuid, uuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;ImageResponseM1&gt; getAllReviewImages(UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        List&lt;ImageResponseM1&gt; responses = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Image&gt; images = service.findAllReviewImages(productUuid, reviewUuid);</b>
+<b class="nc">&nbsp;        for (Image image : images)</b>
+<b class="nc">&nbsp;            responses.add(image.toImageResponseM1(null));</b>
+<b class="nc">&nbsp;        return responses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ImageResponseM1 createReviewImage(String token, UUID productUuid, UUID reviewUuid, MultipartFile image) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Image response = service.createReviewImage(AccountUtils.findAccount(token).getUuid(), productUuid, reviewUuid, amazonS3Service.saveFile(image));</b>
+<b class="nc">&nbsp;        return response.toImageResponseM1(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteReviewImage(String token, UUID productUuid, UUID reviewUuid, UUID uuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        service.deleteReviewImage(AccountUtils.findAccount(token).getUuid(), productUuid, reviewUuid, uuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

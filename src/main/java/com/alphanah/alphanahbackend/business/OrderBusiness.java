@@ -75,6 +75,17 @@ public class OrderBusiness {
             if (cart.getOrderItems().size() == 0)
                 throw OrderException.cannotUpdateWithEmptyCart();
 
+            for (OrderItem cartItem: cart.getOrderItems()) {
+                if (cartItem.getProductOption().getProduct().isDeleted())
+                    throw OrderException.cannotUpdateWithDeletedCartItem();
+
+                if (cartItem.getProductOption().isDeleted())
+                    throw OrderException.cannotUpdateWithDeletedCartItem();
+
+                if (cartItem.getQuantity() > cartItem.getProductOption().getQuantity())
+                    throw OrderException.cannotUpdateWithQuantityExceedStock();
+            }
+
             RequestOptions requestOptions = RequestOptions.builder()
                     .setApiKey(stripeApiKey)
                     .build();

@@ -1,0 +1,230 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Category</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Category (com.alphanah.alphanahbackend.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Category</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.3%
+  </span>
+  <span class="absValue">
+    (5/54)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Category$HibernateProxy$SBeFLoEB</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.3%
+  </span>
+  <span class="absValue">
+    (5/54)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.entity;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.category.CategoryResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.category.CategoryResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.category.CategoryResponseM3;
+&nbsp;import com.alphanah.alphanahbackend.model.product.ProductResponseM2;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.EqualsAndHashCode;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+<b class="fc">&nbsp;@Data</b>
+&nbsp;@Entity(name = &quot;categories&quot;)
+&nbsp;public class Category {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;category_uuid&quot;, nullable = false, updatable = false)
+&nbsp;    @GeneratedValue
+<b class="nc">&nbsp;    private UUID uuid;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;category_name&quot;, nullable = false, updatable = false, length = 120)
+<b class="nc">&nbsp;    private String name;</b>
+&nbsp;
+<b class="fc">&nbsp;    @Column(name = &quot;category_level&quot;, nullable = false, updatable = false)</b>
+<b class="fc">&nbsp;    private Integer level = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;category&quot;, orphanRemoval = true, fetch = FetchType.LAZY)</b>
+<b class="nc">&nbsp;    private List&lt;ProductCategory&gt; productCategories = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;parent_category_uuid&quot;)
+<b class="nc">&nbsp;    private Category parentCategory;</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;parentCategory&quot;, orphanRemoval = true, fetch = FetchType.LAZY)</b>
+<b class="nc">&nbsp;    private List&lt;Category&gt; childCategories = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    public List&lt;Category&gt; getAllChild() {
+<b class="nc">&nbsp;        return getAllChild(new ArrayList&lt;&gt;(), this);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private List&lt;Category&gt; getAllChild(List&lt;Category&gt; allChildList, Category root) {
+<b class="nc">&nbsp;        for (Category child : root.getChildCategories()) {</b>
+<b class="nc">&nbsp;            allChildList.add(child);</b>
+<b class="nc">&nbsp;            allChildList = getAllChild(allChildList, child);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return allChildList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    public List&lt;Category&gt; getAllParent() {
+<b class="nc">&nbsp;        return getAllParent(new ArrayList&lt;&gt;(), this);</b>
+&nbsp;    }
+&nbsp;    private List&lt;Category&gt; getAllParent(List&lt;Category&gt; allParentList, Category root) {
+<b class="nc">&nbsp;        Category current = root;</b>
+<b class="nc">&nbsp;        while (current.getParentCategory() != null) {</b>
+<b class="nc">&nbsp;            allParentList.add(root.parentCategory);</b>
+<b class="nc">&nbsp;            current = current.parentCategory;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return allParentList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CategoryResponseM1 toCategoryResponseM1(CategoryResponseM1 response) {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new CategoryResponseM1();</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setCategoryUUID(this.getUuid().toString());</b>
+<b class="nc">&nbsp;        response.setName(this.getName());</b>
+<b class="nc">&nbsp;        response.setLevel(this.getLevel());</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CategoryResponseM2 toCategoryResponseM2(CategoryResponseM2 response) {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new CategoryResponseM2();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (CategoryResponseM2) this.toCategoryResponseM1(response);</b>
+<b class="nc">&nbsp;        if (this.getParentCategory() != null)</b>
+<b class="nc">&nbsp;            response.setParentCategory(this.getParentCategory().toCategoryResponseM1(null));</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;CategoryResponseM1&gt; subcategories = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (Category subCategory: this.getChildCategories())</b>
+<b class="nc">&nbsp;            subcategories.add(subCategory.toCategoryResponseM1(null));</b>
+<b class="nc">&nbsp;        response.setChildCategories(subcategories);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CategoryResponseM3 toCategoryResponseM3(CategoryResponseM3 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new CategoryResponseM3();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (CategoryResponseM3) this.toCategoryResponseM2(response);</b>
+&nbsp;
+&nbsp;        // List of (All Own &quot;Product&quot;) and (All Subcategory &quot;Product&quot;) (without Category) Response
+<b class="nc">&nbsp;        List&lt;ProductCategory&gt; productCategoryList = this.getProductCategories();</b>
+<b class="nc">&nbsp;        for (Category subCategory: this.getAllChild()) {</b>
+<b class="nc">&nbsp;            productCategoryList.addAll(subCategory.getProductCategories());</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;ProductResponseM2&gt; products = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (ProductCategory productCategory: productCategoryList) {</b>
+<b class="nc">&nbsp;            ProductResponseM2 productResponse = productCategory.getProduct().toProductResponseM2();</b>
+<b class="nc">&nbsp;            if (products.contains(productResponse))</b>
+<b class="nc">&nbsp;                continue;</b>
+<b class="nc">&nbsp;            products.add(productResponse);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setProducts(products);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

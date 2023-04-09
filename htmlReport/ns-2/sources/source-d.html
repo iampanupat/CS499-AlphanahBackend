@@ -1,0 +1,175 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ReviewAPI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.api</a>
+</div>
+
+<h1>Coverage Summary for Class: ReviewAPI (com.alphanah.alphanahbackend.api)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReviewAPI</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.7%
+  </span>
+  <span class="absValue">
+    (1/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.api;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.business.ReviewBusiness;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.ListResponse;
+&nbsp;import com.alphanah.alphanahbackend.model.review.ReviewResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.review.ReviewResponseM3;
+&nbsp;import com.alphanah.alphanahbackend.model.review.ReviewRequest;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/product&quot;)
+<b class="fc">&nbsp;public class ReviewAPI {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ReviewBusiness business;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{productUuid}/review&quot;)
+&nbsp;    public ResponseEntity&lt;ListResponse&gt; getAllReviews(@PathVariable(&quot;productUuid&quot;) UUID productUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        List&lt;ReviewResponseM3&gt; rawResponse = business.getAllReviews(productUuid);</b>
+<b class="nc">&nbsp;        ListResponse response = new ListResponse(rawResponse);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{productUuid}/review/{uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;ReviewResponseM3&gt; getReview(@PathVariable(&quot;productUuid&quot;) UUID productUuid, @PathVariable(&quot;uuid&quot;) UUID uuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        ReviewResponseM3 response = business.getReview(productUuid, uuid);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/{productUuid}/review&quot;)
+&nbsp;    public ResponseEntity&lt;ReviewResponseM1&gt; createReview(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @RequestBody ReviewRequest request,
+&nbsp;            @PathVariable(&quot;productUuid&quot;) UUID productUuid
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.customerVerify(token);</b>
+<b class="nc">&nbsp;        ReviewResponseM1 response = business.createReview(token, productUuid, request);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{productUuid}/review/{uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;ReviewResponseM1&gt; updateReview(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @RequestBody ReviewRequest request,
+&nbsp;            @PathVariable(&quot;productUuid&quot;) UUID productUuid,
+&nbsp;            @PathVariable(&quot;uuid&quot;) UUID uuid
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.customerVerify(token);</b>
+<b class="nc">&nbsp;        ReviewResponseM1 response = business.updateReview(token, productUuid, uuid, request);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{productUuid}/review/{uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteReview(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @PathVariable(&quot;productUuid&quot;) UUID productUuid,
+&nbsp;            @PathVariable(&quot;uuid&quot;) UUID uuid
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.customerVerify(token);</b>
+<b class="nc">&nbsp;        business.deleteReview(token, productUuid, uuid);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

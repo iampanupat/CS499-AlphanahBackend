@@ -1,0 +1,289 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderItemService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.service</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderItemService (com.alphanah.alphanahbackend.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderItemService</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.1%
+  </span>
+  <span class="absValue">
+    (1/87)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">OrderItemService$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.1%
+  </span>
+  <span class="absValue">
+    (1/88)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.service;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Order;
+&nbsp;import com.alphanah.alphanahbackend.entity.OrderItem;
+&nbsp;import com.alphanah.alphanahbackend.entity.ProductOption;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.exception.OrderException;
+&nbsp;import com.alphanah.alphanahbackend.exception.OrderItemException;
+&nbsp;import com.alphanah.alphanahbackend.repository.OrderItemRepository;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import org.aspectj.weaver.ast.Or;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class OrderItemService {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private OrderItemRepository repository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private OrderService orderService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductOptionService optionService;
+&nbsp;
+&nbsp;    public Order addOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Order cart = orderService.findOrCreateCart(creatorUuid);</b>
+<b class="nc">&nbsp;        List&lt;OrderItem&gt; orderItems = cart.getOrderItems();</b>
+<b class="nc">&nbsp;        for (OrderItem orderItem: orderItems) {</b>
+<b class="nc">&nbsp;            if (orderItem.getProductOption().getUuid().equals(optionUuid)) {</b>
+<b class="nc">&nbsp;                quantity += orderItem.getQuantity();</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return this.updateOrCreateCartItem(creatorUuid, productUuid, optionUuid, quantity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Order updateOrCreateCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid, Integer quantity) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(optionUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithNullProductOptionUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(quantity))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithNullQuantity();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (quantity &lt;= 0)</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithNegativeOrZeroQuantity();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (quantity &gt; Env.PRODUCT_QUANTITY_MAX_VALUE)</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithQuantityExceedMaxValue();</b>
+&nbsp;
+<b class="nc">&nbsp;        ProductOption option = optionService.findProductOption(productUuid, optionUuid);</b>
+<b class="nc">&nbsp;        if (quantity &gt; option.getQuantity())</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithQuantityExceedStock();</b>
+&nbsp;
+&nbsp;        OrderItem entity;
+<b class="nc">&nbsp;        Order cart = orderService.findOrCreateCart(creatorUuid);</b>
+<b class="nc">&nbsp;        if (!repository.existsByOrderAndProductOption(cart, option)) {</b>
+<b class="nc">&nbsp;            entity = new OrderItem();</b>
+<b class="nc">&nbsp;            entity.setPrice(-1.0);</b>
+<b class="nc">&nbsp;            entity.setOrder(cart);</b>
+<b class="nc">&nbsp;            entity.setProductOption(option);</b>
+<b class="nc">&nbsp;            entity.setDeliveryStatus(DeliveryStatus.CART_ITEM);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            Optional&lt;OrderItem&gt; optional = repository.findByOrderAndProductOption(cart, option);</b>
+<b class="nc">&nbsp;            if (optional.isEmpty())</b>
+<b class="nc">&nbsp;                throw OrderItemException.notFound();</b>
+<b class="nc">&nbsp;            entity = optional.get();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        entity.setQuantity(quantity);</b>
+<b class="nc">&nbsp;        return repository.save(entity).getOrder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Order deleteCartItem(UUID creatorUuid, UUID productUuid, UUID optionUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotDeleteWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotDeleteWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(optionUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotDeleteWithNullProductOptionUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Order cart = orderService.findOrCreateCart(creatorUuid);</b>
+<b class="nc">&nbsp;        ProductOption option = optionService.findProductOption(productUuid, optionUuid);</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;OrderItem&gt; optional = repository.findByOrderAndProductOption(cart, option);</b>
+<b class="nc">&nbsp;        if (optional.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderItemException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        OrderItem entity = optional.get();</b>
+<b class="nc">&nbsp;        repository.delete(entity);</b>
+<b class="nc">&nbsp;        return orderService.findOrCreateCart(creatorUuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;OrderItem&gt; findAllPaidOrderItem(UUID creatorUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotFindWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;OrderItem&gt; saleOrderItemList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;OrderItem&gt; orderItemList = (List&lt;OrderItem&gt;) repository.findAll();</b>
+<b class="nc">&nbsp;        for (OrderItem saleOrderItem: orderItemList) {</b>
+<b class="nc">&nbsp;            if (!saleOrderItem.getOrder().isPaid())</b>
+<b class="nc">&nbsp;                continue;</b>
+<b class="nc">&nbsp;            if (!creatorUuid.equals(saleOrderItem.getProductOption().getProduct().getCreatorUuid()))</b>
+<b class="nc">&nbsp;                continue;</b>
+<b class="nc">&nbsp;            saleOrderItemList.add(saleOrderItem);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        Collections.sort(saleOrderItemList);</b>
+<b class="nc">&nbsp;        return saleOrderItemList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public OrderItem findPaidOrderItem(UUID creatorUuid, UUID orderItemUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotFindWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(orderItemUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotFindWithNullOrderItemUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;OrderItem&gt; optional = repository.findById(orderItemUuid);</b>
+<b class="nc">&nbsp;        if (optional.isEmpty())</b>
+<b class="nc">&nbsp;            throw OrderItemException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        OrderItem orderItem = optional.get();</b>
+<b class="nc">&nbsp;        if (!orderItem.getOrder().isPaid())</b>
+<b class="nc">&nbsp;            throw OrderItemException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!creatorUuid.equals(orderItem.getProductOption().getProduct().getCreatorUuid()))</b>
+<b class="nc">&nbsp;            throw OrderItemException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        return orderItem;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public OrderItem updateDeliveryStatus(UUID creatorUuid, UUID orderItemUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(orderItemUuid))</b>
+<b class="nc">&nbsp;            throw OrderItemException.cannotUpdateWithNullOrderItemUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        OrderItem entity = this.findPaidOrderItem(creatorUuid, orderItemUuid);</b>
+<b class="nc">&nbsp;        DeliveryStatus status = entity.getDeliveryStatus();</b>
+<b class="nc">&nbsp;        switch (status) {</b>
+<b class="nc">&nbsp;            case PENDING -&gt; entity.setDeliveryStatus(DeliveryStatus.SHIPPED);</b>
+<b class="nc">&nbsp;            case SHIPPED -&gt; entity.setDeliveryStatus(DeliveryStatus.DELIVERED);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return repository.save(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,341 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Order</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Order (com.alphanah.alphanahbackend.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Order</td>
+<td class="coverageStat">
+  <span class="percent">
+    4%
+  </span>
+  <span class="absValue">
+    (1/25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.9%
+  </span>
+  <span class="absValue">
+    (2/108)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Order$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Order$HibernateProxy$KvnaeQ9r</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    3.8%
+  </span>
+  <span class="absValue">
+    (1/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.8%
+  </span>
+  <span class="absValue">
+    (2/109)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.entity;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.CouponType;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.OrderType;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.PayType;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.order.*;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import com.alphanah.alphanahbackend.utility.DateUtils;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.EqualsAndHashCode;
+&nbsp;import org.joda.time.DateTime;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+<b class="fc">&nbsp;@Data</b>
+&nbsp;@Entity(name = &quot;orders&quot;)
+&nbsp;public class Order implements Comparable&lt;Order&gt; {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;order_uuid&quot;, nullable = false, updatable = false)
+&nbsp;    @GeneratedValue
+<b class="nc">&nbsp;    private UUID uuid;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_creator_uuid&quot;, nullable = false, updatable = false)
+<b class="nc">&nbsp;    private UUID creatorUuid;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_type&quot;, nullable = false)
+&nbsp;    @Enumerated(EnumType.STRING)
+<b class="nc">&nbsp;    private OrderType type;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_checkout_date&quot;)
+<b class="nc">&nbsp;    private Date checkoutDate;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_pay_type&quot;, nullable = false)
+&nbsp;    @Enumerated(EnumType.STRING)
+<b class="nc">&nbsp;    private PayType payType;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_recipient_firstname&quot;)
+<b class="nc">&nbsp;    private String recipientFirstname;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_recipient_lastname&quot;)
+<b class="nc">&nbsp;    private String recipientLastname;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_recipient_phone&quot;)
+<b class="nc">&nbsp;    private String recipientPhone;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_recipient_address&quot;)
+<b class="nc">&nbsp;    private String recipientAddress;</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;order&quot;, orphanRemoval = true, fetch = FetchType.LAZY)</b>
+<b class="nc">&nbsp;    private List&lt;OrderItem&gt; orderItems = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    @OneToOne
+&nbsp;    @JoinColumn(name = &quot;coupon_uuid&quot;)
+<b class="nc">&nbsp;    private Coupon coupon;</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int compareTo(Order other) {
+<b class="nc">&nbsp;        Date thisDate = Objects.isNull(this.checkoutDate) ? new Date() : this.checkoutDate;</b>
+<b class="nc">&nbsp;        Date otherDate = Objects.isNull(other.checkoutDate) ? new Date() : other.checkoutDate;</b>
+<b class="nc">&nbsp;        return thisDate.compareTo(otherDate) * -1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isPaid() {
+<b class="nc">&nbsp;        return !Objects.isNull(checkoutDate);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isCouponActive() {
+<b class="nc">&nbsp;        boolean priceDiscount = this.calculateRawTotalPrice() != this.calculateTotalPriceWithCoupon();</b>
+<b class="nc">&nbsp;        boolean deliveryFeeDiscount = this.calculateRawDeliveryFee() != this.calculateDeliveryFeeWithCoupon();</b>
+<b class="nc">&nbsp;        return priceDiscount || deliveryFeeDiscount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Set&lt;UUID&gt; merchantUuidSet() {
+<b class="nc">&nbsp;        Set&lt;UUID&gt; merchantUuidSet = new HashSet&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (OrderItem orderItem: orderItems)</b>
+<b class="nc">&nbsp;            merchantUuidSet.add(orderItem.getProductOption().getProduct().getCreatorUuid());</b>
+<b class="nc">&nbsp;        return merchantUuidSet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Map&lt;UUID, Double&gt; merchantTotalPriceMap() {
+<b class="nc">&nbsp;        Map&lt;UUID, Double&gt; totalPriceMap = new HashMap&lt;&gt;();</b>
+&nbsp;        UUID merchantUuid;
+&nbsp;        double totalPrice;
+<b class="nc">&nbsp;        for (OrderItem orderItem: orderItems) {</b>
+<b class="nc">&nbsp;            merchantUuid = orderItem.getProductOption().getProduct().getCreatorUuid();</b>
+<b class="nc">&nbsp;            totalPrice = totalPriceMap.getOrDefault(merchantUuid, 0.0);</b>
+<b class="nc">&nbsp;            totalPrice += (this.isPaid() ? orderItem.getPrice() : orderItem.getProductOption().getPrice()) * orderItem.getQuantity();</b>
+<b class="nc">&nbsp;            totalPriceMap.put(merchantUuid, totalPrice);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return totalPriceMap;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double calculateRawTotalPrice() {
+<b class="nc">&nbsp;        double finalPrice = 0;</b>
+<b class="nc">&nbsp;        for (OrderItem orderItem: orderItems)</b>
+<b class="nc">&nbsp;            finalPrice += (this.isPaid() ? orderItem.getPrice() : orderItem.getProductOption().getPrice()) * orderItem.getQuantity();</b>
+<b class="nc">&nbsp;        return finalPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double calculateTotalPriceWithCoupon() {
+<b class="nc">&nbsp;        double finalPrice = 0;</b>
+<b class="nc">&nbsp;        Set&lt;UUID&gt; merchantUuidSet = this.merchantUuidSet();</b>
+<b class="nc">&nbsp;        Map&lt;UUID, Double&gt; totalPriceMap = this.merchantTotalPriceMap();</b>
+<b class="nc">&nbsp;        for (UUID merchantUuid: merchantUuidSet) {</b>
+<b class="nc">&nbsp;            double rawTotalPrice = totalPriceMap.getOrDefault(merchantUuid, 0.0);</b>
+<b class="nc">&nbsp;            if (!Objects.isNull(coupon) &amp;&amp; coupon.getCreatorUuid().equals(merchantUuid) &amp;&amp; coupon.isAvailable())</b>
+<b class="nc">&nbsp;                switch (coupon.getType()) {</b>
+<b class="nc">&nbsp;                    case GIFT_CARD -&gt; finalPrice += rawTotalPrice &lt;= coupon.getValue() ? 0 : rawTotalPrice - coupon.getValue();</b>
+<b class="nc">&nbsp;                    case PERCENTAGE_DISCOUNT -&gt; finalPrice += rawTotalPrice * (100 - coupon.getValue()) / 100;</b>
+<b class="nc">&nbsp;                    default -&gt; finalPrice += rawTotalPrice;</b>
+&nbsp;                }
+&nbsp;            else
+<b class="nc">&nbsp;                finalPrice += rawTotalPrice;</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return finalPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double calculateRawDeliveryFee() {
+<b class="nc">&nbsp;        double finalPrice = 0;</b>
+<b class="nc">&nbsp;        Set&lt;UUID&gt; merchantUuidSet = merchantUuidSet();</b>
+<b class="nc">&nbsp;        Map&lt;UUID, Double&gt; totalPriceMap = merchantTotalPriceMap();</b>
+<b class="nc">&nbsp;        for (UUID merchantUuid: merchantUuidSet)</b>
+<b class="nc">&nbsp;            finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) &lt; 1000 ? 50 : totalPriceMap.get(merchantUuid) * 0.05;</b>
+<b class="nc">&nbsp;        return finalPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double calculateDeliveryFeeWithCoupon() {
+<b class="nc">&nbsp;        double finalPrice = 0;</b>
+<b class="nc">&nbsp;        Set&lt;UUID&gt; merchantUuidSet = merchantUuidSet();</b>
+<b class="nc">&nbsp;        Map&lt;UUID, Double&gt; totalPriceMap = merchantTotalPriceMap();</b>
+<b class="nc">&nbsp;        for (UUID merchantUuid: merchantUuidSet)</b>
+<b class="nc">&nbsp;            if ( !(!Objects.isNull(coupon) &amp;&amp; coupon.getCreatorUuid().equals(merchantUuid) &amp;&amp; coupon.isAvailable() &amp;&amp; coupon.getType().equals(CouponType.FREE_SHIPPING)) )</b>
+<b class="nc">&nbsp;                finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) &lt; 1000 ? 50 : totalPriceMap.get(merchantUuid) * 0.05;</b>
+<b class="nc">&nbsp;        return finalPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CartResponseM1 toCartResponseM1(CartResponseM1 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new CartResponseM1();</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setOrderUUID(uuid.toString());</b>
+<b class="nc">&nbsp;        response.setCreator(AccountUtils.findAccount(creatorUuid).toAccountResponseM1());</b>
+<b class="nc">&nbsp;        response.setOrderType(type.toString());</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CartResponseM2 toCartResponseM2(CartResponseM2 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new CartResponseM2();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (CartResponseM2) this.toCartResponseM1(response);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;CartItemResponseM2&gt; cartItems = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (OrderItem cartItem : this.getOrderItems())</b>
+<b class="nc">&nbsp;            cartItems.add(cartItem.toCartItemResponseM2(null));</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setDiscount(Objects.isNull(coupon) ? null : this.isCouponActive());</b>
+<b class="nc">&nbsp;        response.setCoupon(Objects.isNull(coupon) ? null : coupon.toCouponResponseM1());</b>
+<b class="nc">&nbsp;        response.setRawTotalPrice(this.calculateRawTotalPrice());</b>
+<b class="nc">&nbsp;        response.setTotalPrice(this.calculateTotalPriceWithCoupon());</b>
+<b class="nc">&nbsp;        response.setRawDeliveryFee(this.calculateRawDeliveryFee());</b>
+<b class="nc">&nbsp;        response.setDeliveryFee(this.calculateDeliveryFeeWithCoupon());</b>
+<b class="nc">&nbsp;        response.setCartItems(cartItems);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PaidResponseM1 toPaidResponseM1(PaidResponseM1 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new PaidResponseM1();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (PaidResponseM1) this.toCartResponseM1(response);</b>
+<b class="nc">&nbsp;        response.setCheckoutDate(DateUtils.timeZoneConverter(checkoutDate, Env.bangkokZone));</b>
+<b class="nc">&nbsp;        response.setPayType(payType.toString());</b>
+<b class="nc">&nbsp;        DeliveryInformation information = new DeliveryInformation();</b>
+<b class="nc">&nbsp;        information.setFirstname(this.recipientFirstname);</b>
+<b class="nc">&nbsp;        information.setLastname(this.recipientLastname);</b>
+<b class="nc">&nbsp;        information.setPhone(this.recipientPhone);</b>
+<b class="nc">&nbsp;        information.setAddress(this.recipientAddress);</b>
+<b class="nc">&nbsp;        response.setDeliveryInformation(information);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PaidResponseM2 toPaidResponseM2(PaidResponseM2 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new PaidResponseM2();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (PaidResponseM2) this.toPaidResponseM1(response);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;PaidItemResponseM2&gt; paidItems = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (OrderItem paidItem: this.getOrderItems())</b>
+<b class="nc">&nbsp;            paidItems.add(paidItem.toPaidItemResponseM2(null));</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setDiscount(Objects.isNull(coupon) ? null : this.isCouponActive());</b>
+<b class="nc">&nbsp;        response.setCoupon(Objects.isNull(coupon) ? null : coupon.toCouponResponseM1());</b>
+<b class="nc">&nbsp;        response.setRawTotalPrice(this.calculateRawTotalPrice());</b>
+<b class="nc">&nbsp;        response.setTotalPrice(this.calculateTotalPriceWithCoupon());</b>
+<b class="nc">&nbsp;        response.setRawDeliveryFee(this.calculateRawDeliveryFee());</b>
+<b class="nc">&nbsp;        response.setDeliveryFee(this.calculateDeliveryFeeWithCoupon());</b>
+<b class="nc">&nbsp;        response.setOrderItems(paidItems);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

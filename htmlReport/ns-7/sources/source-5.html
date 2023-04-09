@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CouponException</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: CouponException (com.alphanah.alphanahbackend.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CouponException</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.exception;
+&nbsp;
+&nbsp;public class CouponException extends AlphanahBaseException {
+&nbsp;
+&nbsp;    public CouponException(String message) {
+<b class="nc">&nbsp;        super(&quot;coupon.&quot; + message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotFindByNullCouponCode() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.find.by.null.coupon.code&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException notFound() {
+<b class="nc">&nbsp;        return new CouponException(&quot;not.found&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNullCouponCode() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.null.coupon.code&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNullCouponType() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.null.coupon.type&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNullCouponValue() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.null.coupon.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNullCouponStartDate() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.null.coupon.start.date&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNullCouponMaxUse() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.null.coupon.max.use&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateDuplicateCouponCode() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.duplicate.coupon.code&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNegativeOrZeroValue() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.negative.or.zero.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithValueExceedGiftCardMaxValue() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.value.exceed.gift.card.max.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithValueExceedPercentageDiscountMaxValue() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.value.exceed.percentage.discount.max.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithInvalidDate() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.invalid.date&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithNegativeOrZeroCouponMaxUse() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.negative.or.zero.coupon.max.use&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotCreateWithUnsupportedCouponType() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.create.with.unsupported.coupon.type&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotUpdateWithNullCouponCode() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.update.with.null.coupon.code&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotUpdateWithDeletedCoupon() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.update.with.deleted.coupon&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotUpdateWithRunOutCoupon() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.update.with.run.out.coupon&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotDeleteWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.delete.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotDeleteWithNullCouponCode() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.delete.with.null.coupon.code&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CouponException cannotDeleteNotOwned() {
+<b class="nc">&nbsp;        return new CouponException(&quot;cannot.delete.not.owned&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

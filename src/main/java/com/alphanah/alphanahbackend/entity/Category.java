@@ -104,6 +104,8 @@ public class Category {
 
         List<ProductResponseM2> products = new ArrayList<>();
         for (ProductCategory productCategory: productCategoryList) {
+            if (productCategory.getProduct().isDeleted())
+                continue;
             ProductResponseM2 productResponse = productCategory.getProduct().toProductResponseM2();
             if (products.contains(productResponse))
                 continue;

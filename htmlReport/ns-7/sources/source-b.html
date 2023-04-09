@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ProductException</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductException (com.alphanah.alphanahbackend.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProductException</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.exception;
+&nbsp;
+&nbsp;public class ProductException extends AlphanahBaseException {
+&nbsp;
+&nbsp;    public ProductException(String message) {
+<b class="nc">&nbsp;        super(&quot;product.&quot; + message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotFindWithNullProductUuid() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.find.with.null.product.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException notFound() {
+<b class="nc">&nbsp;        return new ProductException(&quot;not.found&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotCreateWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.create.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotCreateWithNullName() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.create.with.null.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotCreateWithNullDescription() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.create.with.null.description&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotCreateWithEmptyName() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.create.with.empty.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotCreateWithEmptyDescription() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.create.with.empty.description&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotCreateWithNameExceedMaxLength() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.create.with.name.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotCreateWithDescriptionExceedMaxLength() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.create.with.description.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithNullProductUuid() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.null.product.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithNullName() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.null.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithNullDescription() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.null.description&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithEmptyName() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.empty.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithEmptyDescription() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.empty.description&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithNameExceedMaxLength() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.name.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateWithDescriptionExceedMaxLength() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.with.description.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotUpdateNotOwned() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.update.not.owned&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotDeleteWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.delete.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotDeleteWithNullProductUuid() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.delete.with.null.product.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductException cannotDeleteNotOwned() {
+<b class="nc">&nbsp;        return new ProductException(&quot;cannot.delete.not.owned&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

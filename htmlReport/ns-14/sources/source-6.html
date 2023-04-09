@@ -1,0 +1,321 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ImageService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ImageService (com.alphanah.alphanahbackend.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImageService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0.9%
+  </span>
+  <span class="absValue">
+    (1/115)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.service;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Image;
+&nbsp;import com.alphanah.alphanahbackend.entity.Product;
+&nbsp;import com.alphanah.alphanahbackend.entity.Review;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.exception.ImageException;
+&nbsp;import com.alphanah.alphanahbackend.repository.ImageRepository;
+&nbsp;import com.alphanah.alphanahbackend.repository.ProductRepository;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ImageService {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ImageRepository repository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductService productService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ReviewService reviewService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductRepository productRepository;
+&nbsp;
+&nbsp;    public List&lt;Image&gt; findAllProductImages(UUID productUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Product product = productService.findProduct(productUuid);</b>
+<b class="nc">&nbsp;        return repository.findAllByProduct(product);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Image&gt; findAllReviewImages(UUID productUuid, UUID reviewUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(reviewUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullReviewUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Review review = reviewService.findReview(productUuid, reviewUuid);</b>
+<b class="nc">&nbsp;        return repository.findAllByReview(review);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Image findProductImage(UUID productUuid, UUID imageUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(imageUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullImageUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Product product = productService.findProduct(productUuid);</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Image&gt; optional = repository.findById(imageUuid);</b>
+<b class="nc">&nbsp;        if (optional.isEmpty())</b>
+<b class="nc">&nbsp;            throw ImageException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        Image image = optional.get();</b>
+<b class="nc">&nbsp;        if (!image.getProduct().getUuid().equals(product.getUuid()))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithInvalidProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        return image;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Image findReviewImage(UUID productUuid, UUID reviewUuid, UUID imageUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(reviewUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullReviewUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(imageUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithNullImageUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Review review = reviewService.findReview(productUuid, reviewUuid);</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Image&gt; optional = repository.findById(imageUuid);</b>
+<b class="nc">&nbsp;        if (optional.isEmpty())</b>
+<b class="nc">&nbsp;            throw ImageException.notFound();</b>
+&nbsp;
+<b class="nc">&nbsp;        Image image = optional.get();</b>
+<b class="nc">&nbsp;        if (!image.getReview().getUuid().equals(review.getUuid()))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotFindWithInvalidReviewUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        return image;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Product createProductMainImage(UUID creatorUuid, UUID productUuid, String imagePath) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(imagePath))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullImagePath();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (imagePath.isEmpty())</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithEmptyImagePath();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (imagePath.length() &gt; Env.IMAGE_PATH_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithImagePathExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        Product product = productService.findProduct(productUuid);</b>
+<b class="nc">&nbsp;        if (!product.getCreatorUuid().equals(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateNotOwned();</b>
+&nbsp;
+<b class="nc">&nbsp;        Image image = new Image();</b>
+<b class="nc">&nbsp;        image.setProduct(null);</b>
+<b class="nc">&nbsp;        image.setPath(imagePath);</b>
+<b class="nc">&nbsp;        repository.save(image);</b>
+&nbsp;
+<b class="nc">&nbsp;        Product entity = productService.findProduct(productUuid);</b>
+<b class="nc">&nbsp;        entity.setImage(image);</b>
+<b class="nc">&nbsp;        return productRepository.save(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Image createProductImage(UUID creatorUuid, UUID productUuid, String imagePath) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(imagePath))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullImagePath();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (imagePath.isEmpty())</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithEmptyImagePath();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (imagePath.length() &gt; Env.IMAGE_PATH_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithImagePathExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        Product product = productService.findProduct(productUuid);</b>
+<b class="nc">&nbsp;        if (!product.getCreatorUuid().equals(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateNotOwned();</b>
+&nbsp;
+<b class="nc">&nbsp;        Image entity = new Image();</b>
+<b class="nc">&nbsp;        entity.setProduct(product);</b>
+<b class="nc">&nbsp;        entity.setPath(imagePath);</b>
+<b class="nc">&nbsp;        return repository.save(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Image createReviewImage(UUID creatorUuid, UUID productUuid, UUID reviewUuid, String imagePath) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(reviewUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullReviewUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(imagePath))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithNullImagePath();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (imagePath.isEmpty())</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithEmptyImagePath();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (imagePath.length() &gt; Env.IMAGE_PATH_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateWithImagePathExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        Review review = reviewService.findReview(productUuid, reviewUuid);</b>
+<b class="nc">&nbsp;        if (!review.getCreatorUuid().equals(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotCreateNotOwned();</b>
+&nbsp;
+<b class="nc">&nbsp;        Image entity = new Image();</b>
+<b class="nc">&nbsp;        entity.setReview(review);</b>
+<b class="nc">&nbsp;        entity.setPath(imagePath);</b>
+<b class="nc">&nbsp;        return repository.save(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteProductImage(UUID creatorUuid, UUID productUuid, UUID imageUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(imageUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteWithNullImageUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Image entity = this.findProductImage(productUuid, imageUuid);</b>
+<b class="nc">&nbsp;        if (!entity.getProduct().getCreatorUuid().equals(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteNotOwned();</b>
+&nbsp;
+<b class="nc">&nbsp;        repository.delete(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteReviewImage(UUID creatorUuid, UUID productUuid, UUID reviewUuid, UUID imageUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(reviewUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteWithNullReviewUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(imageUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteWithNullImageUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Image entity = this.findReviewImage(productUuid, reviewUuid, imageUuid);</b>
+<b class="nc">&nbsp;        if (!entity.getReview().getCreatorUuid().equals(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ImageException.cannotDeleteNotOwned();</b>
+&nbsp;
+<b class="nc">&nbsp;        repository.delete(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

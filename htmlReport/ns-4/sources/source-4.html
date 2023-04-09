@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > SecurityConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.configuration</a>
+</div>
+
+<h1>Coverage Summary for Class: SecurityConfig (com.alphanah.alphanahbackend.configuration)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/24)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$1</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$2</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/24)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.configuration;
+&nbsp;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+&nbsp;import org.springframework.security.config.http.SessionCreationPolicy;
+&nbsp;import org.springframework.security.web.AuthenticationEntryPoint;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;import org.springframework.security.web.access.AccessDeniedHandler;
+&nbsp;import org.springframework.web.cors.CorsConfiguration;
+&nbsp;import org.springframework.web.cors.CorsConfigurationSource;
+&nbsp;import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+&nbsp;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSecurity
+<b class="fc">&nbsp;public class SecurityConfig {</b>
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+<b class="fc">&nbsp;        String[] anonymousEndpoints = {</b>
+&nbsp;                &quot;/register&quot;,
+&nbsp;                &quot;/login&quot;
+&nbsp;        };
+&nbsp;
+<b class="fc">&nbsp;        String[] permitAllEndpoints = {</b>
+&nbsp;                &quot;/error/*&quot;,
+&nbsp;                &quot;/product&quot;,
+&nbsp;                &quot;/product/*&quot;,
+&nbsp;                &quot;/category&quot;,
+&nbsp;                &quot;/category/*&quot;,
+&nbsp;                &quot;/account/*&quot;
+&nbsp;        };
+&nbsp;
+<b class="fc">&nbsp;        httpSecurity</b>
+<b class="fc">&nbsp;                .cors().and().csrf().disable()</b>
+<b class="fc">&nbsp;                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()</b>
+<b class="fc">&nbsp;                .authorizeHttpRequests()</b>
+<b class="fc">&nbsp;                .requestMatchers(anonymousEndpoints).anonymous()</b>
+<b class="fc">&nbsp;                .requestMatchers(permitAllEndpoints).permitAll()</b>
+<b class="fc">&nbsp;                .anyRequest().authenticated().and()</b>
+<b class="fc">&nbsp;                .exceptionHandling()</b>
+<b class="fc">&nbsp;                    .authenticationEntryPoint(authenticationEntryPoint())</b>
+<b class="fc">&nbsp;                    .accessDeniedHandler(accessDeniedHandler()).and()</b>
+<b class="fc">&nbsp;                .oauth2ResourceServer().jwt();</b>
+<b class="fc">&nbsp;        return httpSecurity.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public AuthenticationEntryPoint authenticationEntryPoint() {
+<b class="fc">&nbsp;        return new CustomAuthenticationEntryPoint();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public AccessDeniedHandler accessDeniedHandler() {
+<b class="fc">&nbsp;        return new CustomAccessDeniedHandler();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public CorsConfigurationSource corsConfigurationSource() {
+<b class="fc">&nbsp;        CorsConfiguration configuration = new CorsConfiguration();</b>
+<b class="fc">&nbsp;        configuration.setAllowedOrigins(List.of(&quot;*&quot;));</b>
+<b class="fc">&nbsp;        configuration.setAllowedMethods(List.of(&quot;*&quot;));</b>
+<b class="fc">&nbsp;        configuration.setAllowedHeaders(List.of(&quot;*&quot;));</b>
+<b class="fc">&nbsp;        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</b>
+<b class="fc">&nbsp;        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</b>
+<b class="fc">&nbsp;        return source;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

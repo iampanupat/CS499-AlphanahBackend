@@ -18,7 +18,14 @@ public class ProductService {
     private ProductRepository repository;
 
     public List<Product> findAllProducts() {
-        return (List<Product>) repository.findAll();
+        List<Product> productList = (List<Product>) repository.findAll();
+        List<Product> products = new ArrayList<>();
+
+        for (Product product: productList)
+            if (!product.isDeleted())
+                products.add(product);
+
+        return products;
     }
 
     public Product findProduct(UUID productUuid) throws AlphanahBaseException {
@@ -27,6 +34,9 @@ public class ProductService {
 
         Optional<Product> optional = repository.findById(productUuid);
         if (optional.isEmpty())
+            throw ProductException.notFound();
+
+        if (optional.get().isDeleted())
             throw ProductException.notFound();
 
         return optional.get();
@@ -109,7 +119,8 @@ public class ProductService {
         if (!entity.getCreatorUuid().equals(creatorUuid))
             throw ProductException.cannotDeleteNotOwned();
 
-        repository.delete(entity);
+        entity.setSoftDelete(true);
+        repository.save(entity);
     }
 
 }

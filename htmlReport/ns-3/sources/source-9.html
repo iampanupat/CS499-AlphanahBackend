@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ProductCategoryBusiness</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.business</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductCategoryBusiness (com.alphanah.alphanahbackend.business)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProductCategoryBusiness</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.business;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Product;
+&nbsp;import com.alphanah.alphanahbackend.entity.ProductCategory;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.product_category.ProductCategoryResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.service.ProductCategoryService;
+&nbsp;import com.alphanah.alphanahbackend.service.ProductService;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ProductCategoryBusiness {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductCategoryService service;
+&nbsp;
+&nbsp;    public List&lt;ProductCategoryResponseM1&gt; createProductCategory(String token, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        List&lt;ProductCategoryResponseM1&gt; responses = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;ProductCategory&gt; productCategories = service.createProductCategory(AccountUtils.findAccount(token).getUuid(), productUuid, categoryUuid);</b>
+&nbsp;
+<b class="nc">&nbsp;        for (ProductCategory productCategory : productCategories)</b>
+<b class="nc">&nbsp;            responses.add(productCategory.toProductCategoryResponseM1(null));</b>
+&nbsp;
+<b class="nc">&nbsp;        return responses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteProductCategory(String token, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        service.deleteProductCategory(AccountUtils.findAccount(token).getUuid(), productUuid, categoryUuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

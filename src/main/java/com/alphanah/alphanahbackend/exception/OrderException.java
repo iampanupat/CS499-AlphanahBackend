@@ -102,6 +102,10 @@ public class OrderException extends AlphanahBaseException {
         return new OrderException("cannot.update.with.empty.cart");
     }
 
+    public static OrderException cannotUpdateWithDeletedCartItem() {
+        return new OrderException("cannot.update.with.deleted.cart.item");
+    }
+
     public static OrderException cannotUpdateWithQuantityExceedStock() {
         return new OrderException("cannot.update.with.quantity.exceed.stock");
     }

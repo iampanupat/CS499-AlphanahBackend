@@ -1,0 +1,175 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Account</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Account (com.alphanah.alphanahbackend.entity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Account</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (3/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (5/35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.entity;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.model.account.AccountResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.Role;
+&nbsp;import com.alphanah.alphanahbackend.model.account.AccountResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import lombok.Data;
+&nbsp;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.UUID;
+&nbsp;
+<b class="fc">&nbsp;@Data</b>
+&nbsp;public class Account {
+&nbsp;
+<b class="fc">&nbsp;    private UUID uuid;</b>
+<b class="nc">&nbsp;    private String email;</b>
+<b class="nc">&nbsp;    private Role role;</b>
+<b class="nc">&nbsp;    private String firstname;</b>
+<b class="nc">&nbsp;    private String lastname;</b>
+<b class="nc">&nbsp;    private String address;</b>
+<b class="nc">&nbsp;    private String phone;</b>
+<b class="nc">&nbsp;    private String image;</b>
+<b class="nc">&nbsp;    private UUID cartUuid;</b>
+<b class="nc">&nbsp;    private String createDate;</b>
+&nbsp;
+<b class="fc">&nbsp;    public Account() {</b>
+<b class="fc">&nbsp;        this.role = Role.CUSTOMER;</b>
+<b class="fc">&nbsp;        this.image = &quot;/defaultProfilePicture.jpg&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isCustomer() {
+<b class="nc">&nbsp;        return this.role == Role.CUSTOMER;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isMerchant() {
+<b class="nc">&nbsp;        return this.role == Role.MERCHANT;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public AccountResponseM1 toAccountResponseM1() {
+<b class="nc">&nbsp;        return this.toAccountResponseM1(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private AccountResponseM1 toAccountResponseM1(AccountResponseM1 response) {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new AccountResponseM1();</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setAccountUUID(this.getUuid().toString());</b>
+<b class="nc">&nbsp;        response.setRole(this.getRole().toString());</b>
+<b class="nc">&nbsp;        response.setFirstname(Objects.isNull(firstname) &amp; Objects.isNull(lastname) ? String.valueOf(role) : firstname);</b>
+<b class="nc">&nbsp;        response.setLastname(Objects.isNull(firstname) &amp; Objects.isNull(lastname) ? String.valueOf(uuid) : lastname);</b>
+<b class="nc">&nbsp;        response.setImage(Env.IMAGE_SERVER_URL + this.getImage());</b>
+<b class="nc">&nbsp;        response.setCreateDate(this.getCreateDate());</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public AccountResponseM2 toAccountResponseM2() {
+<b class="nc">&nbsp;        return this.toAccountResponseM2(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private AccountResponseM2 toAccountResponseM2(AccountResponseM2 response) {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new AccountResponseM2();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (AccountResponseM2) this.toAccountResponseM1(response);</b>
+<b class="nc">&nbsp;        response.setEmail(this.getEmail());</b>
+<b class="nc">&nbsp;        response.setAddress(this.getAddress());</b>
+<b class="nc">&nbsp;        response.setPhone(this.getPhone());</b>
+<b class="nc">&nbsp;        response.setCartUUID(Objects.isNull(this.getCartUuid()) ? null : this.getCartUuid().toString());</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

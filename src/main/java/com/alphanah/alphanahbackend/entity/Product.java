@@ -54,6 +54,13 @@ public class Product {
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 
+    @Column(name = "product_soft_delete", nullable = false)
+    private Boolean softDelete = false;
+
+    public boolean isDeleted() {
+        return softDelete;
+    }
+
     public ProductResponseM1 toProductResponseM1() throws AlphanahBaseException {
         return this.toProductResponseM1(null);
     }
@@ -86,6 +93,8 @@ public class Product {
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
         for (ProductOption option: productOptionList) {
+            if (option.isDeleted())
+                continue;
             min = option.getPrice() < min ? option.getPrice() : min;
             max = option.getPrice() > max ? option.getPrice() : max;
             options.add(option.toProductOptionResponseM1(null));

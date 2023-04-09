@@ -1,0 +1,181 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AuthService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.service</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthService (com.alphanah.alphanahbackend.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.9%
+  </span>
+  <span class="absValue">
+    (1/34)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.service;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.Role;
+&nbsp;import com.alphanah.alphanahbackend.utility.AmazonUtils;
+&nbsp;import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+&nbsp;import com.amazonaws.services.cognitoidp.model.*;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class AuthService {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private AWSCognitoIdentityProvider cognitoClient;
+&nbsp;
+&nbsp;    @Value(&quot;${spring.security.oauth2.client.registration.cognito.userPoolId}&quot;)
+&nbsp;    private String userPoolId;
+&nbsp;
+&nbsp;    @Value(&quot;${spring.security.oauth2.client.registration.cognito.clientId}&quot;)
+&nbsp;    private String clientId;
+&nbsp;
+&nbsp;    @Value(&quot;${spring.security.oauth2.client.registration.cognito.clientSecret}&quot;)
+&nbsp;    private String clientSecret;
+&nbsp;
+&nbsp;    public Map&lt;String, String&gt; createAccount(String email, String password, Role role) {
+<b class="nc">&nbsp;        AttributeType emailAttr = new AttributeType().withName(&quot;email&quot;).withValue(email);</b>
+<b class="nc">&nbsp;        AttributeType emailVerifiedAttr = new AttributeType().withName(&quot;email_verified&quot;).withValue(&quot;true&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        AdminCreateUserRequest createUserRequest = new AdminCreateUserRequest()</b>
+<b class="nc">&nbsp;                .withUserPoolId(userPoolId)</b>
+<b class="nc">&nbsp;                .withUsername(email)</b>
+<b class="nc">&nbsp;                .withTemporaryPassword(password)</b>
+<b class="nc">&nbsp;                .withUserAttributes(emailAttr, emailVerifiedAttr)</b>
+<b class="nc">&nbsp;                .withMessageAction(MessageActionType.SUPPRESS)</b>
+<b class="nc">&nbsp;                .withDesiredDeliveryMediums(DeliveryMediumType.EMAIL);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (role == Role.MERCHANT) {</b>
+<b class="nc">&nbsp;            createUserRequest.withUserAttributes(new AttributeType().withName(&quot;custom:role&quot;).withValue(&quot;merchant&quot;));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        cognitoClient.adminCreateUser(createUserRequest);</b>
+&nbsp;
+<b class="nc">&nbsp;        AdminSetUserPasswordRequest adminSetUserPasswordRequest = new AdminSetUserPasswordRequest()</b>
+<b class="nc">&nbsp;                .withUsername(email)</b>
+<b class="nc">&nbsp;                .withUserPoolId(userPoolId)</b>
+<b class="nc">&nbsp;                .withPassword(password)</b>
+<b class="nc">&nbsp;                .withPermanent(true);</b>
+&nbsp;
+<b class="nc">&nbsp;        cognitoClient.adminSetUserPassword(adminSetUserPasswordRequest);</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        response.put(&quot;email&quot;, email);</b>
+<b class="nc">&nbsp;        response.put(&quot;role&quot;, Objects.equals(Role.MERCHANT, role) ? Role.MERCHANT.toString() : Role.CUSTOMER.toString());</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public AuthenticationResultType signInAccount(String email, String password) {
+<b class="nc">&nbsp;        final Map&lt;String, String&gt; authParams = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        authParams.put(&quot;SECRET_HASH&quot;, AmazonUtils.calculateSecretHash(clientId, clientSecret, email));</b>
+<b class="nc">&nbsp;        authParams.put(&quot;USERNAME&quot;, email);</b>
+<b class="nc">&nbsp;        authParams.put(&quot;PASSWORD&quot;, password);</b>
+&nbsp;
+<b class="nc">&nbsp;        final AdminInitiateAuthRequest authRequest = new AdminInitiateAuthRequest();</b>
+<b class="nc">&nbsp;        authRequest</b>
+<b class="nc">&nbsp;                .withAuthFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)</b>
+<b class="nc">&nbsp;                .withClientId(clientId)</b>
+<b class="nc">&nbsp;                .withUserPoolId(userPoolId)</b>
+<b class="nc">&nbsp;                .withAuthParameters(authParams);</b>
+&nbsp;
+<b class="nc">&nbsp;        return cognitoClient.adminInitiateAuth(authRequest).getAuthenticationResult();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

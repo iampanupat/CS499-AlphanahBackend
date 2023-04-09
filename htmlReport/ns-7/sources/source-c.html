@@ -1,0 +1,242 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ProductOptionException</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductOptionException (com.alphanah.alphanahbackend.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProductOptionException</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/33)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.exception;
+&nbsp;
+&nbsp;import org.springframework.security.core.parameters.P;
+&nbsp;
+&nbsp;public class ProductOptionException extends AlphanahBaseException {
+&nbsp;
+&nbsp;    public ProductOptionException(String message) {
+<b class="nc">&nbsp;        super(&quot;product.option.&quot; + message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotFindWithNullProductUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.find.with.null.product.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotFindWithNullProductOptionUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.find.with.null.product.option.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException notFound() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;not.found&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNullProductUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.null.product.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNullName() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.null.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNullPrice() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.null.price&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNullQuantity() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.null.quantity&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithEmptyName() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.empty.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNegativeOrZeroPrice() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.negative.or.zero.price&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNegativeOrZeroQuantity() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.negative.or.zero.quantity&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithNameExceedMaxLength() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.name.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithPriceExceedMaxValue() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.price.exceed.max.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateWithQuantityExceedMaxValue() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.with.quantity.exceed.max.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotCreateNotOwned() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.create.not.owned&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNullProductUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.null.product.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNullProductOptionUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.null.product.option.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNullName() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.null.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNullPrice() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.null.price&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNullQuantity() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.null.quantity&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithEmptyName() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.empty.name&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNegativeOrZeroPrice() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.negative.or.zero.price&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNegativeOrZeroQuantity() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.negative.or.zero.quantity&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithNameExceedMaxLength() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.name.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithPriceExceedMaxValue() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.price.exceed.max.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateWithQuantityExceedMaxValue() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.with.quantity.exceed.max.value&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotUpdateNotOwned() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.update.not.owned&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotDeleteWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.delete.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotDeleteWithNullProductUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.delete.with.null.product.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotDeleteWithNullProductOptionUuid() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.delete.with.null.product.option.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ProductOptionException cannotDeleteNotOwned() {
+<b class="nc">&nbsp;        return new ProductOptionException(&quot;cannot.delete.not.owned&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

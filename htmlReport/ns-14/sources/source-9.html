@@ -1,0 +1,195 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ProductCategoryService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductCategoryService (com.alphanah.alphanahbackend.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProductCategoryService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.1%
+  </span>
+  <span class="absValue">
+    (1/47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.service;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Category;
+&nbsp;import com.alphanah.alphanahbackend.entity.Product;
+&nbsp;import com.alphanah.alphanahbackend.entity.ProductCategory;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.exception.ProductCategoryException;
+&nbsp;import com.alphanah.alphanahbackend.repository.ProductCategoryRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ProductCategoryService {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductCategoryRepository repository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductService productService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CategoryService categoryService;
+&nbsp;
+&nbsp;    public List&lt;ProductCategory&gt; createProductCategory(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotCreateWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotCreateWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(categoryUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotCreateWithNullCategoryUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Product product = productService.findProduct(productUuid);</b>
+<b class="nc">&nbsp;        if (!product.getProductCategories().isEmpty())</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotCreateMultipleRelationship();</b>
+&nbsp;
+<b class="nc">&nbsp;        Category category = categoryService.findCategory(categoryUuid);</b>
+<b class="nc">&nbsp;        if (repository.existsByProductAndCategory(product, category))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotCreateDuplicateRelationship();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!product.getCreatorUuid().equals(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotCreateNotOwned();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;ProductCategory&gt; entityList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        while (category != null) {</b>
+<b class="nc">&nbsp;            if (!repository.existsByProductAndCategory(product, category)) {</b>
+<b class="nc">&nbsp;                ProductCategory entity = new ProductCategory();</b>
+<b class="nc">&nbsp;                entity.setProduct(product);</b>
+<b class="nc">&nbsp;                entity.setCategory(category);</b>
+<b class="nc">&nbsp;                entityList.add(entity);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            category = category.getParentCategory();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return (List&lt;ProductCategory&gt;) repository.saveAll(entityList);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteProductCategory(UUID creatorUuid, UUID productUuid, UUID categoryUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotDeleteWithNullCreatorUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(productUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotDeleteWithNullProductUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(categoryUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotDeleteWithNullCategoryUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Product product = productService.findProduct(productUuid);</b>
+<b class="nc">&nbsp;        Category category = categoryService.findCategory(categoryUuid);</b>
+<b class="nc">&nbsp;        if (!product.getCreatorUuid().equals(creatorUuid))</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotDeleteNotOwned();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;ProductCategory&gt; entityList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Category&gt; categoryAndSubcategories = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        categoryAndSubcategories.add(category);</b>
+<b class="nc">&nbsp;        categoryAndSubcategories.addAll(category.getAllChild());</b>
+<b class="nc">&nbsp;        for (Category currentCategory: categoryAndSubcategories) {</b>
+<b class="nc">&nbsp;            Optional&lt;ProductCategory&gt; optional = repository.findByProductAndCategory(product, currentCategory);</b>
+<b class="nc">&nbsp;            if (optional.isEmpty())</b>
+<b class="nc">&nbsp;                continue;</b>
+<b class="nc">&nbsp;            entityList.add(optional.get());</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        if (entityList.isEmpty())</b>
+<b class="nc">&nbsp;            throw ProductCategoryException.cannotDeleteNullRelationship();</b>
+&nbsp;
+<b class="nc">&nbsp;        repository.deleteAll(entityList);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

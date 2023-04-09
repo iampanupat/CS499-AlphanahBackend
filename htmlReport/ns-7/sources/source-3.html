@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AuthException</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthException (com.alphanah.alphanahbackend.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthException</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.exception;
+&nbsp;
+&nbsp;public class AuthException extends AlphanahBaseException {
+&nbsp;
+&nbsp;    public AuthException(String message) {
+<b class="nc">&nbsp;        super(&quot;auth.&quot; + message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException roleNotAllowed() {
+<b class="nc">&nbsp;        return new AuthException(&quot;role.not.allowed&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithNullEmail() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.null.email&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithNullPassword() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.null.password&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithNullConfirmPassword() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.null.confirm.password&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithNullRole() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.null.role&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithEmptyEmail() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.empty.email&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithEmptyPassword() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.empty.password&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithEmptyConfirmPassword() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.empty.confirm.password&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithEmailExceedMaxLength() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.email.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithPasswordExceedMaxLength() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.password.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithConfirmPasswordExceedMaxLength() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.confirm.password.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotRegisterWithPasswordsNotMatch() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.register.with.passwords.not.match&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotLoginWithNullEmail() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.login.with.null.email&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotLoginWithNullPassword() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.login.with.null.password&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotLoginWithEmptyEmail() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.login.with.empty.email&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotLoginWithEmptyPassword() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.login.with.empty.password&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotLoginWithEmailExceedMaxLength() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.login.with.email.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static AuthException cannotLoginWithPasswordExceedMaxLength() {
+<b class="nc">&nbsp;        return new AuthException(&quot;cannot.login.with.password.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

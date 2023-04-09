@@ -1,0 +1,167 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CouponAPI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.api</a>
+</div>
+
+<h1>Coverage Summary for Class: CouponAPI (com.alphanah.alphanahbackend.api)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CouponAPI</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.api;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.business.CouponBusiness;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.CouponType;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.ListResponse;
+&nbsp;import com.alphanah.alphanahbackend.model.coupon.CouponRequest;
+&nbsp;import com.alphanah.alphanahbackend.model.coupon.CouponResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/coupon&quot;)
+<b class="fc">&nbsp;public class CouponAPI {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CouponBusiness business;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;ListResponse&gt; getAllCouponsWithUsage(
+&nbsp;            @RequestParam(required = false) CouponType type,
+&nbsp;            @RequestParam(required = false) Boolean started,
+&nbsp;            @RequestParam(required = false) Boolean expired,
+&nbsp;            @RequestParam(required = false) Boolean runOut,
+&nbsp;            @RequestParam(required = false) UUID merchant
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        List&lt;CouponResponseM1&gt; rawResponses = business.getAllCoupons(type, started, expired, runOut, merchant);</b>
+<b class="nc">&nbsp;        ListResponse response = new ListResponse(rawResponses);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{coupon_code}&quot;)
+&nbsp;    public ResponseEntity&lt;CouponResponseM1&gt; getCoupon(@PathVariable(&quot;coupon_code&quot;) String couponCode) throws AlphanahBaseException {
+<b class="nc">&nbsp;        CouponResponseM1 response = business.getCoupon(couponCode);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;CouponResponseM1&gt; createCoupon(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @RequestBody CouponRequest request
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.merchantVerify(token);</b>
+<b class="nc">&nbsp;        CouponResponseM1 response = business.createCoupon(AccountUtils.findAccount(token).getUuid(), request);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{coupon_code}&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteCoupon(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @PathVariable(&quot;coupon_code&quot;) String couponCode
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.merchantVerify(token);</b>
+<b class="nc">&nbsp;        business.deleteCoupon(AccountUtils.findAccount(token).getUuid(), couponCode);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

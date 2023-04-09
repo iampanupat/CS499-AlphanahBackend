@@ -1,0 +1,195 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderItemAPI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.api</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderItemAPI (com.alphanah.alphanahbackend.api)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderItemAPI</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5%
+  </span>
+  <span class="absValue">
+    (1/20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.api;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.business.OrderItemBusiness;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.ListResponse;
+&nbsp;import com.alphanah.alphanahbackend.model.order.CartResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.OrderItemRequest;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class OrderItemAPI {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private OrderItemBusiness business;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/cart/{product_uuid}/option/{product_option_uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;CartResponseM2&gt; addOrCreateCartItem(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @PathVariable(&quot;product_uuid&quot;) UUID productUuid,
+&nbsp;            @PathVariable(&quot;product_option_uuid&quot;) UUID optionUuid,
+&nbsp;            @RequestBody OrderItemRequest request
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.customerVerify(token);</b>
+<b class="nc">&nbsp;        CartResponseM2 response = business.addOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/cart/{product_uuid}/option/{product_option_uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;CartResponseM2&gt; updateOrCreateCartItem(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @PathVariable(&quot;product_uuid&quot;) UUID productUuid,
+&nbsp;            @PathVariable(&quot;product_option_uuid&quot;) UUID optionUuid,
+&nbsp;            @RequestBody OrderItemRequest request
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.customerVerify(token);</b>
+<b class="nc">&nbsp;        CartResponseM2 response = business.updateOrCreateCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid, request);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/cart/{product_uuid}/option/{product_option_uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;CartResponseM2&gt; deleteCartItem(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @PathVariable(&quot;product_uuid&quot;) UUID productUuid,
+&nbsp;            @PathVariable(&quot;product_option_uuid&quot;) UUID optionUuid
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.customerVerify(token);</b>
+<b class="nc">&nbsp;        CartResponseM2 response = business.deleteCartItem(AccountUtils.findAccount(token).getUuid(), productUuid, optionUuid);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/sale_order&quot;)
+&nbsp;    public ResponseEntity&lt;ListResponse&gt; getAllSaleOrderItem(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @RequestParam(required = false) DeliveryStatus deliveryStatus
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.merchantVerify(token);</b>
+<b class="nc">&nbsp;        List&lt;PaidItemResponseM2&gt; rawResponse = business.getAllSaleOrderItem(AccountUtils.findAccount(token).getUuid(), deliveryStatus);</b>
+<b class="nc">&nbsp;        ListResponse response = new ListResponse(rawResponse);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/sale_order/{order_item_uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;PaidItemResponseM2&gt; getSaleOrderItem(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @PathVariable(&quot;order_item_uuid&quot;) UUID orderItemUuid
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.merchantVerify(token);</b>
+<b class="nc">&nbsp;        PaidItemResponseM2 response = business.getSaleOrderItem(AccountUtils.findAccount(token).getUuid(), orderItemUuid);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/sale_order/{order_item_uuid}&quot;)
+&nbsp;    public ResponseEntity&lt;PaidItemResponseM2&gt; updateSaleOrderItem(
+&nbsp;            @RequestHeader(value = &quot;Authorization&quot;) String token,
+&nbsp;            @PathVariable(&quot;order_item_uuid&quot;) UUID orderItemUuid
+&nbsp;    ) throws AlphanahBaseException {
+<b class="nc">&nbsp;        AccountUtils.merchantVerify(token);</b>
+<b class="nc">&nbsp;        PaidItemResponseM2 response = business.updateDeliveryStatus(AccountUtils.findAccount(token).getUuid(), orderItemUuid);</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

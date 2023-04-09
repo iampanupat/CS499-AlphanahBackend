@@ -10,10 +10,7 @@ import com.alphanah.alphanahbackend.utility.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductOptionService {
@@ -29,7 +26,14 @@ public class ProductOptionService {
             throw ProductOptionException.cannotFindWithNullProductUuid();
 
         Product product = productService.findProduct(productUuid);
-        return repository.findAllByProduct(product);
+
+        List<ProductOption> productOptionList = repository.findAllByProduct(product);
+        List<ProductOption> productOptions = new ArrayList<>();
+        for (ProductOption productOption: productOptionList)
+            if (!productOption.isDeleted())
+                productOptions.add(productOption);
+
+        return productOptions;
     }
 
     public ProductOption findProductOption(UUID productUuid, UUID productOptionUuid) throws AlphanahBaseException {
@@ -46,6 +50,9 @@ public class ProductOptionService {
 
         ProductOption option = optional.get();
         if (!option.getProduct().getUuid().equals(product.getUuid()))
+            throw ProductOptionException.notFound();
+
+        if (option.isDeleted())
             throw ProductOptionException.notFound();
 
         return option;
@@ -160,7 +167,8 @@ public class ProductOptionService {
         if (!product.getCreatorUuid().equals(creatorUUID))
             throw ProductOptionException.cannotDeleteNotOwned();
 
-        repository.delete(entity);
+        entity.setSoftDelete(true);
+        repository.save(entity);
     }
 
 }

@@ -1,0 +1,328 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AccountService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.service</a>
+</div>
+
+<h1>Coverage Summary for Class: AccountService (com.alphanah.alphanahbackend.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccountService</td>
+<td class="coverageStat">
+  <span class="percent">
+    36.4%
+  </span>
+  <span class="absValue">
+    (4/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    30.8%
+  </span>
+  <span class="absValue">
+    (33/107)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AccountService$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    41.7%
+  </span>
+  <span class="absValue">
+    (5/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    31.5%
+  </span>
+  <span class="absValue">
+    (34/108)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.service;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Account;
+&nbsp;import com.alphanah.alphanahbackend.exception.AccountException;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.AwsCognitoField;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.Role;
+&nbsp;import com.alphanah.alphanahbackend.utility.DateUtils;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import com.alphanah.alphanahbackend.utility.PhoneUtils;
+&nbsp;import com.alphanah.alphanahbackend.utility.JWTUtils;
+&nbsp;import com.amazonaws.AmazonServiceException;
+&nbsp;import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+&nbsp;import com.amazonaws.services.cognitoidp.model.*;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class AccountService {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private AWSCognitoIdentityProvider cognitoClient;
+&nbsp;
+&nbsp;    @Value(&quot;${spring.security.oauth2.client.registration.cognito.userPoolId}&quot;)
+&nbsp;    private String userPoolId;
+&nbsp;
+&nbsp;    private Map&lt;UUID, Account&gt; findAll() {
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;UserType&gt; users = cognitoClient.listUsers(new ListUsersRequest().withUserPoolId(userPoolId)).getUsers();</b>
+<b class="fc">&nbsp;            Map&lt;UUID, Account&gt; accountMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;            for (UserType user : users) {</b>
+<b class="fc">&nbsp;                List&lt;AttributeType&gt; attributeTypes = user.getAttributes();</b>
+<b class="fc">&nbsp;                Date createDate = user.getUserCreateDate();</b>
+<b class="fc">&nbsp;                Account account = this.accountMapper(new Account(), attributeTypes, createDate);;</b>
+<b class="fc">&nbsp;                accountMap.put(account.getUuid(), account);</b>
+<b class="fc">&nbsp;            }</b>
+<b class="fc">&nbsp;            return accountMap;</b>
+<b class="nc">&nbsp;        } catch (AmazonServiceException exception) {</b>
+<b class="nc">&nbsp;            throw exception;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private Account accountMapper(Account account, List&lt;AttributeType&gt; attributeTypes, Date createDate) {
+<b class="fc">&nbsp;        account.setCreateDate(DateUtils.timeZoneConverter(createDate, Env.bangkokZone));</b>
+<b class="fc">&nbsp;        for (AttributeType attribute : attributeTypes) {</b>
+<b class="fc">&nbsp;            AwsCognitoField awsCognitoField = AwsCognitoField.get(attribute.getName());</b>
+<b class="fc">&nbsp;            String cognitoValue = attribute.getValue();</b>
+<b class="fc">&nbsp;            if (Objects.isNull(awsCognitoField)) continue;</b>
+<b class="fc">&nbsp;            switch (awsCognitoField) {</b>
+<b class="fc">&nbsp;                case UUID -&gt; account.setUuid(UUID.fromString(cognitoValue));</b>
+<b class="fc">&nbsp;                case EMAIL -&gt; account.setEmail(cognitoValue);</b>
+<b class="fc">&nbsp;                case ROLE -&gt; account.setRole(Role.valueOf(cognitoValue.toUpperCase()));</b>
+<b class="fc">&nbsp;                case FIRSTNAME -&gt; account.setFirstname(cognitoValue);</b>
+<b class="fc">&nbsp;                case LASTNAME -&gt; account.setLastname(cognitoValue);</b>
+<b class="fc">&nbsp;                case ADDRESS -&gt; account.setAddress(cognitoValue);</b>
+<b class="fc">&nbsp;                case PHONE -&gt; account.setPhone(PhoneUtils.removeThaiAreaCode(cognitoValue));</b>
+<b class="fc">&nbsp;                case IMAGE -&gt; account.setImage(cognitoValue);</b>
+<b class="fc">&nbsp;                case CART_UUID -&gt; account.setCartUuid(UUID.fromString(cognitoValue));</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return account;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Account findAccount(String token) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(token))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotFindByNullToken();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            GetUserResult userResult = cognitoClient.getUser(new GetUserRequest().withAccessToken(JWTUtils.removeBearer(token)));</b>
+<b class="nc">&nbsp;            UUID accountUuid = UUID.fromString(userResult.getUserAttributes().get(0).getValue());</b>
+<b class="nc">&nbsp;            return this.findAccount(accountUuid);</b>
+<b class="nc">&nbsp;        } catch (AmazonServiceException exception) {</b>
+<b class="nc">&nbsp;            throw exception;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public Account findAccount(UUID accountUuid) throws AlphanahBaseException {
+<b class="fc">&nbsp;        if (Objects.isNull(accountUuid))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotFindByNullAccountUuid();</b>
+&nbsp;
+&nbsp;        Map&lt;UUID, Account&gt; accountMap;
+&nbsp;        try {
+<b class="fc">&nbsp;            accountMap = this.findAll();</b>
+<b class="nc">&nbsp;        } catch (AmazonServiceException exception){</b>
+<b class="nc">&nbsp;            throw exception;</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        Account account = accountMap.get(accountUuid);</b>
+<b class="fc">&nbsp;        if (Objects.isNull(account))</b>
+<b class="fc">&nbsp;            throw AccountException.notFound();</b>
+<b class="nc">&nbsp;        return account;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void updateAccount(String token, String firstname, String lastname, String address, String phone) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(token))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullToken();</b>
+&nbsp;
+<b class="nc">&nbsp;        Account account = this.findAccount(token);</b>
+<b class="nc">&nbsp;        this.updateAccount(account, firstname, lastname, address, phone);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void updateAccount(UUID accountUuid, String firstname, String lastname, String address, String phone) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(accountUuid))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullAccountUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Account account = this.findAccount(accountUuid);</b>
+<b class="nc">&nbsp;        this.updateAccount(account, firstname, lastname, address, phone);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void updateAccount(Account account, String firstname, String lastname, String address, String phone) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(account))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullAccount();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(firstname))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullFirstname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(lastname))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullLastname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(address))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullAddress();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(phone))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullPhone();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (firstname.isEmpty())</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithEmptyFirstname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (lastname.isEmpty())</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithEmptyLastname();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (address.isEmpty())</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithEmptyAddress();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (phone.isEmpty())</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithEmptyPhone();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (firstname.length() &gt; Env.FIRSTNAME_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithFirstnameExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (lastname.length() &gt; Env.LASTNAME_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithLastnameExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (address.length() &gt; Env.ADDRESS_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithAddressExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (phone.length() &gt; Env.PHONE_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithPhoneExceedMaxLength();</b>
+&nbsp;
+<b class="nc">&nbsp;        this.updateAwsCognitoField(account, AwsCognitoField.FIRSTNAME, firstname);</b>
+<b class="nc">&nbsp;        this.updateAwsCognitoField(account, AwsCognitoField.LASTNAME, lastname);</b>
+<b class="nc">&nbsp;        this.updateAwsCognitoField(account, AwsCognitoField.ADDRESS, address);</b>
+<b class="nc">&nbsp;        this.updateAwsCognitoField(account, AwsCognitoField.PHONE, PhoneUtils.addThaiAreaCode(phone));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void updateAwsCognitoField(String token, AwsCognitoField awsCognitoField, String value) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(token))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullToken();</b>
+&nbsp;
+<b class="nc">&nbsp;        Account account = this.findAccount(token);</b>
+<b class="nc">&nbsp;        this.updateAwsCognitoField(account, awsCognitoField, value);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void updateAwsCognitoField(UUID accountUuid, AwsCognitoField awsCognitoField, String value) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(accountUuid))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullAccountUuid();</b>
+&nbsp;
+<b class="nc">&nbsp;        Account account = this.findAccount(accountUuid);</b>
+<b class="nc">&nbsp;        this.updateAwsCognitoField(account, awsCognitoField, value);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void updateAwsCognitoField(Account account, AwsCognitoField awsCognitoField, String value) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (Objects.isNull(account))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullAccount();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(awsCognitoField))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullAwsCognitoField();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (Objects.isNull(value))</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithNullValue();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (value.length() &gt; Env.AWS_COGNITO_VALUE_MAX_LENGTH)</b>
+<b class="nc">&nbsp;            throw AccountException.cannotUpdateWithAwsCognitoValueExceedMaxLength();</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            cognitoClient.adminUpdateUserAttributes(new AdminUpdateUserAttributesRequest()</b>
+<b class="nc">&nbsp;                    .withUsername(account.getEmail())</b>
+<b class="nc">&nbsp;                    .withUserPoolId(userPoolId)</b>
+<b class="nc">&nbsp;                    .withUserAttributes(new AttributeType().withName(awsCognitoField.getFieldName()).withValue(value))</b>
+&nbsp;            );
+<b class="nc">&nbsp;        } catch (AmazonServiceException exception) {</b>
+<b class="nc">&nbsp;            throw exception;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

@@ -34,6 +34,13 @@ public class ProductOption {
     @OneToMany(mappedBy = "productOption", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @Column(name = "product_soft_delete", nullable = false)
+    private Boolean softDelete = false;
+
+    public boolean isDeleted() {
+        return softDelete;
+    }
+
     public ProductOptionResponseM1 toProductOptionResponseM1(ProductOptionResponseM1 response) {
         if (response == null)
             response = new ProductOptionResponseM1();

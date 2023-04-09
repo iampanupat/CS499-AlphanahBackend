@@ -1,0 +1,281 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Product</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Product (com.alphanah.alphanahbackend.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Product</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.9%
+  </span>
+  <span class="absValue">
+    (1/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.4%
+  </span>
+  <span class="absValue">
+    (5/93)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Product$HibernateProxy$jsPS0H7y</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    5.9%
+  </span>
+  <span class="absValue">
+    (1/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.4%
+  </span>
+  <span class="absValue">
+    (5/93)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.entity;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.category.CategoryResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.image.ImageResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.product.ProductResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.product.ProductResponseM3;
+&nbsp;import com.alphanah.alphanahbackend.model.product.ProductResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.product_option.ProductOptionResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.review.ReviewResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import com.alphanah.alphanahbackend.utility.DateUtils;
+&nbsp;import com.alphanah.alphanahbackend.utility.Env;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.Data;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+<b class="fc">&nbsp;@Data</b>
+&nbsp;@Entity(name = &quot;products&quot;)
+&nbsp;public class Product {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;product_uuid&quot;, nullable = false, updatable = false)
+&nbsp;    @GeneratedValue
+<b class="nc">&nbsp;    private UUID uuid;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;product_name&quot;, nullable = false, length = 120)
+<b class="nc">&nbsp;    private String name;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;product_description&quot;)
+<b class="nc">&nbsp;    private String description;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;product_create_date&quot;, nullable = false, updatable = false)
+<b class="nc">&nbsp;    private Date createDate;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;product_creator_uuid&quot;, nullable = false, updatable = false)
+<b class="nc">&nbsp;    private UUID creatorUuid;</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;product&quot;, orphanRemoval = true, fetch = FetchType.LAZY)</b>
+<b class="nc">&nbsp;    private List&lt;ProductOption&gt; options = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;product&quot;, orphanRemoval = true, fetch = FetchType.LAZY)</b>
+<b class="nc">&nbsp;    private List&lt;ProductCategory&gt; productCategories = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    @OneToOne
+&nbsp;    @JoinColumn(name = &quot;product_main_image&quot;)
+<b class="nc">&nbsp;    private Image image;</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;product&quot;, orphanRemoval = true, fetch = FetchType.LAZY)</b>
+<b class="nc">&nbsp;    private List&lt;Image&gt; images = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;product&quot;, orphanRemoval = true, fetch = FetchType.LAZY)</b>
+<b class="nc">&nbsp;    private List&lt;Review&gt; reviews = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    public ProductResponseM1 toProductResponseM1() throws AlphanahBaseException {
+<b class="nc">&nbsp;        return this.toProductResponseM1(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ProductResponseM1 toProductResponseM1(ProductResponseM1 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new ProductResponseM1();</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setProductUUID(uuid.toString());</b>
+<b class="nc">&nbsp;        response.setName(name);</b>
+<b class="nc">&nbsp;        response.setDescription(description);</b>
+<b class="nc">&nbsp;        response.setCreator(AccountUtils.findAccount(creatorUuid).toAccountResponseM1());</b>
+<b class="nc">&nbsp;        response.setCreateDate(DateUtils.timeZoneConverter(createDate, Env.bangkokZone));</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ProductResponseM2 toProductResponseM2() throws AlphanahBaseException {
+<b class="nc">&nbsp;        return this.toProductResponseM2(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ProductResponseM2 toProductResponseM2(ProductResponseM2 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new ProductResponseM2();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (ProductResponseM2) this.toProductResponseM1(response);</b>
+&nbsp;
+&nbsp;        // List of &quot;Product Option&quot; Base Response
+<b class="nc">&nbsp;        List&lt;ProductOptionResponseM1&gt; options = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;ProductOption&gt; productOptionList = this.getOptions();</b>
+<b class="nc">&nbsp;        double min = Double.MAX_VALUE;</b>
+<b class="nc">&nbsp;        double max = Double.MIN_VALUE;</b>
+<b class="nc">&nbsp;        for (ProductOption option: productOptionList) {</b>
+<b class="nc">&nbsp;            min = option.getPrice() &lt; min ? option.getPrice() : min;</b>
+<b class="nc">&nbsp;            max = option.getPrice() &gt; max ? option.getPrice() : max;</b>
+<b class="nc">&nbsp;            options.add(option.toProductOptionResponseM1(null));</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        response.setMinPrice(min == Double.MAX_VALUE ? 0 : min);</b>
+<b class="nc">&nbsp;        response.setMaxPrice(max == Double.MIN_VALUE ? 0 : max);</b>
+<b class="nc">&nbsp;        response.setOptions(options);</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setMainImage(Objects.isNull(image) ? null : image.toImageResponseM1(null));</b>
+&nbsp;
+&nbsp;        // &quot;Image&quot; Base Response
+<b class="nc">&nbsp;        List&lt;ImageResponseM1&gt; images = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Image&gt; imageList = this.getImages();</b>
+<b class="nc">&nbsp;        for (Image image : imageList)</b>
+<b class="nc">&nbsp;            images.add(image.toImageResponseM1(null));</b>
+<b class="nc">&nbsp;        response.setImages(images);</b>
+&nbsp;
+&nbsp;        // &quot;Review&quot; with Image Response
+<b class="nc">&nbsp;        List&lt;ReviewResponseM2&gt; reviews = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Review&gt; reviewList = this.getReviews();</b>
+<b class="nc">&nbsp;        double sumReview = 0;</b>
+<b class="nc">&nbsp;        int totalCount = 0, oneStarCount = 0, twoStarCount = 0, threeStarCount = 0, fourStarCount = 0, fiveStarCount = 0;</b>
+<b class="nc">&nbsp;        for (Review review : reviewList) {</b>
+<b class="nc">&nbsp;            switch (review.getRating()) {</b>
+<b class="nc">&nbsp;                case 1 -&gt; oneStarCount++;</b>
+<b class="nc">&nbsp;                case 2 -&gt; twoStarCount++;</b>
+<b class="nc">&nbsp;                case 3 -&gt; threeStarCount++;</b>
+<b class="nc">&nbsp;                case 4 -&gt; fourStarCount++;</b>
+<b class="nc">&nbsp;                case 5 -&gt; fiveStarCount++;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            sumReview += review.getRating();</b>
+<b class="nc">&nbsp;            totalCount++;</b>
+<b class="nc">&nbsp;            reviews.add(review.toReviewResponseM2(null));</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        response.setReviewScore(reviews.isEmpty() ? 0 : Math.round(sumReview / totalCount * 10.0) / 10.0);</b>
+<b class="nc">&nbsp;        response.setReviewFiveStar(fiveStarCount);</b>
+<b class="nc">&nbsp;        response.setReviewFourStar(fourStarCount);</b>
+<b class="nc">&nbsp;        response.setReviewThreeStar(threeStarCount);</b>
+<b class="nc">&nbsp;        response.setReviewTwoStar(twoStarCount);</b>
+<b class="nc">&nbsp;        response.setReviewOneStar(oneStarCount);</b>
+<b class="nc">&nbsp;        response.setReviews(reviews);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ProductResponseM3 toProductResponseM3() throws AlphanahBaseException {
+<b class="nc">&nbsp;        return this.toProductResponseM3(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ProductResponseM3 toProductResponseM3(ProductResponseM3 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new ProductResponseM3();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (ProductResponseM3) this.toProductResponseM2(response);</b>
+&nbsp;
+&nbsp;        // List of &quot;Category&quot; Base Response
+<b class="nc">&nbsp;        List&lt;CategoryResponseM1&gt; categories = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;ProductCategory&gt; productCategoryList = this.getProductCategories();</b>
+<b class="nc">&nbsp;        for (ProductCategory productCategory : productCategoryList)</b>
+<b class="nc">&nbsp;            categories.add(productCategory.getCategory().toCategoryResponseM1(null));</b>
+<b class="nc">&nbsp;        response.setCategories(categories);</b>
+&nbsp;
+<b class="nc">&nbsp;        int saleCount = 0;</b>
+<b class="nc">&nbsp;        int outOfStock = 0;</b>
+<b class="nc">&nbsp;        List&lt;ProductOption&gt; productOptionList = this.options;</b>
+<b class="nc">&nbsp;        for (ProductOption option : productOptionList) {</b>
+<b class="nc">&nbsp;            if (option.getQuantity() == 0)</b>
+<b class="nc">&nbsp;                outOfStock++;</b>
+&nbsp;
+<b class="nc">&nbsp;            for (OrderItem orderItem : option.getOrderItems()) {</b>
+<b class="nc">&nbsp;                if (orderItem.getDeliveryStatus().equals(DeliveryStatus.CART_ITEM))</b>
+<b class="nc">&nbsp;                    continue;</b>
+<b class="nc">&nbsp;                saleCount += orderItem.getQuantity();</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        response.setSaleCount(saleCount);</b>
+<b class="nc">&nbsp;        response.setOutOfStock(outOfStock);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

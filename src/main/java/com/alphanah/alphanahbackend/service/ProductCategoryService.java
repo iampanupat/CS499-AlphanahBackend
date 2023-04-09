@@ -34,12 +34,12 @@ public class ProductCategoryService {
             throw ProductCategoryException.cannotCreateWithNullCategoryUuid();
 
         Product product = productService.findProduct(productUuid);
-        if (!product.getProductCategories().isEmpty())
-            throw ProductCategoryException.cannotCreateMultipleRelationship();
+//        if (!product.getProductCategories().isEmpty())
+//            throw ProductCategoryException.cannotCreateMultipleRelationship();
 
         Category category = categoryService.findCategory(categoryUuid);
-        if (repository.existsByProductAndCategory(product, category))
-            throw ProductCategoryException.cannotCreateDuplicateRelationship();
+//        if (repository.existsByProductAndCategory(product, category))
+//            throw ProductCategoryException.cannotCreateDuplicateRelationship();
 
         if (!product.getCreatorUuid().equals(creatorUuid))
             throw ProductCategoryException.cannotCreateNotOwned();

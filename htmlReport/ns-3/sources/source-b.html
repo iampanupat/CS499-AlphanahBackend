@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ReviewBusiness</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.business</a>
+</div>
+
+<h1>Coverage Summary for Class: ReviewBusiness (com.alphanah.alphanahbackend.business)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReviewBusiness</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.business;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Review;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.review.ReviewResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.review.ReviewResponseM3;
+&nbsp;import com.alphanah.alphanahbackend.model.review.ReviewRequest;
+&nbsp;import com.alphanah.alphanahbackend.service.ReviewService;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ReviewBusiness {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ReviewService service;
+&nbsp;
+&nbsp;    public List&lt;ReviewResponseM3&gt; getAllReviews(UUID productUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        List&lt;ReviewResponseM3&gt; responses = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Review&gt; reviews = service.findAllReviews(productUuid);</b>
+<b class="nc">&nbsp;        for (Review review : reviews)</b>
+<b class="nc">&nbsp;            responses.add(review.toReviewResponseM3(null));</b>
+<b class="nc">&nbsp;        return responses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ReviewResponseM3 getReview(UUID productUuid, UUID uuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Review response = service.findReview(productUuid, uuid);</b>
+<b class="nc">&nbsp;        return response.toReviewResponseM3(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ReviewResponseM1 createReview(String token, UUID productUuid, ReviewRequest request) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Review response = service.createReview(AccountUtils.findAccount(token).getUuid(), productUuid, request.getMessage(), request.getRating());</b>
+<b class="nc">&nbsp;        return response.toReviewResponseM1(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ReviewResponseM1 updateReview(String token, UUID productUuid, UUID uuid, ReviewRequest request) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Review response = service.updateReview(AccountUtils.findAccount(token).getUuid(), productUuid, uuid, request.getMessage(), request.getRating());</b>
+<b class="nc">&nbsp;        return response.toReviewResponseM1(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteReview(String token, UUID productUuid, UUID uuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        service.deleteReview(AccountUtils.findAccount(token).getUuid(), productUuid, uuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

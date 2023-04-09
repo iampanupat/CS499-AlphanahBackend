@@ -199,11 +199,39 @@ public class Order implements Comparable<Order> {
         response.setDiscount(Objects.isNull(coupon) ? null : this.isCouponActive());
         response.setCoupon(Objects.isNull(coupon) ? null : coupon.toCouponResponseM1());
         response.setRawTotalPrice(this.calculateRawTotalPrice());
-        response.setTotalPrice(this.calculateTotalPriceWithCoupon());
+        response.setTotalPrice(this.calculatePaidTotalPrice());
         response.setRawDeliveryFee(this.calculateRawDeliveryFee());
-        response.setDeliveryFee(this.calculateDeliveryFeeWithCoupon());
+        response.setDeliveryFee(this.calculatePaidDeliveryFee());
         response.setOrderItems(paidItems);
         return response;
+    }
+
+    public double calculatePaidTotalPrice() {
+        double finalPrice = 0;
+        Set<UUID> merchantUuidSet = this.merchantUuidSet();
+        Map<UUID, Double> totalPriceMap = this.merchantTotalPriceMap();
+        for (UUID merchantUuid: merchantUuidSet) {
+            double rawTotalPrice = totalPriceMap.getOrDefault(merchantUuid, 0.0);
+            if (!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid))
+                switch (coupon.getType()) {
+                    case GIFT_CARD -> finalPrice += rawTotalPrice <= coupon.getValue() ? 0 : rawTotalPrice - coupon.getValue();
+                    case PERCENTAGE_DISCOUNT -> finalPrice += rawTotalPrice * (100 - coupon.getValue()) / 100;
+                    default -> finalPrice += rawTotalPrice;
+                }
+            else
+                finalPrice += rawTotalPrice;
+        }
+        return finalPrice;
+    }
+
+    public double calculatePaidDeliveryFee() {
+        double finalPrice = 0;
+        Set<UUID> merchantUuidSet = merchantUuidSet();
+        Map<UUID, Double> totalPriceMap = merchantTotalPriceMap();
+        for (UUID merchantUuid: merchantUuidSet)
+            if ( !(!Objects.isNull(coupon) && coupon.getCreatorUuid().equals(merchantUuid) && coupon.getType().equals(CouponType.FREE_SHIPPING)) )
+                finalPrice += totalPriceMap.getOrDefault(merchantUuid, 0.0) < 1000 ? 50 : totalPriceMap.get(merchantUuid) * 0.05;
+        return finalPrice;
     }
 
 }

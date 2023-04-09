@@ -1,0 +1,212 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderException</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderException (com.alphanah.alphanahbackend.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderException</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.exception;
+&nbsp;
+&nbsp;public class OrderException extends AlphanahBaseException {
+&nbsp;
+&nbsp;    public OrderException(String message) {
+<b class="nc">&nbsp;        super(&quot;order.&quot; + message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException checkoutFailure() {
+<b class="nc">&nbsp;        return new OrderException(&quot;checkout.failure&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotApplyUnavailableCoupon() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.apply.unavailable.coupon&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotApplyAlreadyUsedCoupon() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.apply.already.used.coupon&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotFindWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.find.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotFindWithNullOrderUuid() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.find.with.null.order.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException notFound() {
+<b class="nc">&nbsp;        return new OrderException(&quot;not.found&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotCreateWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.create.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotCreateDuplicateCart() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.create.duplicate.cart&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithNullCreatorUuid() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.null.creator.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithNullPayType() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.null.pay.type&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithNullFirstname() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.null.firstname&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithNullLastname() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.null.lastname&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithNullPhone() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.null.phone&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithNullAddress() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.null.address&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithEmptyFirstname() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.empty.firstname&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithEmptyLastname() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.empty.lastname&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithEmptyPhone() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.empty.phone&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithEmptyAddress() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.empty.address&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithFirstnameExceedMaxLength() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.firstname.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithLastnameExceedMaxLength() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.lastname.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithPhoneExceedMaxLength() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.phone.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithAddressExceedMaxLength() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.address.exceed.max.length&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithNullCartUuid() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.null.cart.uuid&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithEmptyCart() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.empty.cart&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static OrderException cannotUpdateWithQuantityExceedStock() {
+<b class="nc">&nbsp;        return new OrderException(&quot;cannot.update.with.quantity.exceed.stock&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

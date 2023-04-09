@@ -1,0 +1,205 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderItem</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderItem (com.alphanah.alphanahbackend.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderItem</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.9%
+  </span>
+  <span class="absValue">
+    (1/34)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">OrderItem$HibernateProxy$GWX4ocmW</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    8.3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.9%
+  </span>
+  <span class="absValue">
+    (1/34)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.entity;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM1;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.EqualsAndHashCode;
+&nbsp;import org.joda.time.DateTime;
+&nbsp;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.UUID;
+&nbsp;
+<b class="fc">&nbsp;@Data</b>
+&nbsp;@Entity(name = &quot;order_items&quot;)
+&nbsp;public class OrderItem implements Comparable&lt;OrderItem&gt; {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;order_item_uuid&quot;, nullable = false, updatable = false)
+&nbsp;    @GeneratedValue
+<b class="nc">&nbsp;    private UUID uuid;</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;order_uuid&quot;, nullable = false, updatable = false)
+<b class="nc">&nbsp;    private Order order;</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;product_option_uuid&quot;, nullable = false, updatable = false)
+<b class="nc">&nbsp;    private ProductOption productOption;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_item_quantity&quot;, nullable = false)
+<b class="nc">&nbsp;    private Integer quantity;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_item_price&quot;)
+<b class="nc">&nbsp;    private Double price;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;order_item_delivery_status&quot;, nullable = false)
+&nbsp;    @Enumerated(EnumType.STRING)
+<b class="nc">&nbsp;    private DeliveryStatus deliveryStatus;</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int compareTo(OrderItem other) {
+<b class="nc">&nbsp;        Date thisDate = Objects.isNull(this.order.getCheckoutDate()) ? new Date() : this.order.getCheckoutDate();</b>
+<b class="nc">&nbsp;        Date otherDate = Objects.isNull(other.order.getCheckoutDate()) ? new Date() : other.order.getCheckoutDate();</b>
+<b class="nc">&nbsp;        return thisDate.compareTo(otherDate) * -1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CartItemResponseM1 toCartItemResponseM1(CartItemResponseM1 response) {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new CartItemResponseM1();</b>
+&nbsp;
+<b class="nc">&nbsp;        response.setOrderItemUUID(uuid.toString());</b>
+<b class="nc">&nbsp;        response.setQuantity(this.getQuantity().toString());</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CartItemResponseM2 toCartItemResponseM2(CartItemResponseM2 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new CartItemResponseM2();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (CartItemResponseM2) this.toCartItemResponseM1(response);</b>
+<b class="nc">&nbsp;        response.setProduct(this.getProductOption().getProduct().toProductResponseM3());</b>
+<b class="nc">&nbsp;        response.setOption(this.getProductOption().toProductOptionResponseM1(null));</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PaidItemResponseM1 toPaidItemResponseM1(PaidItemResponseM1 response) {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new PaidItemResponseM1();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (PaidItemResponseM1) this.toCartItemResponseM1(response);</b>
+<b class="nc">&nbsp;        response.setPrice(this.getPrice().toString());</b>
+<b class="nc">&nbsp;        response.setDeliveryStatus(this.getDeliveryStatus().toString());</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PaidItemResponseM2 toPaidItemResponseM2(PaidItemResponseM2 response) throws AlphanahBaseException {
+<b class="nc">&nbsp;        if (response == null)</b>
+<b class="nc">&nbsp;            response = new PaidItemResponseM2();</b>
+&nbsp;
+<b class="nc">&nbsp;        response = (PaidItemResponseM2) this.toPaidItemResponseM1(response);</b>
+<b class="nc">&nbsp;        response.setProduct(this.getProductOption().getProduct().toProductResponseM3());</b>
+<b class="nc">&nbsp;        response.setOption(this.getProductOption().toProductOptionResponseM1(null));</b>
+<b class="nc">&nbsp;        response.setOrder(this.getOrder().toPaidResponseM1(null));</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>

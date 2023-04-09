@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderItemBusiness</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.alphanah.alphanahbackend.business</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderItemBusiness (com.alphanah.alphanahbackend.business)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderItemBusiness</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.8%
+  </span>
+  <span class="absValue">
+    (1/21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.alphanah.alphanahbackend.business;
+&nbsp;
+&nbsp;import com.alphanah.alphanahbackend.entity.Order;
+&nbsp;import com.alphanah.alphanahbackend.entity.OrderItem;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.DeliveryStatus;
+&nbsp;import com.alphanah.alphanahbackend.enumerate.OrderType;
+&nbsp;import com.alphanah.alphanahbackend.exception.AlphanahBaseException;
+&nbsp;import com.alphanah.alphanahbackend.model.order.CartResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.CartItemResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.OrderItemRequest;
+&nbsp;import com.alphanah.alphanahbackend.model.order_item.PaidItemResponseM2;
+&nbsp;import com.alphanah.alphanahbackend.service.OrderItemService;
+&nbsp;import com.alphanah.alphanahbackend.utility.AccountUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class OrderItemBusiness {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private OrderItemService service;
+&nbsp;
+&nbsp;    public CartResponseM2 addOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Order response = service.addOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());</b>
+<b class="nc">&nbsp;        return response.toCartResponseM2(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CartResponseM2 updateOrCreateCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid, OrderItemRequest request) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Order response = service.updateOrCreateCartItem(accountUuid, productUuid, optionUuid, request.getQuantity());</b>
+<b class="nc">&nbsp;        return response.toCartResponseM2(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CartResponseM2 deleteCartItem(UUID accountUuid, UUID productUuid, UUID optionUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        Order response = service.deleteCartItem(accountUuid, productUuid, optionUuid);</b>
+<b class="nc">&nbsp;        return response.toCartResponseM2(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;PaidItemResponseM2&gt; getAllSaleOrderItem(UUID merchantUuid, DeliveryStatus deliveryStatus) throws AlphanahBaseException {
+<b class="nc">&nbsp;        List&lt;PaidItemResponseM2&gt; responses = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;OrderItem&gt; saleOrderItemList = service.findAllPaidOrderItem(merchantUuid);</b>
+<b class="nc">&nbsp;        for (OrderItem saleOrderItem: saleOrderItemList) {</b>
+<b class="nc">&nbsp;            if (saleOrderItem.getOrder().getType().equals(OrderType.CART))</b>
+<b class="nc">&nbsp;                continue;</b>
+<b class="nc">&nbsp;            if (!Objects.isNull(deliveryStatus) &amp;&amp; !saleOrderItem.getDeliveryStatus().equals(deliveryStatus))</b>
+<b class="nc">&nbsp;                continue;</b>
+<b class="nc">&nbsp;            responses.add(saleOrderItem.toPaidItemResponseM2(null));</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return responses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PaidItemResponseM2 getSaleOrderItem(UUID merchantUuid, UUID orderItemUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        OrderItem response = service.findPaidOrderItem(merchantUuid, orderItemUuid);</b>
+<b class="nc">&nbsp;        return response.toPaidItemResponseM2(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PaidItemResponseM2 updateDeliveryStatus(UUID merchantUuid, UUID orderItemUuid) throws AlphanahBaseException {
+<b class="nc">&nbsp;        OrderItem response = service.updateDeliveryStatus(merchantUuid, orderItemUuid);</b>
+<b class="nc">&nbsp;        return response.toPaidItemResponseM2(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-12 21:35</div>
+</div>
+</body>
+</html>
